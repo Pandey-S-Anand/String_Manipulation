@@ -1,6 +1,6 @@
 class Solution {
     public String addStrings(String num1, String num2) {
-       int i=num1.length()-1,j=num2.length()-1,carry=0;
+        int i=num1.length()-1,j=num2.length()-1,carry=0;
         StringBuilder num=new StringBuilder("");
         while(i>=0 && j>=0)
         {
@@ -20,7 +20,7 @@ class Solution {
           int d1=num1.charAt(i)-'0';
 	  
           int base=(d1+carry)%10;
-	      carry=(d1+carry)/10;
+	  carry=(d1+carry)/10;
 	  
           num.append(base);
           i--;
@@ -31,7 +31,7 @@ class Solution {
           int d2=num2.charAt(j)-'0';
 	  
           int base=(d2+carry)%10;
-	      carry=(d2+carry)/10;
+	  carry=(d2+carry)/10;
  
           num.append(base);
           j--;
