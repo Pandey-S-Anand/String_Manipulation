@@ -1,42 +1,42 @@
 
 class Solution{
-	public static int smallestNum(String str){
-	   // count_after_dot : is used to find denominator in fraction form.
-	   int numerator=0,count_after_dot = 0;
-	   boolean dot_found=false;
+    public static int smallestNum(String str){
+	// count_after_dot : is used to find denominator in fraction form.
+	int numerator=0,count_after_dot = 0;
+	boolean dot_found=false;
 	   
-     // To find numerator in fraction form of given number. For example, for 30.25,numerator would be 3025.
-	   for(int i=0;i<str.length();i++)
-	     if(str.charAt(i)!='.')
-	     {
-	        numerator=numerator*10+(str.charAt(i)-'0');
-	        if(dot_found==true)
-	          count_after_dot++;
-	     }
-	     else//str.chatAt(i)=='.'
-          dot_found=true;
+        // To find numerator in fraction form of given number. For example, for 30.25,numerator would be 3025.
+	for(int i=0;i<str.length();i++)
+	   if(str.charAt(i)!='.')
+	   {
+	      numerator=numerator*10+(str.charAt(i)-'0');
+	      if(dot_found==true)
+	        count_after_dot++;
+	   }
+	   else//str.chatAt(i)=='.'
+             dot_found=true;
            
-       if(dot_found==false)
+        if(dot_found==false)
           return 1;//Since the number is already a natural Number so we return 1(Smallest number to multiply to convert to natural)
 
 	   
-	   // Find denominator in fraction form. For example,for 30.25, denominator is 100
-	   int denominator=(int)Math.pow(10,count_after_dot);
+	// Find denominator in fraction form. For example,for 30.25, denominator is 100
+	int denominator=(int)Math.pow(10,count_after_dot);
 	  
-	   int hcf=HCF(numerator,denominator);
+	int hcf=HCF(numerator,denominator);
 	   
-	   int res=(denominator/hcf);
+	int res=(denominator/hcf);
 	   
-	   return res;
-	}
+	return res; 
+  }
 	
   public static int GCD(int divisor,int dividend)
   {
     int rem=dividend%divisor;
-	  if(rem==0)
-	    return divisor;
+    if(rem==0)
+       return divisor;
 	      
-	  return GCD(rem,divisor);      
+    return GCD(rem,divisor);      
   }
 }
 
