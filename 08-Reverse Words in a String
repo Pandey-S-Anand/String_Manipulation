@@ -1,4 +1,4 @@
-/* Optimal Solution :
+/* Good Approach :
 
 Approach
 1:  The input string s is trimmed to remove any leading or trailing spaces using the trim() method.
@@ -45,5 +45,93 @@ class Solution {
         res.append(arr[0]);
 
        return res.toString();
+    }
+}
+
+
+// Optimal Approach
+    
+//Naive Implementation
+
+class Solution {
+    public static String reverseWords(String s) {
+        String str=s.trim();
+        char[] arr = str.toCharArray();
+
+        ArrayList<Character>res = new ArrayList<>();
+        int i = arr.length - 1;
+
+        while (i >= 0) 
+        {
+            int j = i; // word end index
+
+            while (i >= 0 && arr[i] != ' ')
+               i--; 
+            
+            i++; //word start index
+            
+            // copy word
+            for (int k = i; k <= j; k++) 
+              res.add(arr[k]);  
+
+            if(i>0)
+              res.add(' ');  // add ' ' to res[]
+            
+            i--;
+
+            // clear excess space
+            while (i >= 0 && arr[i] == ' ') 
+              i--; 
+        }
+        
+        String ans="";
+
+        for(int k=0;k<res.size();k++)
+          ans+=res.get(k);
+
+        return ans;
+    }
+}
+
+
+//Optimal Implementation
+
+
+class Solution {
+    public static String reverseWords(String s) {
+        String str=s.trim();
+        char[] arr = str.toCharArray();
+
+        char[]res=new char[arr.length];
+
+        int i = arr.length-1,idx=0;
+
+        while (i > 0) 
+        {
+            int j = i; // word end index
+
+            while (i >= 0 && arr[i] != ' ')
+               i--; 
+            
+            i++; //word start index
+            
+            // copy word
+            for (int k = i; k <= j; k++) 
+              res[idx++]=arr[k];  
+
+            if(i>0)
+              res[idx++]=' ';  // add ' ' to res[]
+            
+            i--;
+
+            // clear excess space
+            while (i >= 0 && arr[i] == ' ') 
+              i--; 
+        }
+
+        for (int k = 0; k <= i; k++) 
+           res[idx++]=arr[k];
+
+        return new String(res,0,idx);
     }
 }
