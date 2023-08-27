@@ -1,4 +1,4 @@
-//Better Approach
+//Bruteforce Approach
 
 class Solution {
     public String frequencySort(String str) {
