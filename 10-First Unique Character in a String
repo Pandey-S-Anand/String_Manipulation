@@ -1,0 +1,57 @@
+//Bruteforce Approach
+
+class Solution {
+    public int firstUniqChar(String str) {
+       int n=str.length();
+       
+       for(int i=0;i<n;i++)
+         if(str.indexOf(str.charAt(i))==str.lastIndexOf(str.charAt(i)))
+           return i;
+       
+      return -1;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public int firstUniqChar(String str) {
+       HashMap<Character,Integer>hm=new HashMap<>();
+       int n=str.length();
+       for(int i=0;i<n;i++)
+       {
+          char ch=str.charAt(i);
+
+          if(hm.containsKey(ch))
+            hm.put(ch,hm.get(ch)+1);
+          else
+            hm.put(ch,1);
+       }
+         
+       for(int i=0;i<n;i++)
+          if(hm.get(str.charAt(i))==1)
+             return i;
+             
+       return -1;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int firstUniqChar(String str) {
+       int[]freq=new int[26];
+       int n=str.length();
+       
+       for(int i=0;i<n;i++)
+         freq[str.charAt(i)-97]++;
+
+       for(int i=0;i<n;i++)
+          if(freq[str.charAt(i)-97]==1)
+             return i;
+             
+       return -1;
+    }
+}
