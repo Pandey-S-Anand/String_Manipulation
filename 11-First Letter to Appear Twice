@@ -1,0 +1,52 @@
+//Bruteforce Approach
+
+class Solution {
+    public char repeatedCharacter(String str) {
+      HashMap<Character,Integer>hm=new HashMap<>();
+      int i,n=str.length();
+
+      for(i=0;i<n;i++)
+         if(hm.containsKey(str.charAt(i)))
+            break;
+         else
+            hm.put(str.charAt(i),1);
+            
+      return str.charAt(i); 
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public char repeatedCharacter(String str) {
+      HashSet<Character>hs=new HashSet<>();
+      int i,n=str.length();
+      for(i=0;i<n;i++)
+        if(hs.contains(str.charAt(i)))
+          break;
+        else
+          hs.add(str.charAt(i));
+
+      return str.charAt(i); 
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public char repeatedCharacter(String str) {
+       boolean[]visited=new boolean[26];
+       int i=0,n=str.length();
+       
+       for(i=0;i<n;i++)
+       {
+          if(visited[str.charAt(i)-97]==true)
+            break;
+          else
+            visited[str.charAt(i)-97]=true;
+       }
+       return str.charAt(i);
+    }
+}
