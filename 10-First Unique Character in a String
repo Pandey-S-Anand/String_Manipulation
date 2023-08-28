@@ -1,4 +1,4 @@
-//Bruteforce Approach
+// Bruteforce Approach
 
 class Solution {
     public int firstUniqChar(String str) {
