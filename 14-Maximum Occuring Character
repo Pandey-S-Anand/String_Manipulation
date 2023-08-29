@@ -1,0 +1,58 @@
+//Bruteforce Approach
+
+class Solution{
+    public static char getMaxOccuringChar(String str){
+          int n=str.length();
+          HashMap<Character,Integer>hm=new HashMap<>(n);
+       
+          for(int i=0;i<n;i++)
+          {
+            char ch=str.charAt(i);
+            
+            if(hm.containsKey(ch))
+              hm.put(ch,hm.get(ch)+1);
+            else
+              hm.put(ch,1);
+          }
+       
+	      char maxFreqChar=str.charAt(0);
+	      int maxFreq=hm.get(maxFreqChar);
+	   
+	      for(char ch:hm.keySet())
+           if(hm.get(ch)>maxFreq)
+           {
+              maxFreq=hm.get(ch);
+              maxFreqChar=ch;
+           }
+           else if((hm.get(ch)==maxFreq) && ch<maxFreqChar)
+              maxFreqChar=ch;
+	     
+         return maxFreqChar; 
+    }
+    
+}
+
+
+//Optimal Approach
+
+class Solution{
+    public static char getMaxOccuringChar(String str){
+       int[] freqArr=new int[26];
+	   int n=str.length();
+	   for(int i=0;i<n;i++)
+         freqArr[str.charAt(i)-97]++;
+         
+	   char maxFreqChar='a';
+	   int maxFreq=freqArr[0];
+	   
+	   for(int i=1;i<26;i++)
+	     if(freqArr[i]!=0)
+	       if(freqArr[i]>maxFreq)
+	       {
+	         maxFreq=freqArr[i]; 
+	         maxFreqChar=(char)(i+97);
+	       }
+	     
+       return maxFreqChar;   
+    }
+}
