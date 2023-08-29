@@ -16,6 +16,6 @@ class Solution {
         result.append(str.charAt(n-1));
         result.append(count); 
 
-	   return result.reverse().toString();
+      return result.reverse().toString();
     }
 } 
