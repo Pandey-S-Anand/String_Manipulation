@@ -15,21 +15,20 @@ class Solution{
               hm.put(ch,1);
           }
        
-	      char maxFreqChar=str.charAt(0);
-	      int maxFreq=hm.get(maxFreqChar);
+	  char maxFreqChar=str.charAt(0);
+	  int maxFreq=hm.get(maxFreqChar);
 	   
-	      for(char ch:hm.keySet())
-           if(hm.get(ch)>maxFreq)
-           {
+	  for(char ch:hm.keySet())
+            if(hm.get(ch)>maxFreq)
+            {
               maxFreq=hm.get(ch);
               maxFreqChar=ch;
-           }
-           else if((hm.get(ch)==maxFreq) && ch<maxFreqChar)
+            }
+            else if((hm.get(ch)==maxFreq) && ch<maxFreqChar)
               maxFreqChar=ch;
 	     
          return maxFreqChar; 
     }
-    
 }
 
 
@@ -38,20 +37,19 @@ class Solution{
 class Solution{
     public static char getMaxOccuringChar(String str){
        int[] freqArr=new int[26];
-	   int n=str.length();
-	   for(int i=0;i<n;i++)
+       int n=str.length();
+       for(int i=0;i<n;i++)
          freqArr[str.charAt(i)-97]++;
          
-	   char maxFreqChar='a';
-	   int maxFreq=freqArr[0];
+       char maxFreqChar='a';
+       int maxFreq=freqArr[0];
 	   
-	   for(int i=1;i<26;i++)
-	     if(freqArr[i]!=0)
-	       if(freqArr[i]>maxFreq)
-	       {
-	         maxFreq=freqArr[i]; 
-	         maxFreqChar=(char)(i+97);
-	       }
+       for(int i=1;i<26;i++)
+	  if(freqArr[i]!=0 && (freqArr[i]>maxFreq))
+	  {
+	     maxFreq=freqArr[i]; 
+	     maxFreqChar=(char)(i+97);
+	  }
 	     
        return maxFreqChar;   
     }
