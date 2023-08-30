@@ -1,3 +1,4 @@
+
 class Solution {
     public int getLucky(String str, int k) {
       int n=str.length(),sum=0;
