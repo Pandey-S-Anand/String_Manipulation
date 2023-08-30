@@ -1,0 +1,65 @@
+// Bruteforce Approach
+
+class Solution {
+    static String findMax(String str) {
+        int n=str.length();  
+        HashMap<Character,Integer>hm=new HashMap<>();
+        
+        for(int i=0;i<n;i++)
+        {
+           char ch=str.charAt(i);
+           
+           if(hm.containsKey(ch))
+             hm.put(ch,hm.get(ch)+1);
+           else
+             hm.put(ch,1);
+        }
+    
+        StringBuilder res=new StringBuilder();
+        
+        for(int i=9;i>=0;i--)
+        {
+          char ch=(char)(i+48);
+          
+          if(hm.containsKey(ch))
+          {
+            int freq=hm.get(ch);
+          
+            while(freq!=0)
+            {
+              res.append(i);
+              freq--;
+            }
+          }
+        }
+        
+        return res.toString();
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    static String findMax(String str) {
+        int n=str.length();  
+        int[] frequency=new int[10];
+
+        for(int i=0;i<n;i++)
+          frequency[str.charAt(i)-48]++;
+        
+        StringBuilder res=new StringBuilder();
+        
+        for(int i=9;i>=0;i--)
+        {
+          int freq=frequency[i];
+          
+          while(freq!=0)
+          {
+            res.append(i);
+            freq--;
+          }
+        }
+        
+        return res.toString();
+    }
