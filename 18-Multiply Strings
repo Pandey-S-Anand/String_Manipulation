@@ -68,15 +68,15 @@ class Solution {
 
     public String addTwoNumbers(String num1, String num2) 
     {
-        int i=num1.length()-1,j=num2.length()-1,carry=0,d1,d2,sum;
+        int i=num1.length()-1,j=num2.length()-1,carry=0;
         StringBuilder num=new StringBuilder();
         
         while(i>=0 && j>=0)
         {
-           d1=num1.charAt(i)-'0';
-           d2=num2.charAt(j)-'0';
+           int d1=num1.charAt(i)-'0';
+           int d2=num2.charAt(j)-'0';
             
-           sum=((d1+d2)+carry)%10;
+           int sum=((d1+d2)+carry)%10;
            carry=((d1+d2)+carry)/10;   
         
            num.append(sum);
@@ -86,8 +86,8 @@ class Solution {
         
         while(i>=0)
         {
-          d1=num1.charAt(i)-'0';
-          sum=(d1+carry)%10;
+          int d1=num1.charAt(i)-'0';
+          int sum=(d1+carry)%10;
           carry=(d1+carry)/10;
           num.append(sum);
           i--;
@@ -95,8 +95,8 @@ class Solution {
         
         while(j>=0)
         {
-          d2=num2.charAt(j)-'0';
-          sum=(d2+carry)%10;
+          int d2=num2.charAt(j)-'0';
+          int sum=(d2+carry)%10;
           carry=(d2+carry)/10; 
           num.append(sum);
           j--;
