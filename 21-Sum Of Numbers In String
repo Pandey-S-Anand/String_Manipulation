@@ -1,3 +1,4 @@
+
 class Solution{
   public static long findSum(String str){
      int n=str.length();
