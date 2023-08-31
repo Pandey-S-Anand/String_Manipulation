@@ -1,0 +1,48 @@
+//Using Stack
+
+class Solution {
+    public String removeDuplicates(String str) {
+        int n=str.length();
+
+        StringBuilder stack = new StringBuilder();
+
+        for (int i=0;i<n;i++)
+        {
+            char ch=str.charAt(i);
+            int currLen=stack.length();
+            
+            if(currLen!=0 && stack.charAt(currLen-1)==ch)
+               stack.deleteCharAt(currLen-1);
+            else
+               stack.append(ch); 
+        } 
+            
+        return stack.toString();
+    }
+}
+
+
+//Method 2 (Using Two Pointers)
+
+class Solution {
+    public String removeDuplicates(String str) {
+        int n=str.length(),k=-1;
+        char[]res=new char[n];
+	
+        for (int i=0;i<n;i++) 
+        {
+          char ch=str.charAt(i);
+	    
+          if(k!=-1 && res[k]==ch) 
+            k=k-1;
+          else
+            res[++k]=ch;
+        }
+	
+        StringBuilder ans=new StringBuilder();
+        for(int i=0;i<=k;i++) 
+          ans.append(res[i]);
+	  
+        return ans.toString(); 
+    }
+}
