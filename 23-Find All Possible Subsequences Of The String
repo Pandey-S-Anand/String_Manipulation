@@ -165,9 +165,9 @@ class Solution{
        List<String>list=new ArrayList<>();
        String subsequence="";
        
-	   allPossibleSubsequences(str,str.length(),0,subsequence,list);
+       allPossibleSubsequences(str,str.length(),0,subsequence,list);
 	   
-	   Collections.sort(list);
+       Collections.sort(list);
 	   
        return list;
     }
