@@ -172,7 +172,7 @@ class Solution{
        return list;
     }
 
-	public void allPossibleSubsequences(String str,int n,int strIdx,String ss,List<String>list)
+    public void allPossibleSubsequences(String str,int n,int strIdx,String ss,List<String>list)
     {
           if(strIdx==n)
           {
@@ -186,7 +186,7 @@ class Solution{
             //Exclude element
             allPossibleSubsequences(str,n,strIdx+1,ss,list); 
           }
-	}
+    }
 }
 
 /*
