@@ -1,4 +1,4 @@
-//Intuitive Implementation
+// Intuitive Implementation
 
 class Solution {
     public boolean isIsomorphic(String str1, String str2) {
