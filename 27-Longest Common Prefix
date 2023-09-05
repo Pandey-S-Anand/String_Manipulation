@@ -3,18 +3,17 @@
 class Solution {
     public String longestCommonPrefix(String[] arr) {
     
-    Arrays.sort(arr,new Comp());
+    Arrays.sort(arr,new Comp()); //Sort array according to length so that smallest string is at 0th index
     StringBuilder res=new StringBuilder();
+    int minLen=arr[0].length();
 
-    for(int i=0;i<arr[0].length();i++)
+    for(int i=0;i<minLen;i++)
     {
-      int j;
-      for(j=1;j<arr.length;j++)
+      for(int j=1;j<arr.length;j++)
         if(arr[j].charAt(i)!=arr[0].charAt(i))
           return res.toString();
       
-      if(j==arr.length)
-        res.append(arr[0].charAt(i));
+      res.append(arr[0].charAt(i));
     }
 
     return res.toString();
@@ -41,6 +40,25 @@ class Solution {
 
       for(int i = 1; i < arr.length; i++) 
         while (arr[i].indexOf(prefix) != 0)
+        {
+          prefix = prefix.substring(0, prefix.length() - 1);
+
+          if (prefix.isEmpty())
+            return "";
+        }
+
+    return prefix;
+  }
+}
+
+//Aliter
+
+class Solution {
+    public String longestCommonPrefix(String[] arr) {
+      String prefix = arr[0];
+
+      for(int i = 1; i < arr.length; i++) 
+        while (arr[i].startsWith(prefix)==false)
         {
           prefix = prefix.substring(0, prefix.length() - 1);
 
