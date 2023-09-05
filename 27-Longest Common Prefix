@@ -32,6 +32,42 @@ class Comp implements Comparator<String>{
 }
 
 
+//Better Approach
+
+class Solution {
+  public String longestCommonPrefix(String[] arr) {
+    StringBuilder res=new StringBuilder();
+    int minLen=arr[0].length(),minLenStrIdx=0;
+    String minLenStr=arr[0];
+
+    for(int i=1;i<arr.length;i++)
+      if(arr[i].length()<minLen)
+      {
+        minLen=arr[i].length();
+        minLenStrIdx=i;
+        minLenStr=arr[i];
+      }
+               
+    for(int i=0;i<minLen;i++)
+    {
+      for(int j=0;j<arr.length;j++)
+      {
+          if(j==minLenStrIdx)
+            continue;
+
+          if(arr[j].charAt(i)!=minLenStr.charAt(i))
+            return res.toString();
+      }
+
+      res.append(minLenStr.charAt(i));
+    }
+
+    return res.toString();
+  }
+}
+
+
+
 //Optimal Approach
 
 class Solution {
