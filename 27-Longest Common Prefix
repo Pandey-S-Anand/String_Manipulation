@@ -3,7 +3,7 @@
 class Solution {
     public String longestCommonPrefix(String[] arr) {
     
-    Arrays.sort(arr,new Comp()); //Sort array according to length so that smallest string is at 0th index
+    Arrays.sort(arr,new Comp()); //Sort array according to length in ascending order so that smallest string is at 0th index
     StringBuilder res=new StringBuilder();
     int minLen=arr[0].length();
 
