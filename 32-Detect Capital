@@ -1,0 +1,88 @@
+//Bruteforce Approach
+
+class Solution {
+    public boolean detectCapitalUse(String str) {
+      int n=str.length();
+
+      if(str.equals(str.toUpperCase()) || str.equals(str.toLowerCase()))
+        return true;
+
+      if(Character.isUpperCase(str.charAt(0)))
+      {
+          for(int i=1;i<n;i++)
+            if(Character.isUpperCase(str.charAt(i)))
+              return false;
+      }
+      else
+        return false;
+
+      return true;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public boolean detectCapitalUse(String word) {
+      if(allCapitalOrAllSmall(word) || firstCapital(word))
+        return true;
+      return false;
+    }
+    
+    public boolean allCapitalOrAllSmall(String str)
+    {
+      int n=str.length(),cap=0,small=0;
+
+      for(int i=0;i<n;i++)
+      {
+        char ch=str.charAt(i);
+        if(Character.isUpperCase(ch))
+          cap++;
+        else
+          small++;
+      }
+
+      if(cap==n || small==n)
+        return true;
+      return false;
+    }
+
+    public boolean firstCapital(String str)
+    {
+       int n=str.length();
+
+       if(Character.isUpperCase(str.charAt(0)))
+       {
+         for(int i=1;i<n;i++)
+           if(Character.isUpperCase(str.charAt(i)))
+             return false;
+       }
+       else
+         return false;
+
+       return true;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public boolean detectCapitalUse(String str) {
+      int n=str.length(),cap=0,small=0;
+
+      for(int i=0;i<n;i++)
+      {
+        char ch=str.charAt(i);
+        if(Character.isUpperCase(ch))
+          cap++;
+        else
+          small++;
+      }
+      
+      if(cap==n || small==n || (Character.isUpperCase(str.charAt(0)) && cap==1))
+        return true;
+      return false;
+    }
+}
