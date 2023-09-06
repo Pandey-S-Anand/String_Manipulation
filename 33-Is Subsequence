@@ -1,0 +1,61 @@
+//Bruteforce Approach
+
+class Solution {
+    public boolean isSubsequence(String s, String t) {
+      List<String> res=new ArrayList<>();
+      allPossibleSubsequences(t,t.length(),0,"",res);
+
+      for(int i=0;i<res.size();i++)
+        if(s.equals(res.get(i)))
+          return true;
+          
+      return false;  
+    }
+
+    public void allPossibleSubsequences(String str,int n,int strIdx,String ss,List<String>list)
+    {
+        if(strIdx==n)
+          list.add(ss);
+        else
+        {
+          //Include element
+          allPossibleSubsequences(str,n,strIdx+1,ss+str.charAt(strIdx),list);
+          //Exclude element
+          allPossibleSubsequences(str,n,strIdx+1,ss,list); 
+        }
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public boolean isSubsequence(String ss, String str) {
+      if(str.isEmpty() && ss.isEmpty())
+        return true;
+
+      if(str.isEmpty())
+        return false;
+        
+      if(ss.isEmpty())
+        return true;
+
+      int m=ss.length(),n=str.length(),i=0,j=0;
+
+      while(i<m && j<n)
+      { 
+        if(ss.charAt(i)==str.charAt(j))
+        {
+          i++;
+          j++;
+        }
+        else
+          j++;
+      }
+
+      if(i!=m && j==n)
+        return false;
+
+      return true;  
+    }
+}
