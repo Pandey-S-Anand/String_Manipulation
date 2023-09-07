@@ -1,0 +1,95 @@
+//Bruteforce Approach
+
+class Solution {
+    public int romanToInt(String str) {
+        HashMap<Character, Integer>hm = new HashMap();
+
+        hm.put('I', 1);
+        hm.put('V', 5);
+        hm.put('X', 10);
+        hm.put('L', 50);
+        hm.put('C', 100);
+        hm.put('D', 500);
+        hm.put('M', 1000);
+
+        int n=str.length(),ans = 0;
+        
+        for (int i = 0; i <(n-1); i++)
+        {
+          char ch=str.charAt(i);
+
+          if(hm.get(ch) < hm.get(str.charAt(i + 1))) 
+            ans -= hm.get(ch);
+          else
+            ans += hm.get(ch);
+        }
+
+        ans+=hm.get(str.charAt(n-1));
+        
+        return ans;
+    }
+}
+
+
+//Better Approach
+
+lass Solution {
+    public int romanToInt(String str) {
+        int[] dec=new int[1001];
+        dec['C']=100;
+        dec['D']=500;
+        dec['I']=1;
+        dec['L']=50;
+        dec['M']=1000;
+        dec['V']=5;
+        dec['X']=10;
+
+        int n=str.length(),ans = 0;
+        
+        for (int i = 0; i <(n-1); i++)
+        {
+          char ch=str.charAt(i);
+
+          if(dec[ch] < dec[str.charAt(i+1)]) 
+            ans -= dec[ch];
+          else
+            ans += dec[ch];
+        }
+
+        ans+=dec[str.charAt(n-1)];
+        
+        return ans;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int romanToInt(String str) {
+        int[] dec=new int[26];
+        dec['C'-'A']=100;
+        dec['D'-'A']=500;
+        dec['I'-'A']=1;
+        dec['L'-'A']=50;
+        dec['M'-'A']=1000;
+        dec['V'-'A']=5;
+        dec['X'-'A']=10;
+
+        int n=str.length(),ans = 0;
+        
+        for (int i = 0; i <(n-1); i++)
+        {
+          char ch=str.charAt(i);
+
+          if(dec[ch-'A'] < dec[str.charAt(i+1)-'A']) 
+            ans -= dec[ch-'A'];
+          else
+            ans += dec[ch-'A'];
+        }
+
+        ans+=dec[str.charAt(n-1)-'A'];
+        
+        return ans;
+    }
+}
