@@ -1,0 +1,79 @@
+//Bruteforce Approach
+
+class Solution {
+    public List<String> find_permutation(String str) {
+     HashSet<String>hs=new HashSet<>();
+     
+     permute(str.toCharArray(), 0, str.length()-1,hs);
+     
+     List<String>res=new ArrayList<>();
+
+     res.addAll(hs);
+      
+     Collections.sort(res);
+     
+     return res;
+    }
+    
+    private void permute(char[]arr, int start, int end,HashSet<String>hs)
+    {
+        if (start == end)
+          hs.add(String.valueOf(arr));
+        else 
+        {
+          for (int i = start; i <= end; i++)
+          {
+            swap(arr, start, i);
+            permute(arr, start + 1, end,hs);
+            swap(arr, start, i);
+          }
+        }
+    }
+
+    public void swap(char[]arr, int i, int j)
+    {
+        char temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
+
+
+
+//Optimal Approach
+
+class Solution {
+    public List<String> find_permutation(String str) {
+     List<String>res=new ArrayList<>();
+     permute(str.toCharArray(), 0, str.length()-1,res);
+     
+     Collections.sort(res);
+     
+     return res;
+    }
+    
+    private void permute(char[]arr, int start, int end,List<String>res)
+    {
+        if (start == end)
+        {
+          if(res.contains(String.valueOf(arr))==false)
+            res.add(String.valueOf(arr));
+        }
+        else 
+        {
+          for (int i = start; i <= end; i++)
+          {
+            swap(arr, start, i);
+            permute(arr, start + 1, end,res);
+            swap(arr, start, i);
+          }
+        }
+    }
+
+    public void swap(char[]arr, int i, int j)
+    {
+        char temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
