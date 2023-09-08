@@ -40,7 +40,7 @@ class Solution {
 
 
 
-//Optimal Approach
+//Better Approach
 
 class Solution {
     public List<String> find_permutation(String str) {
@@ -75,5 +75,51 @@ class Solution {
         char temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public List<String> find_permutation(String str) {
+     List<String>res=new ArrayList<>();
+     findAllPermutation(str.toCharArray(), 0, str.length()-1,res);
+     
+     Collections.sort(res);
+     
+     return res;
+    }
+    
+   private void findAllPermutation(char[] arr, int start, int end, List<String> res) 
+   {
+        if (start == end)
+            res.add(new String(arr));
+        else 
+        {
+            for (int i = start; i <= end; i++)
+              if (hasDuplicate(arr, start, i)==false)   // Check for duplicates before swapping
+              {
+                  swap(arr, start, i);
+                  findAllPermutation(arr, start + 1, end, res);
+                  swap(arr, start, i);
+              }
+        }
+    }
+
+    public void swap(char[] arr, int i, int j)
+    {
+        char temp = arr[i];
+        arr[i]=arr[j];
+        arr[j]= temp;
+    }
+
+    private boolean hasDuplicate(char[]arr, int start, int end) 
+    {
+        for (int i = start; i < end; i++)
+          if (arr[i]==arr[end])
+            return true;
+
+        return false;
     }
 }
