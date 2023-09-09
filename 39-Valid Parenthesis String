@@ -18,7 +18,7 @@ class Solution {
           {
             if(openBracket.isEmpty()==false)
               openBracket.pop();
-            else // ch==')'
+            else
             {
               if(star.isEmpty()==false)
                 star.pop();
