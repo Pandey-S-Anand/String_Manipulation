@@ -49,5 +49,58 @@ class Solution {
 }
 
 
+
 //Optimal Approach
 
+class Solution {
+    public long countVowels(String word) {
+      int n=word.length();
+      long sum=0L;
+
+      for(int i=0;i<n;i++)
+        if(isVowel(word.charAt(i)))
+          sum+=(long)(i + 1) * (n - i);
+
+      return sum;
+    }
+
+    public boolean isVowel(char ch)
+    {
+      if(ch=='a' || ch=='e' || ch=='i' || ch=='o' || ch=='u')
+        return true;
+      return false;
+    }
+}
+
+
+/*
+LOGIC: 
+
+str="abcd"
+
+All substrings :
+
+"a" , "ab", "abc", "abcd"
+
+"b",  "bc", "bcd"
+
+"c", "cd"
+
+"d"
+
+
+'a' Appears 4 times : (n-0) + (n-0)*0
+
+'b' Appears 6 times : (n-1) + (n-1)*1
+
+'c' Appears 6 times : (n-2) + (n-2)*2
+
+'d' Appears 4 times : (n-3) + (n-3)*3
+
+Generalised formula:
+
+count of arr[i]= (n-i)+(n-i)*i
+count of arr[i]= (n-i)*(1+(1*i))
+count of arr[i]= (n-i)*(i+1)
+                      
+*/
