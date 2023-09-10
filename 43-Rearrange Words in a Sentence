@@ -1,0 +1,67 @@
+// Bruteforce Approach
+
+class Solution {
+    public String arrangeWords(String text) {
+       String[]arr=text.split(" ");
+       TreeMap<Integer,List<String>>tm=new TreeMap<>();
+       StringBuilder res=new StringBuilder();       
+
+       for(String word:arr)
+       {
+         int len=word.length();
+
+         if(tm.containsKey(len))
+           tm.get(len).add(word);
+         else
+         {
+           List<String>list=new ArrayList<>();
+           list.add(word);
+           tm.put(len,list);
+         }
+       } 
+
+       for(int len:tm.keySet())
+         for(String str:tm.get(len))
+           res.append(str.toLowerCase()).append(" ");
+       
+       res.deleteCharAt(res.length()-1);
+       res.insert(0,Character.toUpperCase(res.charAt(0)));
+       res.deleteCharAt(1);
+
+       return res.toString();
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public String arrangeWords(String text) {
+      String[]arr=text.split(" ");
+      Arrays.sort(arr,new comp());
+
+      StringBuilder res=new StringBuilder();  
+
+      for(String str:arr)
+        res.append(str.toLowerCase()).append(" ");
+       
+      res.deleteCharAt(res.length()-1);
+      res.insert(0,Character.toUpperCase(res.charAt(0)));
+      res.deleteCharAt(1);
+
+      return res.toString();
+    }
+}
+
+class comp implements Comparator<String>
+{
+    public int compare(String str1,String str2)
+    {
+        if(str1.length()<str2.length())
+          return -1;
+        else if(str1.length()>str2.length())
+          return 1;
+        else
+          return 0;
+    }
+}
