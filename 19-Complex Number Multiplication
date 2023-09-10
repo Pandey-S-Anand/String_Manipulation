@@ -1,3 +1,24 @@
+/*
+Math :
+
+c1=a1+ib1 and c2=a2+ib2
+
+c1*c2=(a1+ib1)*(a2+ib2)
+
+c1*c2=a1*(a2+ib2)+ib1*(a2+ib2)
+
+c1*c2=a1*a2 + i*a1*b2 + i*a2*b1 + i^2*b1*b2
+
+c1*c2=a1*a2 + i*a1*b2 + 1*a2*b1 - b1*b2    (i^2=-1)
+
+c1*c2= (a1*a2 - b1*b2) + i(a1*b2 + a2*b1)
+
+Real part = (a1*a2 - b1*b2)
+
+Imaginary Part = (a1*b2 + a2*b1)
+*/
+
+
 //Using .split() Method
 
 class Solution {
