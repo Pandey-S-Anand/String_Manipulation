@@ -16,13 +16,11 @@ class Solution {
     {
          if((high-low+1)%2!=0) 
            return false; // string length is odd
-        
-          int start=low , end=high;
-          char ch1=str.charAt(low);
-          char ch2=str.charAt(high);
-        
-          if(ch1==ch2) 
+          
+         if(str.charAt(low)==str.charAt(high)) 
             return false;  // end and start should be different
+
+         int start=low,end=high;
 
          while(start<end)
          {
