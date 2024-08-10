@@ -1,0 +1,238 @@
+/*
+How many binary strings of length 'n' is possible ?
+
+OR
+
+Given an array of size 'n', find the number of ways to fill the entire array such that each position in the array can contain either '0' or '1'.
+
+
+The total number of binary strings of length 'n' is 2 ^ n .
+Each position in the binary string can either be '0' or '1', giving us two choices per position. 
+For 'n' positions, the total number of combinations is 2 raised to the power of n.
+
+To Recap:
+
+If n=1, the possible strings are: "0", "1" (Total: 2 ^ 1 = 2)
+If n=2, the possible strings are: "00", "01", "10", "11" (Total: 2 ^ 2 = 4)
+If n=3, the possible strings are: "000", "001", "010", "011", "100", "101", "110", "111" (Total: 2 ^ 3 = 8)
+*/
+
+//Iterative Approach
+
+//Naive Implementation
+
+class Solution {
+   public static List<String> generateBinaryStrings(int n) {
+      List<String>nLengthValidBinaryStrings=new ArrayList<>();
+      int totalNLengthBinaryStrings=1<<n;  //x<<y = x*2^n
+      StringBuilder currentBinaryString= new StringBuilder();
+
+      for(int num=0;num<totalNLengthBinaryStrings;num++){
+          for(int i=0;i<n;i++){
+              if((num & (1 << i))!=0){
+                 currentBinaryString.insert(0,'1');
+              }else{
+                 currentBinaryString.insert(0,'0');
+              }
+          }
+        
+        String nLengthBinaryString=currentBinaryString.toString();
+        
+        if(!nLengthBinaryString.contains("11")){
+           nLengthValidBinaryStrings.add(nLengthBinaryString); 
+        }
+        
+        currentBinaryString.setLength(0);
+      }
+      
+      return nLengthValidBinaryStrings;
+   }
+}
+
+//Optimal Implementation
+
+class Solution {
+   public static List<String> generateBinaryStrings(int n) {
+      List<String>nLengthValidBinaryStrings=new ArrayList<>();
+      int totalNLengthBinaryStrings=1<<n;  //x<<y = x*2^n
+      char[] currentBinaryString=new char[n];
+
+      for(int num=0;num<totalNLengthBinaryStrings;num++){
+          for(int i=0;i<n;i++){
+              if((num & (1 << i))!=0){
+                 currentBinaryString[n - 1 - i]='1';
+              }else{
+                 currentBinaryString[n - 1 - i]='0';
+              }
+          }
+        
+        String nLengthBinaryString=new String(currentBinaryString);
+        
+        if(!nLengthBinaryString.contains("11")){
+           nLengthValidBinaryStrings.add(nLengthBinaryString); 
+        }
+      }
+      
+      return nLengthValidBinaryStrings;
+   }
+}
+
+/*
+if you reverse the logic as described below, you will still generate all possible combination of binary strings of length n, 
+but the lexicographical order will not be preserved. 
+
+if ((num & (1 << i)) != 0) {
+    currentBinaryString[n - 1 - i] = '0';
+} else {
+    currentBinaryString[n - 1 - i] = '1';
+}
+
+Example
+Let's illustrate with n = 3:
+
+Normal Logic (Lexicographical Order):
+
+000
+001
+010
+011
+100
+101
+110
+111
+Reversed Logic:
+
+111 (binary 7 in decimal)
+110 (binary 6 in decimal)
+101 (binary 5 in decimal)
+100 (binary 4 in decimal)
+011 (binary 3 in decimal)
+010 (binary 2 in decimal)
+001 (binary 1 in decimal)
+000 (binary 0 in decimal)
+
+As you can see, the reversed logic results in the strings being generated in the reverse order of their numeric values, which is not lexicographical.
+To maintain lexicographical order with reversed approach, you would need to sort the generated binary strings after generating them. 
+*/
+
+
+//Recursive Approach
+
+//Method 1
+
+//Naive Implementation
+
+class Solution {
+   public static List<String> generateBinaryStrings(int n) {
+      List<String>nLengthBinaryStrings=new ArrayList<>();
+      generateAllNLengthBinaryStrings(new char[n],0,nLengthBinaryStrings);
+      return filterStringsWithoutConsecutiveOnes(nLengthBinaryStrings);
+   }
+  
+    private static void generateAllNLengthBinaryStrings(char[] currentBinaryString, int index,List<String>nLengthBinaryStrings) {
+        if (index == currentBinaryString.length) {
+            nLengthBinaryStrings.add(new String(currentBinaryString));
+            return;
+        }
+
+        currentBinaryString[index] = '0';
+        generateAllNLengthBinaryStrings(currentBinaryString, index + 1,nLengthBinaryStrings);
+
+        currentBinaryString[index] = '1';
+        generateAllNLengthBinaryStrings(currentBinaryString, index + 1,nLengthBinaryStrings);
+    }
+    
+    private static List<String> filterStringsWithoutConsecutiveOnes(List<String> nLengthBinaryStrings) {
+        Iterator<String>iterator=nLengthBinaryStrings.iterator();
+        
+        while(iterator.hasNext()){
+           String nLengthString=iterator.next();
+           if (nLengthString.contains("11")) {
+               iterator.remove(); 
+           }
+        }
+       
+        return nLengthBinaryStrings;
+    }
+}
+
+
+//Optimal Implementation
+
+class Solution {
+   public static List<String> generateBinaryStrings(int n) {
+      List<String>validNLengthBinaryStrings=new ArrayList<>();
+      generateAllValidNLengthBinaryStrings(new char[n],0,validNLengthBinaryStrings);
+      return validNLengthBinaryStrings;
+   }
+  
+    private static void generateAllValidNLengthBinaryStrings(char[] currentBinaryString, int index,List<String>validNLengthBinaryStrings) {
+        if (index == currentBinaryString.length) {
+            String nLengthBinaryString=new String(currentBinaryString);
+            if(!nLengthBinaryString.contains("11")){
+               validNLengthBinaryStrings.add(nLengthBinaryString);
+            }
+            return;
+        }
+
+        currentBinaryString[index] = '0';
+        generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1,validNLengthBinaryStrings);
+
+        currentBinaryString[index] = '1';
+        generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1,validNLengthBinaryStrings);
+    }
+}
+
+
+//Method 2
+
+//Naive Implementation
+
+class Solution {
+    public static List<String> generateBinaryStrings(int n) {
+      List<String>validNLengthBinaryStrings=new ArrayList<>();
+      generateAllValidNLengthBinaryStrings(new char[n],0,validNLengthBinaryStrings,'0');
+      return validNLengthBinaryStrings;
+    }
+  
+    private static void generateAllValidNLengthBinaryStrings(char[] currentBinaryString, int index,List<String>validNLengthBinaryStrings,char prevChar) {
+      if (index == currentBinaryString.length) {
+         validNLengthBinaryStrings.add(new String(currentBinaryString));
+         return;
+      }
+
+      currentBinaryString[index] = '0';
+      generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1, validNLengthBinaryStrings, '0');
+
+      if (prevChar != '1') {
+         currentBinaryString[index] = '1';
+         generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1, validNLengthBinaryStrings, '1');
+      }
+    }
+}
+
+
+//OptimalImplementation
+
+class Solution {
+    public static List<String> generateBinaryStrings(int n) {
+      List<String>validNLengthBinaryStrings=new ArrayList<>();
+      generateAllValidNLengthBinaryStrings(new char[n],0,validNLengthBinaryStrings);
+      return validNLengthBinaryStrings;
+    }
+  
+    private static void generateAllValidNLengthBinaryStrings(char[] currentBinaryString, int index,List<String>validNLengthBinaryStrings) {
+      if (index == currentBinaryString.length) {
+         validNLengthBinaryStrings.add(new String(currentBinaryString));
+         return;
+      }
+
+      currentBinaryString[index] = '0';
+      generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1, validNLengthBinaryStrings);
+
+      if (index ==0 || index > 0 && currentBinaryString[index-1]!='1') {
+         currentBinaryString[index] = '1';
+         generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1, validNLengthBinaryStrings);
+      }
+    }
+}
