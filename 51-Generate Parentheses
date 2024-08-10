@@ -1,0 +1,521 @@
+//Iterative Approach
+
+/*
+0  => 000000  => (((((((
+1  => 000001  => )(((((
+2  => 000010  => ()((((
+3  => 000011  => ))((((
+4  => 000100  => (()(((
+5  => 000101  => )()(((
+6  => 000110  => ())(((
+7  => 000111  => )))(((
+8  => 001000  => ((()(( 
+9  => 001001  => )(()((
+10 => 001010  => ()()(( 
+11 => 001011  => ))()((
+12 => 001100  => (())((
+13 => 001101  => )())((
+14 => 001110  => ()))((
+15 => 001111  => ))))((
+16 => 010000  => (((()(
+17 => 010001  => )((()(
+18 => 010010  => ()(()(
+19 => 010011  => ))(()(
+20 => 010100  => (()()(
+21 => 010101  => )()()(
+22 => 010110  => ())()(
+23 => 010111  => )))()(
+24 => 011000  => ((())(
+25 => 011001  => )(())(
+26 => 011010  => ()())(
+27 => 011011  => ))())(
+28 => 011100  => (()))(
+29 => 011101  => )()))(
+30 => 011110  => ())))(
+31 => 011111  => )))))(
+32 => 100000  => ((((()
+33 => 100001  => )(((()
+34 => 100010  => ()((()
+35 => 100011  => ))((()
+36 => 100100  => (()(()
+37 => 100101  => )()(()
+38 => 100110  => ())(()
+39 => 100111  => )))(()
+40 => 101000  => ((()()
+41 => 101001  => )(()()
+42 => 101010  => ()()()
+43 => 101011  => ))()()
+44 => 101100  => (())()
+45 => 101101  => )())()
+46 => 101110  => ()))()
+47 => 101111  => ))))()
+48 => 110000  => (((())
+49 => 110001  => )((())
+50 => 110010  => ()(())
+51 => 110011  => ))(())
+52 => 110100  => (()())
+53 => 110101  => )()())
+54 => 110110  => ())())
+55 => 110111  => )))())
+56 => 111000  => ((()))
+57 => 111001  => )(()))
+58 => 111010  => ()()))
+59 => 111011  => ))()))
+60 => 111100  => (())))
+61 => 111101  => )())))
+62 => 111110  => ()))))
+63 => 111111  => ))))))
+*/
+
+//Intuitive Implementation
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> validCombinations = new ArrayList<>();
+        StringBuilder currentCombination = new StringBuilder();
+        int totalCombinations = 1 << (2 * n); // Total combinations = 2^(2*n)
+
+        for (int num = 0; num < totalCombinations; num++) {
+            for (int i = 0; i < 2 * n; i++) {
+                if ((num & (1 << i)) != 0) {
+                    currentCombination.append(')');
+                } else {
+                    currentCombination.append('(');
+                }
+            }
+
+            if (isValidCombination(currentCombination)) {
+                validCombinations.add(currentCombination.toString());
+            }
+            currentCombination.setLength(0);
+        }
+
+        return validCombinations;
+    }
+
+    private boolean isValidCombination(StringBuilder combination) {
+        int balance = 0;
+
+        for (int i = 0; i < combination.length(); i++) {
+            if (combination.charAt(i) == '(') {
+                balance++;
+            } else {
+                balance--;
+            }
+
+            if (balance < 0) {
+                return false;
+            }
+        }
+
+        return balance == 0;
+    }
+}
+
+//Aliter
+
+/*
+0  => 000000  => ))))))
+1  => 000001  => ()))))
+2  => 000010  => )())) 
+3  => 000011  => (())))
+4  => 000100  => ))()))
+5  => 000101  => ()()))
+6  => 000110  => )(()))
+7  => 000111  => ((()))
+8  => 001000  => )))())
+9  => 001001  => ())())
+10 => 001010  => )()())
+11 => 001011  => (()())
+12 => 001100  => ))(())
+13 => 001101  => ()(())
+14 => 001110  => )((())
+15 => 001111  => (((())
+16 => 010000  => ))))()
+17 => 010001  => ()))()
+18 => 010010  => )())()
+19 => 010011  => (())()
+20 => 010100  => ))()()
+21 => 010101  => ()()()
+22 => 010110  => )(()()
+23 => 010111  => ((()()
+24 => 011000  => )))(()
+25 => 011001  => ())(()
+26 => 011010  => )()(()
+27 => 011011  => (()(()
+28 => 011100  => ))((()
+29 => 011101  => ()((()
+30 => 011110  => )(((()
+31 => 011111  => ((((()
+32 => 100000  => )))))(
+33 => 100001  => ())))(
+34 => 100010  => )()))(
+35 => 100011  => (()))(
+36 => 100100  => ))())(
+37 => 100101  => ()())(
+38 => 100110  => )(())(
+39 => 100111  => ((())(
+40 => 101000  => )))()(
+41 => 101001  => ())()(
+42 => 101010  => )()()(
+43 => 101011  => (()()(
+44 => 101100  => ))(()(
+45 => 101101  => ()(()(
+46 => 101110  => )((()(
+47 => 101111  => (((()(
+48 => 110000  => ))))((
+49 => 110001  => ()))((
+50 => 110010  => )())((
+51 => 110011  => (())((
+52 => 110100  => ))()((
+53 => 110101  => ()()((
+54 => 110110  => )(()((
+55 => 110111  => ((()((
+56 => 111000  => )))(((
+57 => 111001  => ())(((
+58 => 111010  => )()(((
+59 => 111011  => (()(((
+60 => 111100  => ))((((
+61 => 111101  => ()((((
+62 => 111110  => )(((((
+63 => 111111  => (((((((
+*/
+
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> validCombinations = new ArrayList<>();
+        StringBuilder currentCombination = new StringBuilder();
+        int totalCombinations = 1 << (2 * n); // Total combinations = 2^(2*n)
+
+        for (int num = 0; num < totalCombinations; num++) {
+            for (int i = 0; i < 2 * n; i++) {
+                if ((num & (1 << i)) != 0) {
+                    currentCombination.append('(');
+                } else {
+                    currentCombination.append(')');
+                }
+            }
+
+            if (isValidCombination(currentCombination)) {
+                validCombinations.add(currentCombination.toString());
+            }
+            currentCombination.setLength(0);
+        }
+
+        return validCombinations;
+    }
+
+    private boolean isValidCombination(StringBuilder combination) {
+        int balance = 0;
+
+        for (int i = 0; i < combination.length(); i++) {
+            if (combination.charAt(i) == '(') {
+                balance++;
+            } else {
+                balance--;
+            }
+
+            if (balance < 0) {
+                return false;
+            }
+        }
+
+        return balance == 0;
+    }
+}
+
+
+//Optimal Implementation
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> validCombinations = new ArrayList<>();
+        StringBuilder currentCombination = new StringBuilder();
+        int openCount = 0, closeCount = 0,totalCombinations = 1 << (2 * n);
+
+        for (int num = 0; num < totalCombinations; num++) {
+            for (int i = 0; i < 2 * n; i++) {
+                if ((num & (1 << i)) != 0) {
+                    currentCombination.append(')');
+                    closeCount++;
+                } else {
+                    currentCombination.append('(');
+                    openCount++;
+                }
+
+                if (openCount > n) {
+                    break;
+                }
+
+                if (closeCount > openCount) {
+                    break;
+                }
+            }
+
+            if (openCount == n && closeCount == n) {
+                validCombinations.add(currentCombination.toString());
+            }
+
+            currentCombination.setLength(0);
+            openCount = 0;
+            closeCount = 0;
+        }
+
+        return validCombinations;
+    }
+}
+
+
+
+//Recursive Approach
+
+//Method 1
+
+//Naive Implementation
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> allCombinations = new ArrayList<>();
+        generateAllCombinations(new char[2 * n], 0, allCombinations);
+
+        Iterator<String> iterator = allCombinations.iterator();
+
+        while (iterator.hasNext()) {
+            String combination = iterator.next();
+            if (!isValidCombination(combination)) {
+                iterator.remove();
+            }
+        }
+
+        return allCombinations;
+    }
+
+    private void generateAllCombinations(char[] currentCombination, int index, List<String> combinations) {
+        if (index == currentCombination.length) { // index == 2 * n
+            combinations.add(new String(currentCombination));
+            return;
+        }
+
+        currentCombination[index] = '(';
+        generateAllCombinations(currentCombination, index + 1, combinations);
+        currentCombination[index] = ')';
+        generateAllCombinations(currentCombination, index + 1, combinations);
+    }
+
+    private boolean isValidCombination(String combination) {
+        int balance = 0;
+
+        for (char ch : combination.toCharArray()) {
+            if (ch == '(') {
+                balance++;
+            } else {
+                balance--;
+            }
+
+            if (balance < 0) {
+                return false;
+            }
+        }
+
+        return balance == 0;
+    }
+}
+
+//Aliter
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> allCombinations = new ArrayList<>();
+        generateAllCombinations(new StringBuilder(), 0, allCombinations, n);
+
+        Iterator<String> iterator = allCombinations.iterator();
+
+        while (iterator.hasNext()) {
+            String combination = iterator.next();
+            if (!isValidCombination(combination)) {
+                iterator.remove();
+            }
+        }
+
+        return allCombinations;
+    }
+
+    private void generateAllCombinations(StringBuilder currentCombination, int index, List<String> combinations, int n) {
+        if (currentCombination.length() == 2 * n) { // index == 2 * n
+            combinations.add(new String(currentCombination));
+            return;
+        }
+
+        currentCombination.append('(');
+        generateAllCombinations(currentCombination, index + 1, combinations, n);
+        currentCombination.deleteCharAt(currentCombination.length() - 1);
+        currentCombination.append(')');
+        generateAllCombinations(currentCombination, index + 1, combinations, n);
+        currentCombination.deleteCharAt(currentCombination.length() - 1);
+    }
+
+    private boolean isValidCombination(String combination) {
+        int balance = 0;
+
+        for (int i = 0; i < combination.length(); i++) {
+            if (combination.charAt(i) == '(') {
+                balance++;
+            } else {
+                balance--;
+            }
+
+            if (balance < 0) {
+                return false;
+            }
+        }
+
+        return balance == 0;
+    }
+}
+
+
+//Optimal Implementation
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> validCombinations = new ArrayList<>();
+        generateAllValidCombinations(new char[2 * n], 0, validCombinations);
+        return validCombinations;
+    }
+
+    private void generateAllValidCombinations(char[] currentCombination, int index, List<String> validCombinations) {
+        if (index == currentCombination.length) { // index == 2 * n
+            if (isValidCombination(currentCombination)) {
+                validCombinations.add(new String(currentCombination));
+            }
+            return;
+        }
+
+        currentCombination[index] = '(';
+        generateAllValidCombinations(currentCombination, index + 1, validCombinations);
+        currentCombination[index] = ')';
+        generateAllValidCombinations(currentCombination, index + 1, validCombinations);
+    }
+
+    private boolean isValidCombination(char[] combination) {
+        int balance = 0;
+
+        for (char ch : combination) {
+            if (ch == '(') {
+                balance++;
+            } else {
+                balance--;
+            }
+
+            if (balance < 0) {
+                return false;
+            }
+        }
+
+        return balance == 0;
+    }
+}
+
+//Aliter
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> validCombinations = new ArrayList<>();
+        generateAllCombinations(new StringBuilder(), 0, validCombinations, n);
+        return validCombinations;
+    }
+
+    private void generateAllCombinations(StringBuilder currentCombination, int index, List<String> validCombinations, int n) {
+        if (currentCombination.length() == 2 * n) { // index == 2 * n
+            if (isValidCombination(currentCombination)) {
+                validCombinations.add(new String(currentCombination));
+            }
+            return;
+        }
+
+        currentCombination.append('(');
+        generateAllCombinations(currentCombination, index + 1, validCombinations, n);
+        currentCombination.deleteCharAt(currentCombination.length() - 1);
+        currentCombination.append(')');
+        generateAllCombinations(currentCombination, index + 1, validCombinations, n);
+        currentCombination.deleteCharAt(currentCombination.length() - 1);
+    }
+
+    private boolean isValidCombination(StringBuilder combination) {
+        int balance = 0;
+
+        for (int i = 0; i < combination.length(); i++) {
+            if (combination.charAt(i) == '(') {
+                balance++;
+            } else {
+                balance--;
+            }
+
+            if (balance < 0) {
+                return false;
+            }
+        }
+
+        return balance == 0;
+    }
+}
+
+
+
+//Method 2
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> validCombinations = new ArrayList<>();
+        generateValidCombinations(new char[2 * n], 0, 0, 0, validCombinations, n);
+        return validCombinations;
+    }
+
+    private void generateValidCombinations(char[] currentCombination, int index, int openUsedSoFar, int closeUsedSoFar, List<String> validCombinations, int n) {
+        if (index == currentCombination.length) {
+            validCombinations.add(new String(currentCombination));
+            return;
+        }
+
+        if (openUsedSoFar < n) {
+            currentCombination[index] = '(';
+            generateValidCombinations(currentCombination, index + 1, openUsedSoFar + 1, closeUsedSoFar, validCombinations, n);
+        }
+
+        if (closeUsedSoFar < openUsedSoFar) {
+            currentCombination[index] = ')';
+            generateValidCombinations(currentCombination, index + 1, openUsedSoFar, closeUsedSoFar + 1, validCombinations, n);
+        }
+    }
+}
+
+
+//Aliter
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> validCombinations = new ArrayList<>();
+        generateValidCombinations(new StringBuilder(), 0, 0, validCombinations, n);
+        return validCombinations;
+    }
+
+    private void generateValidCombinations(StringBuilder currentCombination, int openUsedSoFar, int closeUsedSoFar, List<String> validCombinations, int n) {
+        if (currentCombination.length() == 2 * n) {
+            validCombinations.add(currentCombination.toString());
+            return;
+        }
+
+        if (openUsedSoFar < n) {
+            currentCombination.append('(');
+            generateValidCombinations(currentCombination, openUsedSoFar + 1, closeUsedSoFar, validCombinations, n);
+            currentCombination.deleteCharAt(currentCombination.length() - 1);
+        }
+
+        if (closeUsedSoFar < openUsedSoFar) {
+            currentCombination.append(')');
+            generateValidCombinations(currentCombination, openUsedSoFar, closeUsedSoFar + 1, validCombinations, n);
+            currentCombination.deleteCharAt(currentCombination.length() - 1);
+        }
+    }
+}
