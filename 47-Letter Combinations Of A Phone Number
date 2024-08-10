@@ -1,0 +1,233 @@
+//Iterative Approach
+
+//Bruteforce Approach
+
+class Solution {
+    private static final Map<Character, String> KEYPAD_MAPPING = Map.of(
+            '2', "abc",
+            '3', "def",
+            '4', "ghi",
+            '5', "jkl",
+            '6', "mno",
+            '7', "pqrs",
+            '8', "tuv",
+            '9', "wxyz");
+
+    public List<String> letterCombinations(String digits) {
+        if (digits.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<String> combinations = new ArrayList<>();
+        combinations.add("");
+
+        for (char digit : digits.toCharArray()) {
+            String letters = KEYPAD_MAPPING.get(digit);
+            List<String> newCombinations = new ArrayList<>();
+            for (String combination : combinations) {
+                for (char letter : letters.toCharArray()) {
+                    newCombinations.add(new StringBuilder().append(combination).append(letter).toString());
+                }
+            }
+            combinations = newCombinations;
+        }
+
+        return combinations;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private static final Map<Character, String> KEYPAD_MAPPING = Map.of(
+            '2', "abc",
+            '3', "def",
+            '4', "ghi",
+            '5', "jkl",
+            '6', "mno",
+            '7', "pqrs",
+            '8', "tuv",
+            '9', "wxyz");
+
+    public List<String> letterCombinations(String digits) {
+        if (digits.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<String> combinations = new ArrayList<>();
+        combinations.add("");
+
+        for (char digit : digits.toCharArray()) {
+            String letters = KEYPAD_MAPPING.get(digit);
+            int currentSize = combinations.size();
+            for (int i = 0; i < currentSize; i++) {
+                for (char letter : letters.toCharArray()) {
+                    combinations.add(new StringBuilder().append(combinations.get(i)).append(letter).toString());
+                }
+            }
+            combinations.subList(0, currentSize).clear();
+        }
+
+        return combinations;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    private static final Map<Character, String> KEYPAD_MAPPING = Map.of(
+            '2', "abc",
+            '3', "def",
+            '4', "ghi",
+            '5', "jkl",
+            '6', "mno",
+            '7', "pqrs",
+            '8', "tuv",
+            '9', "wxyz");
+
+    public List<String> letterCombinations(String digits) {
+        if (digits.isEmpty()) {
+            return new ArrayList<>();
+        }
+        /*
+         * If using an ArrayList, removing elements from the front involves shifting all
+         * subsequent elements, leading to O(n) complexity for each removal operation.
+         * In a LinkedList (implementation of a Queue interface), Dequeue (remove
+         * operation from both front and rear) operations are O(1).
+         */
+        Queue<String> combinations = new LinkedList<>();
+        combinations.add("");
+
+        for (char digit : digits.toCharArray()) {
+            String letters = KEYPAD_MAPPING.get(digit);
+            int currentSize = combinations.size();
+            for (int i = 0; i < currentSize; i++) {
+                String combination = combinations.poll();
+                for (char letter : letters.toCharArray()) {
+                    combinations.add(new StringBuilder().append(combination).append(letter).toString());
+                }
+            }
+        }
+
+        return new ArrayList<>(combinations);
+    }
+}
+
+
+
+//Recursive Approach
+
+//Method 1
+
+public class Solution {
+    private static final Map<Character, String> KEYPAD_MAPPING = Map.of(
+            '2', "abc",
+            '3', "def",
+            '4', "ghi",
+            '5', "jkl",
+            '6', "mno",
+            '7', "pqrs",
+            '8', "tuv",
+            '9', "wxyz");
+
+    public List<String> letterCombinations(String digits) {
+        if (digits.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<String> combinations = new ArrayList<>();
+        generateCombinations(digits, 0, "", combinations);
+        return combinations;
+    }
+
+    private void generateCombinations(String digits, int index, String currentCombination, List<String> combinations) {
+        if (index == digits.length()) {
+            combinations.add(currentCombination);
+            return;
+        }
+
+        String letters = KEYPAD_MAPPING.get(digits.charAt(index));
+        for (char letter : letters.toCharArray()) {
+            generateCombinations(digits, index + 1, currentCombination + letter, combinations);
+        }
+    }
+}
+
+
+//Method 2
+
+class Solution {
+    private static final Map<Character, String> KEYPAD_MAPPING = Map.of(
+            '2', "abc",
+            '3', "def",
+            '4', "ghi",
+            '5', "jkl",
+            '6', "mno",
+            '7', "pqrs",
+            '8', "tuv",
+            '9', "wxyz");
+
+    public List<String> letterCombinations(String digits) {
+        if (digits.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return generateLetterCombinations(digits, 0);
+    }
+
+    private List<String> generateLetterCombinations(String digits, int index) {
+        if (index == digits.length()) {
+            return Collections.singletonList("");
+        }
+
+        String letters = KEYPAD_MAPPING.get(digits.charAt(index));
+        List<String> partialCombinations = generateLetterCombinations(digits, index + 1);
+        List<String> completeCombinations = new ArrayList<>();
+
+        for (char letter : letters.toCharArray()) {
+            for (String combination : partialCombinations) {
+                completeCombinations.add(new StringBuilder().append(letter).append(combination).toString());
+            }
+        }
+
+        return completeCombinations;
+    }
+}
+
+
+//Method 3
+
+public class Solution {
+    private static final Map<Character, String> KEYPAD_MAPPING = Map.of(
+            '2', "abc",
+            '3', "def",
+            '4', "ghi",
+            '5', "jkl",
+            '6', "mno",
+            '7', "pqrs",
+            '8', "tuv",
+            '9', "wxyz");
+
+    public List<String> letterCombinations(String digits) {
+        if (digits.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<String> combinations = new ArrayList<>();
+        generateLetterCombinations(digits, 0, new StringBuilder(), combinations);
+        return combinations;
+    }
+
+    private void generateLetterCombinations(String digits, int index, StringBuilder currentCombination, List<String> combinations) {
+        if (index == digits.length()) {
+            combinations.add(currentCombination.toString());
+            return;
+        }
+
+        String letters = KEYPAD_MAPPING.get(digits.charAt(index));
+        for (char letter : letters.toCharArray()) {
+            currentCombination.append(letter);
+            generateLetterCombinations(digits, index + 1, currentCombination, combinations);
+            currentCombination.deleteCharAt(currentCombination.length() - 1);
+        }
+    }
+}
