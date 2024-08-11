@@ -1,0 +1,69 @@
+//Method 1
+
+//Naive Implementation
+
+class Solution {
+    public boolean isValid(String str) {
+        Deque<Character> stack = new ArrayDeque<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+
+            if (ch == '(' || ch == '{' || ch == '[') {
+                stack.push(ch);
+            } else {
+                if (stack.isEmpty()) {
+                    return false;
+                }
+
+                if (ch == ')' && stack.peek() != '(') {
+                    return false;
+                }
+                if (ch == '}' && stack.peek() != '{') {
+                    return false;
+                }
+                if (ch == ']' && stack.peek() != '[') {
+                    return false;
+                }
+
+                stack.pop();
+            }
+        }
+
+        if (stack.isEmpty()) {
+            return true;
+        }
+
+        return false;
+    }
+}
+
+
+//Optimal Implementation
+
+class Solution {
+    public boolean isValid(String str) {
+        Deque<Character> stack = new ArrayDeque<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+
+            if (ch == '(' || ch == '{' || ch == '[') {
+                stack.push(ch);
+                continue;
+            }
+
+            if ((stack.isEmpty()) || (ch == ')' && stack.peek() != '(') || (ch == '}' && stack.peek() != '{') || (ch == ']' && stack.peek() != '[')) {
+                return false;
+            }
+
+            stack.pop();
+        }
+
+        if (stack.isEmpty()) {
+            return true;
+        }
+
+        return false;
+    }
+}
