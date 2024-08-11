@@ -1,0 +1,211 @@
+//Bruteforce Approach
+
+class Solution {
+    public String frequencySort(String str) {
+        Map<Character, Integer> frequencyMap = new HashMap<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            frequencyMap.put(str.charAt(i), frequencyMap.getOrDefault(str.charAt(i), 0) + 1);
+        }
+
+        int[][] elementFrequencyArray = new int[frequencyMap.size()][2];
+
+        int index = 0;
+        for (char ch : frequencyMap.keySet()) {
+            elementFrequencyArray[index][0] = ch;
+            elementFrequencyArray[index][1] = frequencyMap.get(ch);
+            index++;
+        }
+
+        Arrays.sort(elementFrequencyArray, new sortByFrequency());
+
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < elementFrequencyArray.length; i++) {
+            char ch = (char) elementFrequencyArray[i][0];
+            int frequency = elementFrequencyArray[i][1];
+
+            while (frequency != 0) {
+                result.append(ch);
+                frequency--;
+            }
+        }
+
+        return result.toString();
+    }
+
+    class sortByFrequency implements Comparator<int[]> {
+        public int compare(int[] arr1, int[] arr2) {
+            if (arr1[1] < arr2[1]) {
+                return 1;
+            } else if (arr1[1] > arr2[1]) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
+}
+
+
+
+//Better Approach
+
+class Solution {
+    public String frequencySort(String str) {
+        /*
+         * ASCII code for uppercase A to Z starts from 65(A) to 90(Z)
+         * ASCII code for lower case it start from 97(a) to 122(z)
+         * ASCII code for digit start from 48(0) to 57(9)
+         */
+        int[] frequencyArray = new int[123];
+
+        for (int i = 0; i < str.length(); i++) {
+            frequencyArray[str.charAt(i)]++;
+        }
+
+        int[][] elementFrequencyArray = new int[123][2];
+
+        int index = 0;
+        for (int i = 0; i < 123; i++) {
+            if (frequencyArray[i] != 0) {
+                elementFrequencyArray[index][0] = i;
+                elementFrequencyArray[index][1] = frequencyArray[i];
+                index++;
+            }
+        }
+
+        Arrays.sort(elementFrequencyArray, (arr1, arr2) -> Integer.compare(arr2[1], arr1[1]));
+
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < elementFrequencyArray.length; i++) {
+            char ch = (char) elementFrequencyArray[i][0];
+            int frequency = elementFrequencyArray[i][1];
+
+            while (frequency != 0) {
+                result.append(ch);
+                frequency--;
+            }
+        }
+
+        return result.toString();
+    }
+}
+
+
+
+//Optimal Approach
+
+class Solution {
+    public String frequencySort(String str) {
+        /*
+         * ASCII code for uppercase A to Z starts from 65(A) to 90(Z)
+         * ASCII code for lower case it start from 97(a) to 122(z)
+         * ASCII code for digit start from 48(0) to 57(9)
+         */
+        int[] frequencyArray = new int[62];
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+
+            if (Character.isDigit(ch)) {
+                frequencyArray[ch - 48]++; // index 0 to 9 => character '0' to '9'
+            } else if (Character.isUpperCase(ch)) {
+                frequencyArray[ch - 55]++; // index 10 to 35 => character 'A' to 'Z'
+            } else { // if (Character.isLowerCase(ch))
+                frequencyArray[ch - 61]++; // index 36 to 61 => character 'a' to 'z'
+            }
+        }
+
+        int[][] elementFrequencyArray = new int[62][2];
+
+        int index = 0;
+        for (int i = 0; i < 62; i++) {
+            if (frequencyArray[i] != 0) {
+                elementFrequencyArray[index][1] = frequencyArray[i];
+
+                if (i <= 9) {
+                    elementFrequencyArray[index][0] = i + 48;
+                } else if (i >= 10 && i <= 35) {
+                    elementFrequencyArray[index][0] = i + 55;
+                } else if (i >= 36 && i <= 61) {
+                    elementFrequencyArray[index][0] = i + 61;
+                }
+
+                index++;
+            }
+        }
+
+        Arrays.sort(elementFrequencyArray, (arr1, arr2) -> Integer.compare(arr2[1], arr1[1]));
+
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < elementFrequencyArray.length; i++) {
+            char ch = (char) elementFrequencyArray[i][0];
+            int frequency = elementFrequencyArray[i][1];
+
+            while (frequency != 0) {
+                result.append(ch);
+                frequency--;
+            }
+        }
+
+        return result.toString();
+    }
+}
+
+
+//Further Optimised
+
+class Solution {
+    public String frequencySort(String str) {
+        /*
+         * ASCII code for uppercase A to Z starts from 65(A) to 90(Z)
+         * ASCII code for lower case it start from 97(a) to 122(z)
+         * ASCII code for digit start from 48(0) to 57(9)
+         */
+
+        int[][] elementFrequencyArray = new int[62][2];
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            
+            if (Character.isDigit(ch)) {
+                elementFrequencyArray[ch - 48][0] = ch;
+                elementFrequencyArray[ch - 48][1]++; // index 0 to 9 => character '0' to '9'
+            } else if (Character.isUpperCase(ch)) {
+                elementFrequencyArray[ch - 55][0] = ch;
+                elementFrequencyArray[ch - 55][1]++; // index 10 to 35 => character 'A' to 'Z'
+            } else { // if (Character.isLowerCase(ch))
+                elementFrequencyArray[ch - 61][0] = ch;
+                elementFrequencyArray[ch - 61][1]++; // index 36 to 61 => character 'a' to 'z'
+            }
+        }
+
+        int index = 0;
+        for (int i = 0; i < 62; i++) {
+            if (elementFrequencyArray[i][1] != 0) {
+                elementFrequencyArray[index][0] = elementFrequencyArray[i][0];
+                elementFrequencyArray[index][1] = elementFrequencyArray[i][1];
+                index++;
+            }
+        }
+
+        Arrays.sort(elementFrequencyArray, 0, index, (arr1, arr2) -> Integer.compare(arr2[1], arr1[1]));
+
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < index; i++) {
+            char ch = (char) elementFrequencyArray[i][0];
+            int frequency = elementFrequencyArray[i][1];
+
+            while (frequency != 0) {
+                result.append(ch);
+                frequency--;
+            }
+        }
+
+        return result.toString();
+    }
+}
