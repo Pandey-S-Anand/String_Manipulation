@@ -202,6 +202,35 @@ class Solution {
 }
 
 
+//Better Implementation
+
+class Solution {
+    private static final long MOD = 1000000007L;
+    private static final int[] EVEN_DIGITS = { 0, 2, 4, 6, 8 };
+    private static final int[] PRIME_DIGITS = { 2, 3, 5, 7 };
+
+    public int countGoodNumbers(long n) {
+        return (int) countGoodDigitStrings(new int[(int) n], 0);
+    }
+
+    private long countGoodDigitStrings(int[] currentCombination, int index) {
+        if (index == currentCombination.length) {
+            return 1L;
+        }
+
+        long count = 0;
+        int[] validDigits = (index % 2 == 0) ? EVEN_DIGITS : PRIME_DIGITS;
+
+        for (int digit : validDigits) {
+            currentCombination[index] = digit;
+            count = (count + countGoodDigitStrings(currentCombination, index + 1)) % MOD;
+        }
+
+        return count;
+    }
+}
+
+
 //Optimal Implementation
 
 class Solution {
