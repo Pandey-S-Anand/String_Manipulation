@@ -1,0 +1,142 @@
+/*
+When splitting the string into four non empty distinct substrings, 
+the substrings shouldnot overlap.Each substring should be a unique part of the original string , occupying a distinct, contiguous section of it.
+For example, if you have a string "abcdef", a valid way to split it into four non empty distinct substrings could be "a", "b", "c", "def".
+The key point is that once a character is included in one substring, it cannot be part of another substring.
+*/
+
+//Bruteforce Approach
+
+//Naive Implmentation
+
+class Solution {
+    static int isPossible(String str) {
+        if (str.length() < 4) {
+            return 0;
+        }
+
+        for (int i = 1; i < str.length(); i++) {
+            for (int j = i + 1; j < str.length(); j++) {
+                for (int k = j + 1; k < str.length(); k++) {
+                    String part1 = str.substring(0, i);
+                    String part2 = str.substring(i, j);
+                    String part3 = str.substring(j, k);
+                    String part4 = str.substring(k);
+
+                    Set<String> parts = new HashSet<>();
+                    parts.add(part1);
+                    parts.add(part2);
+                    parts.add(part3);
+                    parts.add(part4);
+
+                    if (parts.size() == 4) {
+                        return 1;
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+}
+
+
+//Optimal Implementation
+
+class Solution {
+    static int isPossible(String str) {
+        if (str.length() < 4) {
+            return 0;
+        }
+
+        for (int i = 1; i < str.length(); i++) {
+            for (int j = i + 1; j < str.length(); j++) {
+                for (int k = j + 1; k < str.length(); k++) {
+                    String part1 = str.substring(0, i);
+                    String part2 = str.substring(i, j);
+                    String part3 = str.substring(j, k);
+                    String part4 = str.substring(k);
+
+                    if (!part1.equals(part2) && !part1.equals(part3) && !part1.equals(part4) &&
+                        !part2.equals(part3) && !part2.equals(part4) && !part3.equals(part4)) {
+                        return 1;
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+}
+
+
+
+//Optimal Approach
+
+class Solution {
+    static int isPossible(String str) {
+        int n = str.length();
+        // If the length of the string is less than 4, it's not possible to form four distinct substrings.
+        if (n < 4) {
+            return 0;
+        }
+
+        Set<Character> set = new HashSet<>();
+
+        for (int i = 0; i < n; i++) {
+            set.add(str.charAt(i));
+        }
+
+        // If there are 4 or more distinct characters, we can form four distinct substrings.
+        if (set.size() >= 4) {
+            return 1;
+        }
+
+        /*
+         * If there are exactly 3 distinct characters then to form four distinct
+         * substrings :
+         * Case 1: At least one character should appear 3 or more times, and the other
+         * two should appear at least once.
+         * Case 2: At least two characters should appear 2 or more times, and the
+         * remaining one should appear at least once.
+         * 
+         * Ex: s = "aabbc"
+         * Output : true
+         * a ab b c
+         * 
+         * Ex: s = "aaabc"
+         * Output : true
+         * a aa b c
+         */
+        if (set.size() == 3 && n >= 5) {
+            return 1;
+        }
+
+        /*
+         * If there are exactly 2 distinct characters, then at least one character
+         * should appear 4 or more times, and the other should appear 3 or more times to
+         * form four distinct substrings.
+         *
+         * Ex: s= "aaaabbb"
+         * Output : true
+         * a aa ab bb
+         */
+        if (set.size() == 2 && n >= 7) {
+            return 1;
+        }
+
+        /*
+         * If there is only 1 distinct character, it should appear 10 or more times to
+         * form four distinct substrings.
+         *
+         * Ex:aaaaaaaaaa
+         * Output : true
+         * a aa aaa aaaa
+         */
+        if (set.size() == 1 && n >= 10) {
+            return 1;
+        }
+
+        return 0;
+    }
+}
