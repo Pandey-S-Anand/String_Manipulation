@@ -1,0 +1,43 @@
+//Iterative Approach
+
+class GfG {
+    public int count(String str) {
+        int currentConsecutiveOnes = 0;
+        int maxConsecutiveOnes = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == '1') {
+                currentConsecutiveOnes++;
+            } else {
+                maxConsecutiveOnes = Math.max(maxConsecutiveOnes, currentConsecutiveOnes);
+                currentConsecutiveOnes = 0;
+            }
+        }
+
+        // To handle the case where the string ends with '1'
+        maxConsecutiveOnes = Math.max(maxConsecutiveOnes, currentConsecutiveOnes);
+
+        return maxConsecutiveOnes;
+    }
+}
+
+
+//Recursive Approach
+
+class GfG {
+    public int count(String str) {
+        return countMaxConsecutiveOnesSubstring(str, 0, 0, 0);
+    }
+
+    private int countMaxConsecutiveOnesSubstring(String binaryString, int index, int currentConsecutiveOnes, int maxConsecutiveOnes) {
+        if (index == binaryString.length()) {
+            return Math.max(maxConsecutiveOnes, currentConsecutiveOnes);
+        }
+
+        if (binaryString.charAt(index) == '1') {
+            return countMaxConsecutiveOnesSubstring(binaryString, index + 1, currentConsecutiveOnes + 1, maxConsecutiveOnes);
+        }
+
+        return countMaxConsecutiveOnesSubstring(binaryString, index + 1, 0, Math.max(maxConsecutiveOnes, currentConsecutiveOnes));
+    }
+}
