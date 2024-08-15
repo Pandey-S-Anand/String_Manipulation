@@ -1,0 +1,66 @@
+//Bruteforce Approach
+
+class Solution {
+    public int countBinarySubstrings(String str) {
+        int count = 0;
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                if (isValidSubstring(str, start, end)) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private boolean isValidSubstring(String str, int low, int high) {
+        if ((high - low + 1) % 2 != 0) {
+            return false; // string length is odd
+        }
+
+        if (str.charAt(low) == str.charAt(high)) {
+            return false; // string is either all 0s or all 1s
+        }
+
+        int start = low, end = high;
+
+        while (start < end) {
+            if (str.charAt(start) != str.charAt(low)) {
+                return false;
+            }
+            
+            if (str.charAt(end) != str.charAt(high)) {
+                return false;
+            }
+
+            start++;
+            end--;
+        }
+
+        return true;
+    }
+}
+
+
+
+//Optimal Approach
+
+class Solution {
+    public int countBinarySubstrings(String str) {
+        int currBlockSize = 1, prevBlockSize = 0, count = 0;
+
+        for (int i = 1; i < str.length(); i++) {
+            if (str.charAt(i) == str.charAt(i - 1)) {
+                currBlockSize++;
+            } else {
+                count += Math.min(currBlockSize, prevBlockSize);
+                prevBlockSize = currBlockSize;
+                currBlockSize = 1;
+            }
+        }
+
+        return count + Math.min(currBlockSize, prevBlockSize);
+    }
+}
