@@ -1,0 +1,57 @@
+//Bruteforce Approach
+
+class Solution{
+    public static int binarySubstring(int size, String str){
+       int count=0; 
+       for(int start=0;start<size;start++){
+           for(int end=start;end<size;end++){
+               if(start!=end && str.charAt(start)=='1' && str.charAt(end)=='1'){
+                   count++;
+               }
+           }
+       }
+       
+       return count;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public static int binarySubstring(int size, String str) {
+        int count = 0;
+        for (int start = 0; start < size; start++) {
+            if (str.charAt(start) == '0') {
+                continue;
+            }
+            for (int end = start + 1; end < size; end++) {
+                if (str.charAt(end) == '1') {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public static int binarySubstring(int size, String str) {
+        int count = 0, numberOfOnes = 0;
+
+        for (int i = size - 1; i >= 0; i--) {
+            if (str.charAt(i) == '1') {
+                //Each time you encounter a 1, it can form valid substrings with all previously encountered 1s (that you have seen so far on the right).
+                count += numberOfOnes;
+                numberOfOnes++;
+            }
+        }
+
+        return count;
+    }
+}
+
