@@ -1,0 +1,128 @@
+//Bruteforce Approach
+
+class Solution {
+    public int lengthOfLongestSubstring(String str) {
+        int maxLength = 0;
+        Set<Character> seen = new HashSet<>();
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                for (int range = start; range <= end; range++) {
+                    seen.add(str.charAt(range));
+                }
+
+                if (seen.size() == (end - start + 1)) {
+                    maxLength = Math.max(maxLength, (end - start + 1));
+                }
+
+                seen.clear();
+            }
+        }
+
+        return maxLength;
+    }
+}
+
+
+//Improved Approach
+
+class Solution {
+    public int lengthOfLongestSubstring(String str) {
+        int maxLength = 0;
+        Set<Character> seen = new HashSet<>();
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                seen.add(str.charAt(end));
+
+                if (seen.size() == (end - start + 1)) {
+                    maxLength = Math.max(maxLength, (end - start + 1));
+                }
+            }
+            seen.clear();
+        }
+
+        return maxLength;
+    }
+}
+
+
+//Good Approach
+
+class Solution {
+    public int lengthOfLongestSubstring(String str) {
+        int maxLength = 0;
+        Set<Character> seen = new HashSet<>();
+
+        for (int start = 0; start < str.length(); start++) {
+            int end;
+            for (end = start; end < str.length(); end++) {
+                if (seen.contains(str.charAt(end))) {
+                    break;
+                }
+                seen.add(str.charAt(end));
+            }
+            maxLength = Math.max(maxLength, (end - start));
+            seen.clear();
+        }
+
+        return maxLength;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public int lengthOfLongestSubstring(String str) {
+        int maxLength = 0, start = 0, end = 0;
+        Set<Character> seen = new HashSet();
+
+        while (end < str.length()) {
+            if (seen.contains(str.charAt(end))) {
+                while (str.charAt(start) != str.charAt(end)) {
+                    seen.remove(str.charAt(start));
+                    start++;
+                }
+                start++;
+            } else {
+                seen.add(str.charAt(end));
+            }
+            maxLength = Math.max(maxLength, end - start + 1);
+            end++;
+        }
+
+        return maxLength;
+    }
+}
+/*
+Important Testcase : 
+"tmmzuxt"
+Output : 5 ("mzuxt")
+*/
+
+
+//Optimal Approach
+
+class Solution {
+    public int lengthOfLongestSubstring(String str) {
+        int maxLength = 0, start = 0, end = 0;
+        boolean[] seen = new boolean[256];
+
+        while (end < str.length()) {
+            if (seen[str.charAt(end)]) {
+                while (str.charAt(start) != str.charAt(end)) {
+                    seen[str.charAt(start)] = false;
+                    start++;
+                }
+                start++;
+            } else {
+                seen[str.charAt(end)] = true;
+            }
+            maxLength = Math.max(maxLength, end - start + 1);
+            end++;
+        }
+
+        return maxLength;
+    }
+}
