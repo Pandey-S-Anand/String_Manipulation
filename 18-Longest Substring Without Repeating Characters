@@ -58,7 +58,7 @@ class Solution {
             int end;
             for (end = start; end < str.length(); end++) {
                 if (seen.contains(str.charAt(end))) {
-                    break;
+                    break; //Since the duplicate character is found so any further substrings starting from the current 'start' index will also contain this duplicate. , Therefore, we exit the inner loop.
                 }
                 seen.add(str.charAt(end));
             }
