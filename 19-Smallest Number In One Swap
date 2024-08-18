@@ -1,0 +1,48 @@
+class Solution {
+    public String smallestNumber(String str) {
+        char[] digits = str.toCharArray();
+
+        // Step 1: Track the last occurrence of each digit
+        /*
+         * By swapping with the last occurrence of a digit, you can achieve a smaller
+         * number compared to swapping with the first occurrence of a digit because
+         * by swapping with the last occurrence of a digit, you effectively move a
+         * larger digit to the rightmost position possible. This minimizes the overall
+         * value of the number.
+         * 
+         * For example, if you have the number 962472, and you are at the digit 9, the
+         * last occurrence of 2 (at index 5). If you swap 9 with 2, it results in
+         * 262479, which is indeed smaller than 269472 obtained by swapping with the
+         * first occurrence of 2 (at index 2).
+         */
+        int[] lastIndex = new int[10];
+        for (int i = 0; i < digits.length; i++) {
+            lastIndex[digits[i] - '0'] = i;
+        }
+
+        // Step 2: Try to find the first digit that can be swapped
+        for (int i = 0; i < digits.length; i++) {
+            for (int digit = 0; digit <= 9; digit++) {
+                // Check if d is smaller than the current digit and appears later than the current digit
+                if (digit < digits[i] - '0' && lastIndex[digit] > i) {
+                    // Swap the digits
+                    char temp = digits[i];
+                    digits[i] = (char) (digit + '0');
+                    digits[lastIndex[digit]] = temp;
+
+                    // Step 3: Handle leading zeros
+                    if (digits[0] != '0') {
+                        return new String(digits);
+                    }
+
+                    // Swap back if it leads to a leading zero
+                    digits[lastIndex[digit]] = digits[i];
+                    digits[i] = temp;
+                }
+            }
+        }
+
+        // If no valid swap was made, return the original number
+        return str;
+    }
+}
