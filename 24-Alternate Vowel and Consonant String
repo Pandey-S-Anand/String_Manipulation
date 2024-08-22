@@ -1,0 +1,91 @@
+//Naive Implementation
+
+class Solution {
+    public String rearrange(String str, int n) {
+        ArrayList<Character> vowels = new ArrayList<>();
+        ArrayList<Character> consonants = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            char ch = str.charAt(i);
+            if (isVowel(ch)) {
+                vowels.add(ch);
+            } else {
+                consonants.add(ch);
+            }
+        }
+
+        if (n % 2 == 0 && vowels.size() != consonants.size()) {
+            return "-1"; // Even length : Both groups have same number of characters (i.e n/2)
+        } else if (n % 2 != 0 && Math.abs(vowels.size() - consonants.size()) != 1) {
+            return "-1"; // Odd length: One group should have exactly one more element
+        }
+
+        // Sort both lists to ensure lexicographically smallest arrangement
+        Collections.sort(vowels);
+        Collections.sort(consonants);
+
+        /*
+         * In the case of an odd-length string, starting with the group that has more
+         * characters ensures that the alternating pattern is maintained throughout the
+         * entire string.
+         * Ex:
+         * Input : "aeibb"
+         * Output :"abebi"
+         * 
+         * Input : "oeibb"
+         * Output :"ebibo"
+         * 
+         * Input : "aecbb"
+         * Output :"babec"
+         * 
+         * Input : "aecdz"
+         * Output :"cadez"
+         * 
+         * In case of an even-length string, always start with the lexicographically
+         * smallest character (vowel or consonant).
+         * Ex:
+         * Input : "eazb"
+         * Output :"abez"
+         * 
+         * Input : "euzb"
+         * Output :"bezu"
+         */
+
+        boolean startWithVowel = (vowels.size() > consonants.size()) ||
+                (vowels.size() == consonants.size() && vowels.get(0) < consonants.get(0));
+
+        StringBuilder alternatingString = new StringBuilder();
+        int vowelIndex = 0, consonantIndex = 0;
+
+        // Construct the result string
+        while (vowelIndex < vowels.size() && consonantIndex < consonants.size()) {
+            if (startWithVowel) {
+                alternatingString.append(vowels.get(vowelIndex++));
+                startWithVowel = false; // Switch to consonant
+            } else {
+                alternatingString.append(consonants.get(consonantIndex++));
+                startWithVowel = true; // Switch to vowel
+            }
+        }
+
+        // Append the remaining character of vowels (in case of odd length string only)
+        if (vowelIndex < vowels.size()) {
+            alternatingString.append(vowels.get(vowelIndex++));
+        }
+
+        // Append the remaining character of consonants (in case of odd length string only)
+        if (consonantIndex < consonants.size()) {
+            alternatingString.append(consonants.get(consonantIndex++));
+        }
+
+        return alternatingString.toString();
+    }
+
+    private boolean isVowel(char ch) {
+        return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
+    }
+}
+
+
+//Optimal Implementation
+
