@@ -50,9 +50,14 @@ class Solution {
          * Input : "euzb"
          * Output :"bezu"
          */
-
-        boolean startWithVowel = (vowels.size() > consonants.size()) ||
-                (vowels.size() == consonants.size() && vowels.get(0) < consonants.get(0));
+          
+        boolean startWithVowel = false;
+        
+        if(n%2==0 && vowels.get(0) < consonants.get(0)){
+           startWithVowel=true;
+        }else if(n%2!=0 && vowels.size() > consonants.size()){
+           startWithVowel=true;
+        }
 
         StringBuilder alternatingString = new StringBuilder();
         int vowelIndex = 0, consonantIndex = 0;
