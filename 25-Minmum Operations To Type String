@@ -10,7 +10,7 @@ class Solution {
              * We then iterate through possible prefixes of the string. For each prefix, we check if it repeats immediately after itself.
              * If a prefix repeats, it means we can use the doubling operation to efficiently construct the string.
              */
-            if (currentString.equals(str.substring(i + 1, i + 1 + prefix.length()))) {
+            if (prefix.equals(str.substring(i + 1, i + 1 + prefix.length()))) {
                 /*
                  * Logic behind calculating current minimun operation is following :
                  * Whenever we enocunter a longer prefix going forward in the string we consider
