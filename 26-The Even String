@@ -1,0 +1,50 @@
+//Methd 1
+
+class Solution {
+    public int convertToEven(String str) {
+        int additions = 0, i = 0;
+
+        while (i < str.length()) {
+            if (str.charAt(i) == 'O') {
+                additions++;
+                while (i < str.length() && str.charAt(i) == 'O') {
+                    i++;
+                }
+            } else {
+                i++;
+            }
+        }
+
+        return additions;
+    }
+}
+
+
+//Method 2
+
+class Solution {
+    public int convertToEven(String str) {
+        Stack<Character> stack = new Stack<>();
+        int additions = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (ch == 'O') {
+                stack.push(ch);
+            } else {
+                if (!stack.isEmpty()) {
+                    additions++;
+                    while (!stack.isEmpty()) {
+                        stack.pop();
+                    }
+                }
+            }
+        }
+
+        if (!stack.isEmpty()) {
+            additions++;
+        }
+
+        return additions;
+    }
+}
