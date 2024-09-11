@@ -1,0 +1,92 @@
+//Bruteforce Approach
+
+class Solution {
+    long substrCount(String str, int k) {
+        long validSubstringCount = 0;
+        Set<Character> distinctChars = new HashSet<>();
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                if ((end - start + 1) < k) {
+                    continue;
+                }
+
+                for (int range = start; range <= end; range++) {
+                    distinctChars.add(str.charAt(range));
+                }
+
+                if (distinctChars.size() == k) {
+                    validSubstringCount++;
+                }
+
+                distinctChars.clear();
+            }
+        }
+
+        return validSubstringCount;
+    }
+}
+
+
+// Better Approach
+
+class Solution {
+    long substrCount(String str, int k) {
+        return countSubstringsWithAtMostKDistinctChars(str, k) - countSubstringsWithAtMostKDistinctChars(str, k - 1);
+    }
+
+    private int countSubstringsWithAtMostKDistinctChars(String str, long k) {
+        Map<Character, Integer> frequencyMap = new HashMap<>();
+        int start = 0, count = 0;
+
+        for (int end = 0; end < str.length(); end++) {
+            frequencyMap.put(str.charAt(end), frequencyMap.getOrDefault(str.charAt(end), 0) + 1);
+
+            while (frequencyMap.size() > k) {
+                if (frequencyMap.get(str.charAt(start)) == 1) {
+                    frequencyMap.remove(str.charAt(start));
+                } else {
+                    frequencyMap.put(str.charAt(start), frequencyMap.get(str.charAt(start)) - 1);
+                }
+                start++;
+            }
+
+            count = count + (end - start + 1);
+        }
+
+        return count;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    long substrCount(String str, int k) {
+        return countSubstringsWithAtMostKDistinctChars(str, k) - countSubstringsWithAtMostKDistinctChars(str, k - 1);
+    }
+
+    private int countSubstringsWithAtMostKDistinctChars(String str, long k) {
+        int[] frequencyArray = new int[26];
+        int start = 0, count = 0, distinctCount = 0;
+
+        for (int end = 0; end < str.length(); end++) {
+            frequencyArray[str.charAt(end) - 'a']++;
+            if (frequencyArray[str.charAt(end) - 'a'] == 1) {
+                distinctCount++;
+            }
+
+            while (distinctCount > k) {
+                if (frequencyArray[str.charAt(start) - 'a'] == 1) {
+                    distinctCount--;
+                }
+                frequencyArray[str.charAt(start) - 'a']--;
+                start++;
+            }
+
+            count = count + (end - start + 1);
+        }
+
+        return count;
+    }
+}
