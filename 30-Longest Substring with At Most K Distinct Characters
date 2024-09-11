@@ -7,10 +7,6 @@ public class Solution {
 
         for (int start = 0; start < str.length(); start++) {
             for (int end = start; end < str.length(); end++) {
-                if ((end - start + 1) < k) {
-                    continue;
-                }
-
                 for (int range = start; range <= end; range++) {
                     distinctChars.add(str.charAt(range));
                 }
