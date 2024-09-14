@@ -1,0 +1,123 @@
+//Bruteforce Approach
+
+class Solution {
+    public static int countUniqueSubstrings(String str) {
+        int count = 0;
+        Set<Character> seen = new HashSet<>();
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                for (int range = start; range <= end; range++) {
+                    seen.add(str.charAt(range));
+                }
+
+                if (seen.size() == (end - start + 1)) {
+                    count++;
+                }
+
+                seen.clear();
+            }
+        }
+
+        return count;
+    }
+}
+
+
+//Improved Approach
+
+class Solution {
+    public static int countUniqueSubstrings(String str) {
+        int count = 0;
+        Set<Character> seen = new HashSet<>();
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                seen.add(str.charAt(end));
+                if (seen.size() == (end - start + 1)) {
+                    count++;
+                }
+            }
+            seen.clear();
+        }
+
+        return count;
+    }
+}
+
+
+//Good Approach
+
+class Solution {
+    public static int countUniqueSubstrings(String str) {
+        int count = 0;
+        Set<Character> seen = new HashSet<>();
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                if (seen.contains(str.charAt(end))) {
+                    break;
+                }
+                seen.add(str.charAt(end));
+                count++;
+            }
+            seen.clear();
+        }
+
+        return count;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public static int countUniqueSubstrings(String str) {
+        int count = 0, start = 0, end = 0;
+        Set<Character> seen = new HashSet();
+
+        while (end < str.length()) {
+            if (seen.contains(str.charAt(end))) {
+                while (str.charAt(start) != str.charAt(end)) {
+                    seen.remove(str.charAt(start));
+                    start++;
+                }
+                start++;
+            } else {
+                seen.add(str.charAt(end));
+            }
+
+            count = count + (end - start + 1);
+            end++;
+        }
+
+        return count;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public static int countUniqueSubstrings(String str) {
+        int count = 0, start = 0, end = 0;
+        boolean[] seen = new boolean[26];
+
+        while (end < str.length()) {
+            if (seen[str.charAt(end) - 'a']) {
+                while (str.charAt(start) != str.charAt(end)) {
+                    seen[str.charAt(start) - 'a'] = false;
+                    start++;
+                }
+                start++;
+            } else {
+                seen[str.charAt(end) - 'a'] = true;
+            }
+
+            count = count + (end - start + 1);
+            end++;
+        }
+
+        return count;
+    }
+}
