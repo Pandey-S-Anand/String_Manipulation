@@ -113,6 +113,10 @@ class Solution {
             freqArray[str.charAt(end) - 'A']++;
             maxFreq = Math.max(maxFreq, freqArray[str.charAt(end) - 'A']);
 
+            if ((end - start + 1) - maxFreq <= k) {
+                maxLength = Math.max(maxLength, end - start + 1);
+            }
+
             while ((end - start + 1) - maxFreq > k) {
                 freqArray[str.charAt(start) - 'A']--;
                 maxFreq = 0;
@@ -121,8 +125,6 @@ class Solution {
                 }
                 start++;
             }
-
-            maxLength = Math.max(maxLength, end - start + 1);
 
             end++;
         }
@@ -143,12 +145,14 @@ class Solution {
             freqArray[str.charAt(end) - 'A']++;
             maxFreq = Math.max(maxFreq, freqArray[str.charAt(end) - 'A']);
 
+            if ((end - start + 1) - maxFreq <= k) {
+                maxLength = Math.max(maxLength, end - start + 1);
+            }
+
             while ((end - start + 1) - maxFreq > k) {
                 freqArray[str.charAt(start) - 'A']--;
                 start++;
             }
-
-            maxLength = Math.max(maxLength, end - start + 1);
 
             end++;
         }
@@ -168,14 +172,15 @@ class Solution {
         while (end < str.length()) {
             freqArray[str.charAt(end) - 'A']++;
             maxFreq = Math.max(maxFreq, freqArray[str.charAt(end) - 'A']);
-            int numChangesNeeded = (end - start + 1) - maxFreq;
 
-            if (numChangesNeeded > k) {
+            if ((end - start + 1) - maxFreq <= k) {
+                maxLength = Math.max(maxLength, end - start + 1);
+            }
+
+            while ((end - start + 1) - maxFreq > k) {
                 freqArray[str.charAt(start) - 'A']--;
                 start++;
             }
-
-            maxLength = Math.max(maxLength, end - start + 1);
 
             end++;
         }
