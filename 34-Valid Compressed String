@@ -1,0 +1,27 @@
+class Solution {
+    static int checkCompressed(String normal, String comp) {
+        int m = normal.length(), n = comp.length(), i = 0, j = 0;
+
+        while (i < m && j < n) {
+            if (Character.isLetter(comp.charAt(j))) {
+                if (normal.charAt(i) != comp.charAt(j)) {
+                    return 0;
+                }
+
+                i++;
+                j++;
+            } else {
+                // If it's a digit, read the entire number
+                int num = 0;
+                while (j < n && Character.isDigit(comp.charAt(j))) {
+                    num = num * 10 + (comp.charAt(j) - '0');
+                    j++;
+                }
+                i += num; // Skip 'num' characters in 'normal'
+            }
+        }
+
+        // Both i and j should reach the end
+        return (i == m && j == n) ? 1 : 0;
+    }
+}
