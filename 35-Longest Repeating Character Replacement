@@ -112,8 +112,9 @@ class Solution {
         while (end < str.length()) {
             freqArray[str.charAt(end) - 'A']++;
             maxFreq = Math.max(maxFreq, freqArray[str.charAt(end) - 'A']);
+            int numChangesNeeded = (end - start + 1) - maxFreq;
 
-            while ((end - start + 1 - maxFreq) > k) {
+            if (numChangesNeeded > k) {
                 freqArray[str.charAt(start) - 'A']--;
                 maxFreq = 0;
                 for (int i = 0; i < 26; i++) {
@@ -142,8 +143,9 @@ class Solution {
         while (end < str.length()) {
             freqArray[str.charAt(end) - 'A']++;
             maxFreq = Math.max(maxFreq, freqArray[str.charAt(end) - 'A']);
+            int numChangesNeeded = (end - start + 1) - maxFreq;
 
-            while ((end - start + 1 - maxFreq) > k) {
+            if (numChangesNeeded > k) {
                 freqArray[str.charAt(start) - 'A']--;
                 start++;
             }
