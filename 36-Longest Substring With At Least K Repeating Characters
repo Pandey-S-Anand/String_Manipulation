@@ -103,4 +103,65 @@ class Solution {
 
 //Better Approach
 
+public class Solution {
+    public int longestSubstring(String str, int k) {
+        if(str.length()<k){
+            return 0;
+        }
 
+        int[] frequencyArray = new int[26];
+
+        for (int i = 0; i < str.length(); i++) {
+            frequencyArray[str.charAt(i)-'a']++;
+        }
+         
+        for(int i=0;i<str.length();i++){
+            //We use all the infrequent elements as splits
+            if(frequencyArray[str.charAt(i)-'a']<k){
+               int left=longestSubstring(str.substring(0,i),k);
+               int right=longestSubstring(str.substring(i+1),k);
+               return Math.max(left,right);
+            }
+        }
+        
+        //All characters in the current substring have a frequency greater than or equal to k.
+        return str.length();
+    }
+}
+
+
+//Further Optimised
+
+public class Solution {
+    public int longestSubstring(String str, int k) {
+        int[] frequencyArray = new int[26];
+        return longestSubstringHelper(str, 0, str.length() - 1, k, frequencyArray);
+    }
+
+    public int longestSubstringHelper(String str, int start, int end, int k, int[] frequencyArray) {
+        if ((end - start + 1) < k) {
+            return 0;
+        }
+
+        Arrays.fill(frequencyArray,0);
+        for (int i = start; i <= end; i++) {
+            frequencyArray[str.charAt(i) - 'a']++;
+        }
+
+        for (int i = start; i <= end; i++) {
+            // We use all the infrequent elements as splits
+            if (frequencyArray[str.charAt(i) - 'a'] < k) {
+                int left = longestSubstringHelper(str, start, i - 1, k, frequencyArray);
+                int nextIndex = i;
+                while (nextIndex < end && str.charAt(nextIndex) == str.charAt(i)) {
+                    nextIndex++; // Skip consecutive infrequent characters to reduce redundant recursive calls
+                }
+                int right = longestSubstringHelper(str, nextIndex, end, k, frequencyArray);
+                return Math.max(left, right);
+            }
+        }
+
+        // All characters in the current substring have a frequency greater than or equal to k.
+        return end - start + 1;
+    }
+}
