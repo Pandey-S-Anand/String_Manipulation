@@ -130,7 +130,7 @@ public class Solution {
 }
 
 
-//Further Optimised
+//Optimal Approach
 
 public class Solution {
     public int longestSubstring(String str, int k) {
