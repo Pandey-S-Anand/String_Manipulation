@@ -1,0 +1,89 @@
+//Bruteforce Approach
+
+class Solution {
+    public int beautySum(String str) {
+        List<String> substrings = generateSubstrings(str);
+        int beautySum = 0;
+
+        for (String substring : substrings) {
+            beautySum += computeBeauty(substring);
+        }
+
+        return beautySum;
+    }
+
+    private List<String> generateSubstrings(String str) {
+        List<String> substrings = new ArrayList<>();
+        StringBuilder substring = new StringBuilder();
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                substring.append(str.charAt(end));
+                substrings.add(substring.toString());
+            }
+            substring.setLength(0);
+        }
+
+        return substrings;
+    }
+
+    private int computeBeauty(String str) {
+        int[] frequencyArray = new int[26];
+        int minFrequency = Integer.MAX_VALUE, maxFrequency = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            frequencyArray[str.charAt(i) - 'a']++;
+        }
+
+        for (int i = 0; i < 26; i++) {
+            if (frequencyArray[i] != 0) {
+                if (frequencyArray[i] < minFrequency) {
+                    minFrequency = frequencyArray[i];
+                }
+                if (frequencyArray[i] > maxFrequency) {
+                    maxFrequency = frequencyArray[i];
+                }
+            }
+        }
+
+        return maxFrequency - minFrequency;
+    }
+}
+
+
+
+//Optimal Approach
+
+class Solution {
+    public int beautySum(String str) {
+        int[] frequencyArray = new int[26];
+        int beautySum = 0;
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                frequencyArray[str.charAt(end) - 'a']++;
+                beautySum += computeBeauty(frequencyArray);
+            }
+            Arrays.fill(frequencyArray, 0);
+        }
+
+        return beautySum;
+    }
+
+    private int computeBeauty(int[] frequencyArray) {
+        int minFrequency = Integer.MAX_VALUE, maxFrequency = 0;
+
+        for (int i = 0; i < 26; i++) {
+            if (frequencyArray[i] != 0) {
+                if (frequencyArray[i] < minFrequency) {
+                    minFrequency = frequencyArray[i];
+                }
+                if (frequencyArray[i] > maxFrequency) {
+                    maxFrequency = frequencyArray[i];
+                }
+            }
+        }
+
+        return maxFrequency - minFrequency;
+    }
+}
