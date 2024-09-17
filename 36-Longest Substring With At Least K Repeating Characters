@@ -138,7 +138,7 @@ public class Solution {
         return longestSubstringHelper(str, 0, str.length() - 1, k, frequencyArray);
     }
 
-    public int longestSubstringHelper(String str, int start, int end, int k, int[] frequencyArray) {
+    private int longestSubstringHelper(String str, int start, int end, int k, int[] frequencyArray) {
         if ((end - start + 1) < k) {
             return 0;
         }
