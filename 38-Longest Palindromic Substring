@@ -1,0 +1,35 @@
+//Bruteforce Approach
+
+class Solution {
+    public String longestPalindrome(String str) {
+        int maxLength = 0, bestStart = 0, bestEnd = 0;
+
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                if (isPalindrome(str, start, end) && (end - start + 1) > maxLength) {
+                    maxLength = end - start + 1;
+                    bestStart = start;
+                    bestEnd = end;
+                }
+            }
+        }
+
+        return str.substring(bestStart, bestEnd + 1);
+    }
+
+    private boolean isPalindrome(String str, int left, int right) {
+        while (left < right) {
+            if (str.charAt(left) != str.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+}
+
+
+//Better Approach
+
+
