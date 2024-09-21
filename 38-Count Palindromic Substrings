@@ -31,20 +31,19 @@ class Solution {
 //Better Approach
 
 class Solution {
-    int[][] memo = new int[1000][1000];
-
     /*
      * memo[i][j]==-1 => str[i..j] is not solved yet
      * memo[i][j]==0 => str[i..j] is not palindrome
      * memo[i][j]==1 => str[i..j] is palindrome
      */
     public int countSubstrings(String str) {
-        initializeMemo();
+        int[][] memo = new int[str.length()][str.length()];
+        initializeMemo(memo);
         int count = 0;
 
         for (int start = 0; start < str.length(); start++) {
             for (int end = start; end < str.length(); end++) {
-                if (isPalindrome(str, start, end)) {
+                if (isPalindrome(str, start, end, memo)) {
                     count++;
                 }
             }
@@ -53,13 +52,13 @@ class Solution {
         return count;
     }
 
-    private void initializeMemo() {
+    private void initializeMemo(int[][] memo) {
         for (int i = 0; i < memo.length; i++) {
             Arrays.fill(memo[i], -1);
         }
     }
 
-    private boolean isPalindrome(String str, int start, int end) {
+    private boolean isPalindrome(String str, int start, int end, int[][] memo) {
         if (start >= end) {
             return true;
         }
@@ -73,10 +72,11 @@ class Solution {
             return false;
         }
 
-        memo[start][end] = isPalindrome(str, start + 1, end - 1) ? 1 : 0;
+        memo[start][end] = isPalindrome(str, start + 1, end - 1, memo) ? 1 : 0;
         return memo[start][end] == 1;
     }
 }
+
 
 //Best Approach
 
