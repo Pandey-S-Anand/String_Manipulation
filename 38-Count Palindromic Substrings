@@ -33,6 +33,11 @@ class Solution {
 class Solution {
     int[][] memo = new int[1000][1000];
 
+    /*
+     * memo[i][j]==-1 => str[i..j] is not solved yet
+     * memo[i][j]==0 => str[i..j] is not palindrome
+     * memo[i][j]==1 => str[i..j] is palindrome
+     */
     public int countSubstrings(String str) {
         initializeMemo();
         int count = 0;
@@ -73,3 +78,98 @@ class Solution {
     }
 }
 
+//Best Approach
+
+class Solution {
+    public int countSubstrings(String str) {
+        int count = 0;
+        boolean[][] dp = new boolean[str.length()][str.length()];
+
+        for (int gap = 0; gap < str.length(); gap++) {
+            for (int i = 0, j = gap; j < str.length(); i++, j++) {
+                if (gap == 0) {
+                    dp[i][j] = true;
+                } else if (gap == 1) {
+                    dp[i][j] = str.charAt(i) == str.charAt(j);
+                } else {
+                    dp[i][j] = (dp[i + 1][j - 1] && str.charAt(i) == str.charAt(j));
+                }
+                if (dp[i][j]) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+}
+
+
+//Further optimised approach
+
+//Intuitive implementation
+
+class Solution {
+    public int countSubstrings(String s) {
+        int count = 0;
+
+        // Iterate through each character and consider it as a center
+        for (int center = 0; center < s.length(); center++) {
+            count++;//a single character always form a palindrome
+            // Count odd-length palindromes centered at a single character
+            if(center>0){
+                count += expandAndCount(s, center-1, center+1);
+            }
+
+            // Count even-length palindromes centered between two characters
+            if(center<s.length()-1 && s.charAt(center)==s.charAt(center+1)){
+                count++; //count length two palindrome
+                count += expandAndCount(s, center-1, center + 2);
+            }
+        }
+
+        return count;
+    }
+
+    private int expandAndCount(String s, int left, int right) {
+        int count = 0;
+
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            count++;
+            left--;
+            right++;
+        }
+
+        return count;
+    }
+}
+
+//Optimal implementation
+
+class Solution {
+    public int countSubstrings(String s) {
+        int count = 0;
+
+        for (int center = 0; center < s.length(); center++) {
+            count += expandAndCount(s, center, center);
+            count += expandAndCount(s, center, center + 1);
+        }
+
+        return count;
+    }
+
+    private int expandAndCount(String s, int left, int right) {
+        int count = 0;
+
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            count++;
+            left--;
+            right++;
+        }
+
+        return count;
+    }
+}
+
+
+//Optimal approach (Manachers algorithm)
