@@ -93,3 +93,99 @@ class Solution {
 
 //Good Approach
 
+class Solution {
+    static final long MOD = 1000000007;
+
+    long countPS(String str) {
+        return computeLps(str, 0, str.length() - 1);
+    }
+
+    private long computeLps(String str, int start, int end) {
+        if (start == end) {
+            return 1;
+        }
+
+        if (end - start == 1) {
+            return str.charAt(start) == str.charAt(end) ? 3 : 2;
+        }
+
+        if (str.charAt(start) == str.charAt(end)) {
+            return (1 + computeLps(str, start, end - 1) + computeLps(str, start + 1, end)) % MOD;
+        }
+
+        return (computeLps(str, start, end - 1) + computeLps(str, start + 1, end) - computeLps(str, start + 1, end - 1) + MOD) % MOD;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    static final long MOD = 1000000007;
+    private long[][] memo;
+
+    long countPS(String str) {
+        memo = new long[str.length()][str.length()];
+        initializeMemo();
+        return computeLps(str, 0, str.length() - 1);
+    }
+
+    private void initializeMemo() {
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+    }
+
+    private long computeLps(String str, int start, int end) {
+        if (start == end) {
+            return 1;
+        }
+
+        if (memo[start][end] != -1) {
+            return memo[start][end];
+        }
+
+        if (end - start == 1) {
+            return memo[start][end] = str.charAt(start) == str.charAt(end) ? 3 : 2;
+        }
+
+        if (str.charAt(start) == str.charAt(end)) {
+            memo[start][end] = (1 + computeLps(str, start, end - 1) + computeLps(str, start + 1, end)) % MOD;
+            return memo[start][end];
+        }
+
+        memo[start][end] = (computeLps(str, start, end - 1) + computeLps(str, start + 1, end) - computeLps(str, start + 1, end - 1) + MOD) % MOD;
+        return memo[start][end];
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    static final long MOD = 1000000007;
+    //dp[i][j] stores the count of palindromic subsequences in the substring str[i...j].
+    long countPS(String str) {
+        int n = str.length();
+        long[][] dp = new long[n][n];
+
+        // Fill the DP table
+        for (int gap = 0; gap < n; gap++) {
+            for (int i = 0, j = gap; j < n; i++, j++) {
+                if (gap == 0) {
+                    dp[i][j] = 1; // Single character is a palindrome
+                } else if (gap == 1) {
+                    dp[i][j] = (str.charAt(i) == str.charAt(j)) ? 3 : 2; // Two characters
+                } else {
+                    if (str.charAt(i) == str.charAt(j)) {
+                        dp[i][j] = (dp[i][j - 1] + dp[i + 1][j] + 1) % MOD;
+                    } else {
+                        dp[i][j] = (dp[i][j - 1] + dp[i + 1][j] - dp[i + 1][j - 1] + MOD) % MOD;
+                    }
+                }
+            }
+        }
+
+        return dp[0][n - 1];
+    }
+}
