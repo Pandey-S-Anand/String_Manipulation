@@ -204,3 +204,32 @@ class Solution {
         return dp[str1.length()][str2.length()];
     }
 }
+
+
+//Aliter (Space Optimised)
+/*
+Since each entry in the DP table relies only on the current and previous rows (or columns), we can optimize the space complexity by using two 1D arrays: one for the current row and one for the previous row. 
+This optimization reduces the space complexity from O(m * n) to O(min(m, n)), where m and n are the lengths of str1 and str2.
+*/
+
+class Solution {
+    public int longestCommonSubsequence(String str1, String str2) {
+        int[] previousRow = new int[str2.length() + 1];
+        int[] currentRow = new int[str2.length() + 1];
+
+        for (int i = 1; i <= str1.length(); i++) {
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    currentRow[j] = 1 + previousRow[j - 1];
+                } else {
+                    currentRow[j] = Math.max(previousRow[j], currentRow[j - 1]);
+                }
+            }
+            int[] temp = previousRow;
+            previousRow = currentRow;
+            currentRow = temp;
+        }
+
+        return previousRow[str2.length()];
+    }
+}
