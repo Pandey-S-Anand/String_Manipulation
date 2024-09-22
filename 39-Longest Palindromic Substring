@@ -33,15 +33,14 @@ class Solution {
 //Better Approach
 
 class Solution {
-    int[][] memo = new int[1000][1000];
-
     public String longestPalindrome(String str) {
-        initializeMemo();
+        int[][] memo = new int[str.length()][str.length()];
+        initializeMemo(memo);
         int maxLength = 0, bestStart = 0, bestEnd = 0;
 
         for (int start = 0; start < str.length(); start++) {
             for (int end = start; end < str.length(); end++) {
-                if (isPalindrome(str, start, end) && (end - start + 1) > maxLength) {
+                if (isPalindrome(str, start, end, memo) && (end - start + 1) > maxLength) {
                     maxLength = end - start + 1;
                     bestStart = start;
                     bestEnd = end;
@@ -52,13 +51,13 @@ class Solution {
         return str.substring(bestStart, bestEnd + 1);
     }
 
-    private void initializeMemo() {
+    private void initializeMemo(int[][] memo) {
         for (int i = 0; i < memo.length; i++) {
             Arrays.fill(memo[i], -1);
         }
     }
 
-    private boolean isPalindrome(String str, int start, int end) {
+    private boolean isPalindrome(String str, int start, int end, int[][] memo) {
         if (start >= end) {
             return true;
         }
@@ -72,7 +71,7 @@ class Solution {
             return false;
         }
 
-        memo[start][end] = isPalindrome(str, start + 1, end - 1) ? 1 : 0;
+        memo[start][end] = isPalindrome(str, start + 1, end - 1, memo) ? 1 : 0;
         return memo[start][end] == 1;
     }
 }
