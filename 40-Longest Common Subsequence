@@ -40,7 +40,7 @@ class Solution {
         return computeLcs(str1, str2, 0, 0);
     }
 
-    public int computeLcs(String str1, String str2, int i, int j) {
+    private int computeLcs(String str1, String str2, int i, int j) {
         if (i == str1.length() || j == str2.length()) {
             return 0;
         }
@@ -49,7 +49,7 @@ class Solution {
             return 1 + computeLcs(str1, str2, i + 1, j + 1);
         }
 
-        return Math.max(computeLcs(str1, str2, i, j + 1), computeLcs(str1, str2, i + 1, j));
+        return Math.max(computeLcs(str1, str2, i + 1, j), computeLcs(str1, str2, i, j + 1));
     }
 }
 
@@ -57,6 +57,7 @@ class Solution {
 //Better Approach
 
 class Solution {
+    private int[][] memo;
     /*
      * memo[i][j]: It holds the length of the longest common subsequence (LCS)
      * between :
@@ -64,20 +65,20 @@ class Solution {
      * The substring of 'str1' starting from index j to the end of str2 (i.e. str2.length() - 1)(inclusive)
      */
     public int longestCommonSubsequence(String str1, String str2) {
-        int[][] memo = new int[str1.length()][str2.length()];
+        memo = new int[str1.length()][str2.length()];
         // Initialize the memoization array with -1 to indicate uncomputed values
-        intializeMemo(memo);
+        intializeMemo();
 
-        return computeLcs(str1, str2, 0, 0, memo);
+        return computeLcs(str1, str2, 0, 0);
     }
 
-    private void intializeMemo(int[][] memo) {
+    private void intializeMemo() {
         for (int i = 0; i < memo.length; i++) {
             Arrays.fill(memo[i], -1);
         }
     }
 
-    private int computeLcs(String str1, String str2, int i, int j, int[][] memo) {
+    private int computeLcs(String str1, String str2, int i, int j) {
         if (i == str1.length() || j == str2.length()) {
             return 0;
         }
@@ -88,52 +89,14 @@ class Solution {
 
         // If the characters match, this contributes to the LCS
         if (str1.charAt(i) == str2.charAt(j)) {
-            return memo[i][j] = 1 + computeLcs(str1, str2, i + 1, j + 1, memo);
+            return memo[i][j] = 1 + computeLcs(str1, str2, i + 1, j + 1);
         }
 
         // If the characters don't match, take the maximum LCS by either skipping a character from str1 or str2
-        return memo[i][j] = Math.max(computeLcs(str1, str2, i + 1, j, memo), computeLcs(str1, str2, i, j + 1, memo));
+        return memo[i][j] = Math.max(computeLcs(str1, str2, i + 1, j), computeLcs(str1, str2, i, j + 1));
     }
 }
 
-//Aliter
-
- class Solution {
-    /*
-     memo[i][j]: It holds the length of the longest common subsequence (LCS)
-     between:
-     - The substring of `str1` from index 0 to i (inclusive)
-     - The substring of `str2` from index 0 to j (inclusive)
-   */
-    public int longestCommonSubsequence(String str1, String str2) {
-        int[][] memo = new int[str1.length()][str2.length()];
-        intializeMemo(memo);
-
-        return computeLcs(str1, str2, str1.length()-1, str2.length()-1, memo);
-    }
-
-    private void intializeMemo(int[][] memo) {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
-        }
-    }
-
-    private int computeLcs(String str1, String str2, int i, int j, int[][] memo) {
-        if (i <0 || j <0) {
-            return 0;
-        }
-
-        if (memo[i][j] != -1) {
-            return memo[i][j];
-        }
-
-        if (str1.charAt(i) == str2.charAt(j)) {
-            return memo[i][j] = 1 + computeLcs(str1, str2, i - 1, j - 1, memo);
-        }
-
-        return memo[i][j] = Math.max(computeLcs(str1, str2, i - 1, j, memo), computeLcs(str1, str2, i, j - 1, memo));
-    }
-}
 
 //Optimal Approach
 
