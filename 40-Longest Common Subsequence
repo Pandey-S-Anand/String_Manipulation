@@ -176,9 +176,8 @@ class Solution {
          * 
          * dp[0][*] represents the case when str1 is empty.
          * dp[*][0] represents the case when str2 is empty.
-         * Hence,
-         * dp[0][0...str2.length()-1] = 0
-         * i.e dp[0...str1.length()-1][0] = 0
+         * Thus, there is no common subsequence between a non-empty string and an empty string, and as a result, all values in 
+         * dp[0][0...str2.length()] and dp[0...str1.length()][0] are 0.
          * 
          * Key Difference:
          * Recursive approach (Top-Down): Moves forward in the strings with i + 1 and j+ 1
