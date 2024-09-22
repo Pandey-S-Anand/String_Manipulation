@@ -90,16 +90,16 @@ class Solution {
     }
 
     private int computeLps(String str, int start, int end) {
-        if (start > end) {
-            return 0;
-        }
-
-        if (start == end) { 
+        if (start == end) {
             return 1;// only one char is always palindrome
         }
 
+        if (end - start == 1) {
+            return str.charAt(start) == str.charAt(end) ? 2 : 1;
+        }
+
         if (str.charAt(start) == str.charAt(end)) {
-            return 2 + computeLps(str, start + 1, end - 1);//the length of the palindromic subsequence increases by 2 (one for each matching character)
+            return 2 + computeLps(str, start + 1, end - 1);// the length of the palindromic subsequence increases by 2 (one for each matching character)
         }
 
         return Math.max(computeLps(str, start + 1, end), computeLps(str, start, end - 1));
