@@ -4,35 +4,28 @@ class Solution {
     static final int MOD = 1000000007;
 
     public int countPalindromicSubsequences(String str) {
-        List<String> subsequences = generateSubsequences(str);
-        Set<String> set = new HashSet();
-        int count = 0;
+        Set<String> set = new HashSet<>();
+        StringBuilder subsequence = new StringBuilder();
+        int totalSubsequences = 1 << str.length(); // x << y = x * 2^n
 
-        for (String subsequence : subsequences) {
-            if (isPalindrome(subsequence) && !set.contains(subsequence)) {
-                count = (count + 1) % MOD;
+        for (int num = 0; num < totalSubsequences; num++) {
+            for (int i = 0; i < str.length(); i++) {
+                if ((num & (1 << i)) != 0) {
+                    subsequence.append(str.charAt(i));
+                }
             }
-            set.add(subsequence);
+
+            if (isPalindrome(subsequence)) {
+                set.add(subsequence.toString());
+            }
+
+            subsequence.setLength(0);
         }
 
-        return count;
+        return set.size() % MOD;
     }
 
-    private List<String> generateSubsequences(String str) {
-        List<String> subsequences = new ArrayList<>();
-        subsequences.add(""); // Start with the empty subsequence
-
-        for (int i = 0; i < str.length(); i++) {
-            int size = subsequences.size();
-            for (int j = 0; j < size; j++) {
-                subsequences.add(subsequences.get(j) + str.charAt(i));
-            }
-        }
-
-        return subsequences;
-    }
-
-    private boolean isPalindrome(String str) {
+    private boolean isPalindrome(StringBuilder str) {
         if (str.isEmpty()) {
             return false;
         }
@@ -43,6 +36,7 @@ class Solution {
             if (str.charAt(start) != str.charAt(end)) {
                 return false;
             }
+
             start++;
             end--;
         }
