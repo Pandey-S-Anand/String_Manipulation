@@ -164,14 +164,14 @@ class Solution {
 
 class Solution {
     static final long MOD = 1000000007;
-    //dp[i][j] stores the count of palindromic subsequences in the substring str[i...j].
+
+    // dp[i][j] stores the count of palindromic subsequences in the substring str[i...j].
     long countPS(String str) {
-        int n = str.length();
-        long[][] dp = new long[n][n];
+        long[][] dp = new long[str.length()][str.length()];
 
         // Fill the DP table
-        for (int gap = 0; gap < n; gap++) {
-            for (int i = 0, j = gap; j < n; i++, j++) {
+        for (int gap = 0; gap < str.length(); gap++) {
+            for (int i = 0, j = gap; j < str.length(); i++, j++) {
                 if (gap == 0) {
                     dp[i][j] = 1; // Single character is a palindrome
                 } else if (gap == 1) {
@@ -186,6 +186,6 @@ class Solution {
             }
         }
 
-        return dp[0][n - 1];
+        return dp[0][str.length() - 1];
     }
 }
