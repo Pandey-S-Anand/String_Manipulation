@@ -1,9 +1,11 @@
 //Bruteforce Approach
 
 class Solution {
+    static final long MOD = 1000000007;
+
     long countPS(String str) {
         List<String> subsequences = generateSubsequences(str);
-        long MOD=1000000007,count = 0;
+        long count = 0;
 
         for (String subsequence : subsequences) {
             if (isPalindrome(subsequence)) {
@@ -51,8 +53,10 @@ class Solution {
 //Improved Approach
 
 class Solution {
+    static final long MOD = 1000000007;
+
     long countPS(String str) {
-        long MOD = 1000000007, count = 0;
+        long count = 0;
         List<String> subsequences = new ArrayList<>();
 
         subsequences.add(""); // Start with the empty subsequence
@@ -165,8 +169,8 @@ class Solution {
 class Solution {
     static final long MOD = 1000000007;
 
-    // dp[i][j] stores the count of palindromic subsequences in the substring str[i...j].
     long countPS(String str) {
+        // dp[i][j] stores the count of palindromic subsequences in the substring str[i...j].
         long[][] dp = new long[str.length()][str.length()];
 
         // Fill the DP table
