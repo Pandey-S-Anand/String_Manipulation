@@ -1,8 +1,28 @@
 //Bruteforce Approach
 
+class Solution {
+    private final int mod = 1000000007;
 
+    public int distinctSubseqII(String str) {
+        Set<String> set = new HashSet<>();
+        StringBuilder subsequence = new StringBuilder();
+        int totalSubsequences = 1 << str.length(); // x << y = x * 2^n
 
+        for (int num = 0; num < totalSubsequences; num++) {
+            for (int i = 0; i < str.length(); i++) {
+                if ((num & (1 << i)) != 0) {
+                    subsequence.append(str.charAt(i));
+                }
+            }
 
+            set.add(subsequence.toString());
+
+            subsequence.setLength(0);
+        }
+
+        return set.size() % mod - 1; // Subtract 1 to exclude the empty subsequence
+    }
+}
 
 
 //Better Approach
