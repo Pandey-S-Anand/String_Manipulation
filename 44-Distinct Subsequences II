@@ -1,5 +1,107 @@
-//Optimal Approach
+//Bruteforce Approach
 
+
+
+
+
+
+//Better Approach
+
+//Intuitive implementation
+
+class Solution {
+    private final int mod = 1000000007;
+    private int[] memo;
+    private int[] charLastIndexMap;
+
+    public int distinctSubseqII(String str) {
+        memo = new int[str.length()];
+        charLastIndexMap = new int[26];
+        Arrays.fill(memo, -1); // Set initial value as -1 to indicate absense of result
+        Arrays.fill(charLastIndexMap, -1); // Set initial value as -1 to indicate no occurrences
+
+        int result = distinctSubseq(str, str.length() - 1) - 1; // Subtract 1 to exclude the empty subsequence
+        if (result < 0) {
+            result = result + mod;
+        } else {
+            result = result % mod;
+        }
+
+        return result;
+    }
+
+    private int distinctSubseq(String str, int index) {
+        if (index == -1) {
+            return 1; // Base case: return 1 for the empty subsequence
+        }
+
+        if (memo[index] != -1) {
+            return memo[index];
+        }
+
+        int result = 2 * distinctSubseq(str, index - 1);
+        if (result < 0) {
+            result = result + mod;
+        } else {
+            result = result % mod;
+        }
+
+        if (charLastIndexMap[str.charAt(index) - 'a'] != -1) {
+            result = result - distinctSubseq(str, charLastIndexMap[str.charAt(index) - 'a'] - 1);
+            if (result < 0) {
+                result = result + mod;
+            } else {
+                result = result % mod;
+            }
+        }
+
+        charLastIndexMap[str.charAt(index) - 'a'] = index;
+
+        return memo[index] = result;
+    }
+}
+
+
+//Optimal Implementation
+
+class Solution {
+    private final int mod = 1000000007;
+    private int[] memo;
+    private int[] charLastIndexMap;
+
+    public int distinctSubseqII(String str) {
+        memo = new int[str.length()];
+        charLastIndexMap = new int[26];
+        Arrays.fill(memo, -1);
+        Arrays.fill(charLastIndexMap, -1);
+
+        return (distinctSubseq(str, str.length() - 1) - 1 + mod) % mod;
+    }
+
+    private int distinctSubseq(String str, int index) {
+        if (index == -1) {
+            return 1;
+        }
+
+        if (memo[index] != -1) {
+            return memo[index];
+        }
+
+        int result = (2 * (distinctSubseq(str, index - 1) % mod)) % mod;
+
+        if (charLastIndexMap[str.charAt(index) - 'a'] != -1) {
+            result = (result - (distinctSubseq(str, charLastIndexMap[str.charAt(index) - 'a'] - 1)) % mod + mod) % mod;
+        }
+
+        charLastIndexMap[str.charAt(index) - 'a'] = index;
+
+        return memo[index] = result;
+    }
+}
+
+
+
+//Optimal Approach
 
 class Solution {
     private final int mod = 1000000007;
