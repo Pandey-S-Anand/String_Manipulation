@@ -1,5 +1,6 @@
 //Optimal Approach
 
+
 class Solution {
     private final int mod = 1000000007;
 
