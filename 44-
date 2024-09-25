@@ -1,0 +1,45 @@
+//Optimal Approach
+
+//Naive Implementation
+
+
+
+//Optimal Implementation
+
+class Solution {
+    private final int mod = 1000000007;
+
+    public int distinctSubseqII(String str) {
+        int[] dp = new int[str.length() + 1]; // dp[i] represents the count of distinct subsequences of the substringstr[0...i-1]
+        int[] charLastIndexMap = new int[26]; // Track last occurrence of each character
+
+        Arrays.fill(charLastIndexMap, -1);
+
+        dp[0] = 1; // Base case: There's one subsequence (the empty subsequence)
+
+        for (int i = 1; i <= str.length(); i++) {
+            dp[i] = 2 * dp[i - 1];
+
+            char ch = str.charAt(i - 1);
+            if (charLastIndexMap[ch - 'a'] != -1) {
+                dp[i] = (dp[i] - dp[charLastIndexMap[ch - 'a'] - 1]);
+            }
+
+            charLastIndexMap[ch - 'a'] = i;
+
+            if (dp[i] < 0) {
+                dp[i] = dp[i] + mod;
+            } else {
+                dp[i] = dp[i] % mod;
+            }
+        }
+
+        int result = dp[str.length()] - 1; // Subtract 1 to exclude the empty subsequence
+
+        if (result < 0) {
+            result += mod; // Handle negative result after subtraction
+        }
+
+        return result;
+    }
+}
