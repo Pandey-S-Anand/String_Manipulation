@@ -130,7 +130,7 @@ class Solution {
 class Solution {
     public int numDistinct(String text, String pattern) {
        int [][]dp=new int[text.length()+1][pattern.length()+1]; 
-       //dp[i][j]: This represents the number of distinct subsequences of the first i characters of s that match the first j characters of t.
+       // dp[i][j]: This represents the number of distinct subsequences of the text[0...i-1] that match the pattern[0...j-1].
 
        for(int j=0;j<=text.length();j++){
           dp[j][0]=1;
