@@ -2,6 +2,32 @@
 
 class Solution {
     public int numDistinct(String text, String pattern) {
+        StringBuilder subsequence = new StringBuilder();
+        int count=0,totalSubsequences = 1 << text.length(); // x << y = x * 2^n
+
+        for (int num = 0; num < totalSubsequences; num++) {
+            for (int i = 0; i < text.length(); i++) {
+                if ((num & (1 << i)) != 0) {
+                    subsequence.append(text.charAt(i));
+                }
+            }
+
+            if(subsequence.toString().equals(pattern)){
+                count++;
+            }
+
+            subsequence.setLength(0);
+        }
+
+        return count;
+    }
+}
+
+
+//Improved Approacch
+
+class Solution {
+    public int numDistinct(String text, String pattern) {
         return countDistinct(text, pattern, text.length() - 1, pattern.length() - 1);
     }
 
