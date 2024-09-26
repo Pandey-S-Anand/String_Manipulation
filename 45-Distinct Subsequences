@@ -1,0 +1,125 @@
+//Bruteforce Approach
+
+class Solution {
+    public int numDistinct(String text, String pattern) {
+        return countDistinct(text, pattern, text.length() - 1, pattern.length() - 1);
+    }
+
+    private int countDistinct(String text, String pattern, int i, int j) {
+        if (j < 0) {        
+            return 1;  // If we've matched all characters of the pattern, count this subsequence
+        }
+
+        if (i < 0) {
+            return 0; // If we've exhausted the main text without fully matching the pattern, return 0
+        }
+
+        if (pattern.charAt(j) == text.charAt(i)) {
+            return countDistinct(text, pattern, i - 1, j - 1) + countDistinct(text, pattern, i - 1, j);
+        }
+
+        return countDistinct(text, pattern, i - 1, j);
+    }
+}
+
+
+//Better Approach
+
+//Naive implementation
+
+class Solution {
+    int[][] memo;
+
+    public int numDistinct(String text, String pattern) {
+        memo = new int[text.length()][pattern.length()];
+
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+
+        return countDistinct(text, pattern, text.length() - 1, pattern.length() - 1);
+    }
+
+    private int countDistinct(String text, String pattern, int i, int j) {
+        if (j < 0) {
+            return 1;
+        }
+
+        if (i < 0) {
+            return 0;
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        if (pattern.charAt(j) == text.charAt(i)) {
+            return memo[i][j] = countDistinct(text, pattern, i - 1, j - 1) + countDistinct(text, pattern, i - 1, j);
+        }
+
+        return memo[i][j] = countDistinct(text, pattern, i - 1, j);
+    }
+}
+
+
+//Optimal implementation
+
+class Solution {
+    int[][] memo;
+
+    public int numDistinct(String text, String pattern) {
+        memo = new int[text.length()][pattern.length()];
+
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+
+        return countDistinct(text, pattern, text.length() - 1, pattern.length() - 1);
+    }
+
+    private int countDistinct(String text, String pattern, int i, int j) {
+        if (j < 0) {
+            return 1;
+        }
+
+        if (i < j) { 
+            return 0;  // If there are fewer characters left in the text than in the pattern, it's impossible to form the pattern
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        if (pattern.charAt(j) == text.charAt(i)) {
+            return memo[i][j] = countDistinct(text, pattern, i - 1, j - 1) + countDistinct(text, pattern, i - 1, j);
+        }
+
+        return memo[i][j] = countDistinct(text, pattern, i - 1, j);
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int numDistinct(String text, String pattern) {
+       int [][]dp=new int[text.length()+1][pattern.length()+1]; 
+       //dp[i][j]: This represents the number of distinct subsequences of the first i characters of s that match the first j characters of t.
+
+       for(int j=0;j<=text.length();j++){
+          dp[j][0]=1;
+       }
+
+       for(int i=1;i<=text.length();i++){
+        for(int j=1;j<=pattern.length();j++){
+            if(text.charAt(i-1)==pattern.charAt(j-1)){
+                dp[i][j]=dp[i-1][j-1] + dp[i-1][j];
+            }else{
+                dp[i][j]=dp[i-1][j];
+            }
+        }
+       }
+
+       return dp[text.length()][pattern.length()];
+    }
+}
