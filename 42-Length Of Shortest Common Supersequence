@@ -1,0 +1,32 @@
+//Better Approach
+
+
+
+
+//Optimal Approach
+
+class Solution {
+    public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
+        return m + n - longestCommonSubsequence(str1, str2, m, n);
+    }
+
+    private static int longestCommonSubsequence(String str1, String str2, int m, int n) {
+        int[] previousRow = new int[n + 1];
+        int[] currentRow = new int[n + 1];
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    currentRow[j] = 1 + previousRow[j - 1];
+                } else {
+                    currentRow[j] = Math.max(previousRow[j], currentRow[j - 1]);
+                }
+            }
+            int[] temp = previousRow;
+            previousRow = currentRow;
+            currentRow = temp;
+        }
+
+        return previousRow[n];
+    }
+}
