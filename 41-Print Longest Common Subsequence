@@ -93,3 +93,42 @@ public class Solution {
         return longestCommonSubsequence.toString();
     }
 }
+
+//Aliter (Space optimised)
+
+public class Solution {
+    public static String findLCS(int m, int n, String str1, String str2){
+        int[] previousRow = new int[n + 1];
+        int[] currentRow = new int[n + 1];
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    currentRow[j] = 1 + previousRow[j - 1];
+                } else {
+                    currentRow[j] = Math.max(previousRow[j], currentRow[j - 1]);
+                }
+            }
+            int[] temp = previousRow;
+            previousRow = currentRow;
+            currentRow = temp;
+        }
+
+        int i = m, j = n;
+        StringBuilder longestCommonSubsequence = new StringBuilder();
+
+        while (i > 0 && j > 0) {
+            if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                longestCommonSubsequence.append(str1.charAt(i - 1));
+                i--;
+                j--;
+            } else if (previousRow[j] > currentRow[j - 1]) {
+                i--;
+            } else {
+                j--;
+            }
+        }
+
+        return longestCommonSubsequence.toString();
+    }
+}
