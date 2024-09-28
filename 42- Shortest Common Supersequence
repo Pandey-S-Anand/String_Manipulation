@@ -1,9 +1,252 @@
+//Without LCS
+
+//Bruteforce Approach
+
+class Solution {
+    public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
+        return computeScs(str1, str2, 0, 0, m, n);
+    }
+
+    private static int computeScs(String str1, String str2, int i, int j, int m, int n) {
+        if (i == m && j == n) {
+            return 0;
+        }
+
+        if (i == m) {
+            return n - j;
+        }
+
+        if (j == n) {
+            return m - i;
+        }
+
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return 1 + computeScs(str1, str2, i + 1, j + 1, m, n);
+        }
+
+        return 1 + Math.min(computeScs(str1, str2, i + 1, j, m, n), computeScs(str1, str2, i, j + 1, m, n));
+    }
+}
+
+
 //Better Approach
 
+class Solution {
+    private static int[][] memo;
 
+    public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
+        memo = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+        return computeScs(str1, str2, 0, 0, m, n);
+    }
+
+    private static int computeScs(String str1, String str2, int i, int j, int m, int n) {
+        if (i == m && j == n) { 
+            return 0; 
+        }
+
+        if (i == m) {
+            return n - j;
+        }
+
+        if (j == n) {
+            return m - i;
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return memo[i][j] = 1 + computeScs(str1, str2, i + 1, j + 1, m, n);
+        }
+
+        return memo[i][j] = 1 + Math.min(computeScs(str1, str2, i + 1, j, m, n), computeScs(str1, str2, i, j + 1, m, n));
+    }
+}
 
 
 //Optimal Approach
+
+class Solution {
+    public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
+        int[][]dp=new int[m+1][n+1];
+        //dp[i][j]=length of shortest common super sequence between str1[0...i-1] and str2[0...j-1]
+        
+        //dp[0][0]=0 : When both strings (str1 and str2) are empty, the length of SCS is 0
+        for(int i=1;i<=n;i++){
+            dp[0][i]=i; // When str1 is empty, the length of the SCS is the length of str2 up to i.
+        }
+        
+        for(int i=1;i<=m;i++){
+            dp[i][0]=i; // When str2 is empty, the length of the SCS is the length of str1 up to i.
+        }
+        
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                if(str1.charAt(i-1)==str2.charAt(j-1)){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }else{
+                    dp[i][j]=1+Math.min(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        
+        return dp[m][n];
+    }
+}
+
+
+//Aliter (space optimised)
+
+class Solution {
+    public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
+        int[] previousRow = new int[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            previousRow[i] = i;
+        }
+
+        int[] currentRow = new int[n + 1];
+
+        for (int i = 1; i <= m; i++) {
+            currentRow[0] = i;
+            for (int j = 1; j <= n; j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    currentRow[j] = 1 + previousRow[j - 1];
+                } else {
+                    currentRow[j] = 1 + Math.min(previousRow[j], currentRow[j - 1]);
+                }
+            }
+
+            int[] temp = currentRow;
+            currentRow = previousRow;
+            previousRow = temp;
+        }
+
+        return previousRow[n];
+    }
+}
+
+
+
+//Using LCS
+
+//Bruteforce Approach
+
+class Solution {
+    public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
+        List<String> subsequences1 = generateSubsequences(str1, m);
+        List<String> subsequences2 = generateSubsequences(str2, n);
+        int maxLength = 0;
+
+        for (String subsequence1 : subsequences1) {
+            for (String subsequence2 : subsequences2) {
+                if (subsequence1.equals(subsequence2)) {
+                    maxLength = Math.max(maxLength, subsequence1.length());
+                }
+            }
+        }
+
+        return m + n - maxLength;
+    }
+
+    private static List<String> generateSubsequences(String str, int n) {
+        List<String> subsequences = new ArrayList<>();
+        subsequences.add(""); // Start with the empty subsequence
+
+        for (int i = 0; i < n; i++) {
+            int size = subsequences.size();
+            for (int j = 0; j < size; j++) {
+                subsequences.add(subsequences.get(j) + str.charAt(i));
+            }
+        }
+
+        return subsequences;
+    }
+}
+
+
+//Improved Approach
+
+class Solution {
+    public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
+        return m + n - computeLcs(str1, str2, 0, 0, m, n);
+    }
+
+    private static int computeLcs(String str1, String str2, int i, int j, int m, int n) {
+        if (i == m || j == n) {
+            return 0;
+        }
+
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return 1 + computeLcs(str1, str2, i + 1, j + 1, m, n);
+        }
+
+        return Math.max(computeLcs(str1, str2, i + 1, j, m, n), computeLcs(str1, str2, i, j + 1, m, n));
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private static int[][] memo;
+
+    public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
+        memo = new int[str1.length()][str2.length()];
+
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+
+        return m + n - computeLcs(str1, str2, 0, 0, m, n);
+    }
+
+    private static int computeLcs(String str1, String str2, int i, int j, int m, int n) {
+        if (i == m || j == n) {
+            return 0;
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return memo[i][j] = 1 + computeLcs(str1, str2, i + 1, j + 1, m, n);
+        }
+
+        return memo[i][j] = Math.max(computeLcs(str1, str2, i + 1, j, m, n), computeLcs(str1, str2, i, j + 1, m, n));
+    }
+}
+
+//Optimal Approach
+
+class Solution {
+    public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
+        return m + n - longestCommonSubsequence(str1, str2, m, n);
+    }
+
+    private static int longestCommonSubsequence(String str1, String str2, int m, int n) {
+        int[][] dp = new int[m + 1][n + 1];
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+
+        return dp[m][n];
+    }
+}
+
+//Aliter (Space optimised)
 
 class Solution {
     public static int shortestCommonSupersequence(String str1, String str2, int m, int n) {
