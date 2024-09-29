@@ -61,5 +61,117 @@ class Solution {
 }
 
 
+//Good Approach
+
+class Solution {
+    public int countPalindromicSubsequence(String str) {
+        Set<String> uniquePalindromicSubsequence = new HashSet<>();
+
+        // Traverse each character in the string as the center
+        for (int i = 1; i < str.length() - 1; i++) {
+            // For each character 'a' to 'z', check if it appears on both sides
+            for (char ch = 'a'; ch <= 'z'; ch++) {
+                if (isPresentOnLeft(str, ch, i) && isPresentOnRight(str, ch, i)) {
+                    uniquePalindromicSubsequence.add("" + ch + str.charAt(i) + ch);
+                }
+            }
+        }
+
+        // Return the number of unique palindromic subsequences
+        return uniquePalindromicSubsequence.size();
+    }
+
+    private boolean isPresentOnLeft(String str, char ch, int index) {
+        for (int i = 0; i < index; i++) {
+            if (str.charAt(i) == ch) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isPresentOnRight(String str, char ch, int index) {
+        for (int i = index + 1; i < str.length(); i++) {
+            if (str.charAt(i) == ch) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+
 //Better Approach
 
+class Solution {
+    public int countPalindromicSubsequence(String str) {
+        Set<String> uniquePalindromicSubsequence = new HashSet<>();
+        boolean[] leftSeen = new boolean[26];
+        boolean[] rightSeen = new boolean[26];
+
+        // Traverse each character in the string as the center
+        for (int i = 1; i < str.length() - 1; i++) {
+
+            // Mark the characters that exist on the left of the center
+            for (int left = 0; left < i; left++) {
+                leftSeen[str.charAt(left) - 'a'] = true;
+            }
+
+            // Mark the characters that exist on the right of the center
+            for (int right = i + 1; right < str.length(); right++) {
+                rightSeen[str.charAt(right) - 'a'] = true;
+            }
+
+            // For each character 'a' to 'z', check if it appears on both sides
+            for (char ch = 'a'; ch <= 'z'; ch++) {
+                if (leftSeen[ch - 'a'] && rightSeen[ch - 'a']) {
+                    uniquePalindromicSubsequence.add("" + ch + str.charAt(i) + ch);
+                }
+            }
+
+            // Reset leftSeen and rightSeen arrays to false
+            Arrays.fill(leftSeen, false);
+            Arrays.fill(rightSeen, false);
+        }
+
+        // Return the number of unique palindromic subsequences
+        return uniquePalindromicSubsequence.size();
+    }
+}
+
+
+//Further Optimised
+
+class Solution {
+    public int countPalindromicSubsequence(String str) {
+        Set<String> uniquePalindromicSubsequence = new HashSet<>();
+        boolean[] leftSeen = new boolean[26]; // To track characters seen on the left
+        int[] rightSeenCount = new int[26]; // To count characters to the right
+
+        // Initialize rightSeenCount for the entire string
+        for (int i = 0; i < str.length(); i++) {
+            rightSeenCount[str.charAt(i) - 'a']++;
+        }
+
+        // Traverse each character in the string as the center
+        for (int i = 0; i < str.length(); i++) {
+            // Decrease the count of the current character from rightSeenCount
+            rightSeenCount[str.charAt(i) - 'a']--;
+
+            // For each character 'a' to 'z', check if it appears on both sides
+            for (char ch = 'a'; ch <= 'z'; ch++) {
+                if (leftSeen[ch - 'a'] && rightSeenCount[ch - 'a'] > 0) {
+                    uniquePalindromicSubsequence.add("" + ch + str.charAt(i) + ch);
+                }
+            }
+
+            // Mark the center character as seen on the left for the next iteration
+            leftSeen[str.charAt(i) - 'a'] = true;
+        }
+
+        // Return the number of unique palindromic subsequences
+        return uniquePalindromicSubsequence.size();
+    }
+}
