@@ -30,6 +30,7 @@ public class Solution {
         return maxLength;
     }
 
+
     private static Map<String, List<List<Integer>>> generateSubsequences(String str, int n) {
         Map<String, List<List<Integer>>> subsequenceMap = new HashMap<>();
         StringBuilder currentSubsequence = new StringBuilder();
@@ -57,6 +58,7 @@ public class Solution {
 
         return subsequenceMap;
     }
+
 
     private static boolean hasOverlappingIndices(List<Integer> indices1, List<Integer> indices2) {
         for (int i = 0; i < indices1.size(); i++) {
