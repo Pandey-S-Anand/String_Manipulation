@@ -175,3 +175,7 @@ class Solution {
         return uniquePalindromicSubsequence.size();
     }
 }
+
+
+//Optimal Approach
+
