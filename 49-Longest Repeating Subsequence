@@ -2,10 +2,39 @@
 
 public class Solution {
     public static int longestRepeatingSubsequence(String str, int n) {
+        Map<String, List<List<Integer>>> subsequenceMap = generateSubsequences(str, n);
+        int maxLength = 0;
+
+        for (Map.Entry<String, List<List<Integer>>> entry : subsequenceMap.entrySet()) {
+            String subsequence = entry.getKey();
+            List<List<Integer>> indicesList = entry.getValue();
+
+            // Only consider if there are more than one occurrence of the subsequence i.e a
+            // repeating subsequence
+            if (indicesList.size() > 1) {
+                for (int i = 0; i < indicesList.size(); i++) {
+                    Iterator<List<Integer>> iterator = indicesList.listIterator(i + 1);
+                    while (iterator.hasNext()) {
+                        if (hasOverlappingIndices(indicesList.get(i), iterator.next())) {
+                            iterator.remove(); // Remove overlapping subsequence
+                        }
+                    }
+                }
+            }
+
+            if (indicesList.size() > 1) {
+                maxLength = Math.max(maxLength, subsequence.length());
+            }
+        }
+
+        return maxLength;
+    }
+
+    private static Map<String, List<List<Integer>>> generateSubsequences(String str, int n) {
         Map<String, List<List<Integer>>> subsequenceMap = new HashMap<>();
-        int maxLength = 0, totalSubsequences = 1 << n; // 2^n
         StringBuilder currentSubsequence = new StringBuilder();
         List<Integer> currentIndices = new ArrayList<>();
+        int totalSubsequences = 1 << n; // 2^n
 
         for (int num = 0; num < totalSubsequences; num++) {
             for (int i = 0; i < n; i++) {
@@ -26,28 +55,7 @@ public class Solution {
             currentIndices.clear();
         }
 
-        for (Map.Entry<String, List<List<Integer>>> entry : subsequenceMap.entrySet()) {
-            String subsequence = entry.getKey();
-            List<List<Integer>> indicesList = entry.getValue();
-
-            // Only consider if there are more than one occurrence of the subsequence i.e a repeating subsequence
-            if (indicesList.size() > 1) {
-                for (int i = 0; i < indicesList.size(); i++) {
-                    Iterator<List<Integer>> iterator = indicesList.listIterator(i + 1);
-                    while (iterator.hasNext()) {
-                        if (hasOverlappingIndices(indicesList.get(i), iterator.next())) {
-                            iterator.remove(); // Remove overlapping subsequence
-                        }
-                    }
-                }
-            }
-
-            if (indicesList.size() > 1) {
-                maxLength = Math.max(maxLength, subsequence.length());
-            }
-        }
-
-        return maxLength;
+        return subsequenceMap;
     }
 
     private static boolean hasOverlappingIndices(List<Integer> indices1, List<Integer> indices2) {
