@@ -33,3 +33,33 @@ class Solution {
         return str.charAt(0) == str.charAt(2);
     }
 }
+
+
+//Improved Approach
+
+class Solution {
+    public int countPalindromicSubsequence(String str) {
+        Set<String> uniqueSubsequencesOfLengthThree = new HashSet<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            for (int j = i + 1; j < str.length(); j++) {
+                for (int k = j + 1; k < str.length(); k++) {
+                    String subsequence = "" + str.charAt(i) + str.charAt(j) + str.charAt(k);
+                    if (isPalindrome(subsequence)) {
+                        uniqueSubsequencesOfLengthThree.add(subsequence);
+                    }
+                }
+            }
+        }
+
+        return uniqueSubsequencesOfLengthThree.size();
+    }
+
+    private boolean isPalindrome(String str) {
+        return str.charAt(0) == str.charAt(2);
+    }
+}
+
+
+//Better Approach
+
