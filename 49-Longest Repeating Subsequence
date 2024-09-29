@@ -1,0 +1,161 @@
+//Bruteforce Approach
+
+public class Solution {
+    public static int longestRepeatingSubsequence(String str, int n) {
+        Map<String, List<List<Integer>>> subsequenceMap = new HashMap<>();
+        int maxLength = 0, totalSubsequences = 1 << n; // 2^n
+        StringBuilder currentSubsequence = new StringBuilder();
+        List<Integer> currentIndices = new ArrayList<>();
+
+        for (int num = 0; num < totalSubsequences; num++) {
+            for (int i = 0; i < n; i++) {
+                if ((num & (1 << i)) != 0) {
+                    currentSubsequence.append(str.charAt(i));
+                    currentIndices.add(i);
+                }
+            }
+
+            String currSubsequence = currentSubsequence.toString();
+
+            // Only add non-empty subsequences to the map
+            if (!currSubsequence.isEmpty()) {
+                subsequenceMap.putIfAbsent(currSubsequence, new ArrayList<>());
+                subsequenceMap.get(currSubsequence).add(new ArrayList<>(currentIndices));
+            }
+            currentSubsequence.setLength(0);
+            currentIndices.clear();
+        }
+
+        for (Map.Entry<String, List<List<Integer>>> entry : subsequenceMap.entrySet()) {
+            String subsequence = entry.getKey();
+            List<List<Integer>> indicesList = entry.getValue();
+
+            // Only consider if there are more than one occurrence of the subsequence i.e a repeating subsequence
+            if (indicesList.size() > 1) {
+                for (int i = 0; i < indicesList.size(); i++) {
+                    Iterator<List<Integer>> iterator = indicesList.listIterator(i + 1);
+                    while (iterator.hasNext()) {
+                        if (hasOverlappingIndices(indicesList.get(i), iterator.next())) {
+                            iterator.remove(); // Remove overlapping subsequence
+                        }
+                    }
+                }
+            }
+
+            if (indicesList.size() > 1) {
+                maxLength = Math.max(maxLength, subsequence.length());
+            }
+        }
+
+        return maxLength;
+    }
+
+    private static boolean hasOverlappingIndices(List<Integer> indices1, List<Integer> indices2) {
+        for (int i = 0; i < indices1.size(); i++) {
+            if (indices1.get(i) == indices2.get(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+
+//Improved Approach
+
+public class Solution {
+    public static int longestRepeatingSubsequence(String str, int n) {
+        return computeLrs(str, str, 0, 0);
+    }
+
+    private static int computeLrs(String str1, String str2, int i, int j) {
+        if (i == str1.length() || j == str2.length()) {
+            return 0;
+        }
+
+        if (i != j && str1.charAt(i) == str2.charAt(j)) {
+            return 1 + computeLrs(str1, str2, i + 1, j + 1);
+        }
+
+        return Math.max(computeLrs(str1, str2, i + 1, j), computeLrs(str1, str2, i, j + 1));
+    }
+}
+
+
+//Better Approach
+
+public class Solution {
+    private static int[][] memo;
+
+    public static int longestRepeatingSubsequence(String str, int n) {
+        memo = new int[str.length()][str.length()];
+        // Initialize the memoization array with -1 to indicate uncomputed values
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+
+        return computeLrs(str, str, 0, 0);
+    }
+
+    private static int computeLrs(String str1, String str2, int i, int j) {
+        if (i == str1.length() || j == str2.length()) {
+            return 0;
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        if (i != j && str1.charAt(i) == str2.charAt(j)) {
+            return memo[i][j] = 1 + computeLrs(str1, str2, i + 1, j + 1);
+        }
+
+        return memo[i][j] = Math.max(computeLrs(str1, str2, i + 1, j), computeLrs(str1, str2, i, j + 1));
+    }
+}
+
+//Optimal Approach
+
+public class Solution {
+    public static int longestRepeatingSubsequence(String str, int n) {
+        int[][] dp = new int[n + 1][n + 1];
+        // dp[i][j]=length of longest repeating subsequence between str[0...i-1] and str[0..j-1]
+        for (int i = 1; i <= n; i++) {
+            // Check if characters are the same but at different positions
+            for (int j = 1; j <= n; j++) {
+                if (i != j && str.charAt(i - 1) == str.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
+                }
+            }
+        }
+
+        return dp[n][n];
+    }
+}
+
+//Aliter (Space optimised)
+
+public class Solution {
+    public static int longestRepeatingSubsequence(String str, int n) {
+        int[] curRow = new int[n + 1];
+        int[] prevRow = new int[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (i != j && str.charAt(i - 1) == str.charAt(j - 1)) {
+                    curRow[j] = 1 + prevRow[j - 1];
+                } else {
+                    curRow[j] = Math.max(curRow[j - 1], prevRow[j]);
+                }
+            }
+
+            int[] temp = curRow;
+            curRow = prevRow;
+            prevRow = temp;
+        }
+
+        return prevRow[n];
+    }
+}
