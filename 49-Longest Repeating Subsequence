@@ -9,8 +9,7 @@ public class Solution {
             String subsequence = entry.getKey();
             List<List<Integer>> indicesList = entry.getValue();
 
-            // Only consider if there are more than one occurrence of the subsequence i.e a
-            // repeating subsequence
+            // Only consider if there are more than one occurrence of the subsequence i.e a repeating subsequence
             if (indicesList.size() > 1) {
                 for (int i = 0; i < indicesList.size(); i++) {
                     Iterator<List<Integer>> iterator = indicesList.listIterator(i + 1);
