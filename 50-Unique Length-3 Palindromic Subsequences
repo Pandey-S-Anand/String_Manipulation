@@ -141,6 +141,38 @@ class Solution {
     }
 }
 
+/*
+Ex: 
+str= "bbcbabbaaabab"
+
+All palindromic subsequences of length 3 : (Total = 17)
+
+bbb
+bcb
+bbb (repeated)
+bab
+aba
+bbb (repeated)
+aba (repeated)
+bbb (repeated)
+aaa
+bab (repeated)
+aaa (repeated)
+bab (repeated)
+aaa (repeated)
+bab (repeated)
+aba (repeated)
+bbb (repeated)
+bab (repeated)
+
+All unique palindromic subsequences of length 3 : (Total = 5)
+
+bbb
+bcb
+bab
+aba
+aaa
+*/
 
 //Further Optimised
 
@@ -179,3 +211,34 @@ class Solution {
 
 //Optimal Approach
 
+class Solution {
+    public int countPalindromicSubsequence(String str) {
+        boolean[][] seen = new boolean[26][26]; //Tracks whether we have already counted the palindrome that starts and ends with ch1 and has ch2 in the middle.
+        boolean[] leftSeen = new boolean[26];
+        int[] rightSeenCount = new int[26];
+        int count = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            rightSeenCount[str.charAt(i) - 'a']++;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+
+            rightSeenCount[str.charAt(i) - 'a']--;
+
+            for (char ch = 'a'; ch <= 'z'; ch++) {
+                if (leftSeen[ch - 'a'] && rightSeenCount[ch - 'a'] > 0) {
+                    // Check if this pair has been seen before
+                    if (!seen[ch - 'a'][str.charAt(i) - 'a']) {
+                        count++; // Count this palindromic subsequence
+                        seen[ch - 'a'][str.charAt(i) - 'a'] = true; // Mark this pair as seen
+                    }
+                }
+            }
+
+            leftSeen[str.charAt(i) - 'a'] = true;
+        }
+
+        return count;
+    }
+}
