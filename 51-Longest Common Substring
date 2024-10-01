@@ -1,0 +1,133 @@
+//Improved Approach
+
+class Solution {
+    public int longestCommonSubstr(String str1, String str2) {
+        return longestCommonSubstring(str1, str2, 0, 0, 0);
+    }
+
+    private int longestCommonSubstring(String str1, String str2, int i, int j, int currentLength) {
+        if (i == str1.length() || j == str2.length()) {
+            return currentLength;
+        }
+
+        int len1 = currentLength;
+        if (str1.charAt(i) == str2.charAt(j)) {
+            len1 = longestCommonSubstring(str1, str2, i + 1, j + 1, currentLength + 1);
+        }
+
+        int len2 = longestCommonSubstring(str1, str2, i + 1, j, 0);
+        int len3 = longestCommonSubstring(str1, str2, i, j + 1, 0);
+
+        return Math.max(len1, Math.max(len2, len3));
+    }
+}
+
+//Better Approach
+
+class Solution {
+    private int[][][] memo;
+
+    public int longestCommonSubstr(String str1, String str2) {
+        memo = new int[str1.length()][str2.length()][Math.min(str1.length(), str2.length())];
+        for (int i = 0; i < str1.length(); i++) {
+            for (int j = 0; j < str2.length(); j++) {
+                Arrays.fill(memo[i][j], -1);
+            }
+        }
+
+        return longestCommonSubstring(str1, str2, 0, 0, 0);
+    }
+
+    private int longestCommonSubstring(String str1, String str2, int i, int j, int currentLength) {
+        if (i == str1.length() || j == str2.length()) {
+            return currentLength;
+        }
+
+        if (memo[i][j][currentLength] != -1) {
+            return memo[i][j][currentLength];
+        }
+
+        int len1 = currentLength;
+        if (str1.charAt(i) == str2.charAt(j)) {
+            len1 = longestCommonSubstring(str1, str2, i + 1, j + 1, currentLength + 1);
+        }
+
+        int len2 = longestCommonSubstring(str1, str2, i + 1, j, 0);
+        int len3 = longestCommonSubstring(str1, str2, i, j + 1, 0);
+
+        return memo[i][j][currentLength] = Math.max(len1, Math.max(len2, len3));
+    }
+}
+
+
+
+//Optimal Approach
+
+//Naive Implementation 
+
+class Solution {
+    public int longestCommonSubstr(String str1, String str2) {
+        int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+        int maxLength = 0;
+
+        for (int i = 1; i <= str1.length(); i++) {
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                    maxLength = Math.max(maxLength, dp[i][j]);
+                } else {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+
+        return maxLength;
+    }
+}
+
+//Optimal Implementation
+
+class Solution {
+    public int longestCommonSubstr(String str1, String str2) {
+        int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+        int maxLength = 0;
+
+        for (int i = 1; i <= str1.length(); i++) {
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                    maxLength = Math.max(maxLength, dp[i][j]);
+                }
+            }
+        }
+
+        return maxLength;
+    }
+}
+
+
+//Aliter (space optimised)
+
+class Solution {
+    public int longestCommonSubstr(String str1, String str2) {
+        int[] currentRow = new int[str2.length() + 1];
+        int[] previousRow = new int[str2.length() + 1];
+        int maxLength = 0;
+
+        for (int i = 1; i <= str1.length(); i++) {
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    currentRow[j] = 1 + previousRow[j - 1];
+                    maxLength = Math.max(maxLength, currentRow[j]);
+                } else {
+                    currentRow[j] = 0;
+                }
+            }
+            int[] temp = currentRow;
+            currentRow = previousRow;
+            previousRow = temp;
+        }
+
+        return maxLength;
+    }
+}
