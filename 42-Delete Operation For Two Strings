@@ -1,3 +1,149 @@
+//Without LCS
+
+//Bruteforce Approach
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        return findMinDeletions(word1, word2, 0, 0);
+    }
+
+    private int findMinDeletions(String word1, String word2, int i, int j) {
+        // Base case: if we reach the end of both the strings word1 and word2
+         if(i == word1.length() && j == word2.length()){
+            return 0;
+        }
+        // Base case: if we reach the end of word1
+        if (i == word1.length()) {
+            return word2.length() - j; // All remaining characters in word2 must be deleted
+        }
+        // Base case: if we reach the end of word2
+        if (j == word2.length()) {
+            return word1.length() - i; // All remaining characters in word1 must be deleted
+        }
+
+        // If the characters match, move to the next characters in both strings
+        if (word1.charAt(i) == word2.charAt(j)) {
+            return findMinDeletions(word1, word2, i + 1, j + 1);
+        }
+
+        // If characters do not match, consider deleting from either string and take the minimum of both possibilities
+        return 1 + Math.min(findMinDeletions(word1, word2, i + 1, j), findMinDeletions(word1, word2, i, j + 1));
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private int[][] memo;
+
+    public int minDistance(String word1, String word2) {
+        memo = new int[word1.length()][word2.length()];
+        intializeMemo();
+        return findMinDeletions(word1, word2, 0, 0);
+    }
+
+    private int findMinDeletions(String word1, String word2, int i, int j) {
+        // Base case: if we reach the end of both the strings word1 and word2
+        if (i == word1.length() && j == word2.length()) {
+            return 0;
+        }
+        // Base case: if we reach the end of word1
+        if (i == word1.length()) {
+            return word2.length() - j; // All remaining characters in word2 must be deleted
+        }
+        // Base case: if we reach the end of word2
+        if (j == word2.length()) {
+            return word1.length() - i; // All remaining characters in word1 must be deleted
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        // If the characters match, move to the next characters in both strings
+        if (word1.charAt(i) == word2.charAt(j)) {
+            return memo[i][j] = findMinDeletions(word1, word2, i + 1, j + 1);
+        }
+
+        // If characters do not match, consider deleting from either string and take the minimum of both possibilities
+        return memo[i][j] = 1 + Math.min(findMinDeletions(word1, word2, i + 1, j), findMinDeletions(word1, word2, i, j + 1));
+    }
+
+    private void intializeMemo() {
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        // dp[i][j] will represent the minimum number of deletions required to make word1[0..i-1] equal to word2[0..j-1]
+        int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+
+        // dp[0][0] = 0 : Initialize dp[0][0] to 0, as no deletions are needed for two empty strings
+
+        // If word2 is empty , we need to delete all characters of word1
+        for (int i = 1; i <= word1.length(); i++) {
+            dp[i][0] = i;
+        }
+
+        // If word1 is empty , we need to delete all characters of word2
+        for (int i = 1; i <= word2.length(); i++) {
+            dp[0][i] = i;
+        }
+
+        for (int i = 1; i <= word1.length(); i++) {
+            for (int j = 1; j <= word2.length(); j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+
+        return dp[word1.length()][word2.length()];
+    }
+}
+
+//Aliter (Space optimized)
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int[] currRow = new int[word2.length() + 1];
+        int[] prevRow = new int[word2.length() + 1];
+
+        // If word1 is empty , we need to delete all characters of word2
+        for (int i = 1; i <= word2.length(); i++) {
+            prevRow[i] = i;
+        }
+
+        for (int i = 1; i <= word1.length(); i++) {
+            currRow[0] = i; // if word2 is empty , we need to delete all characters of word1
+            for (int j = 1; j <= word2.length(); j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    currRow[j] = prevRow[j - 1];
+                } else {
+                    currRow[j] = 1 + Math.min(prevRow[j], currRow[j - 1]);
+                }
+            }
+
+            int[] temp = currRow;
+            currRow = prevRow;
+            prevRow = temp;
+        }
+
+        return prevRow[word2.length()];
+    }
+}
+
+
+
 //Using LCS
 
 /*
