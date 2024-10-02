@@ -1,0 +1,305 @@
+//Without LCS
+
+// Naive Approach
+
+class Solution {
+    public int findMinCost(String word1, String word2, int cost1, int cost2) {
+        return findMinDeletionsCost(word1, word2, 0, 0, cost1, cost2);
+    }
+
+    private int findMinDeletionsCost(String word1, String word2, int i, int j, int cost1, int cost2) {
+        // Base case: if we reach the end of both the strings word1 and word2
+        if (i == word1.length() && j == word2.length()) {
+            return 0; // No cost if both strings are empty
+        }
+        // Base case: if we reach the end of word1
+        if (i == word1.length()) {
+            return cost2 * (word2.length() - j); // Cost for deleting remaining characters in word2
+        }
+        // Base case: if we reach the end of word2
+        if (j == word2.length()) {
+            return cost1 * (word1.length() - i); // Cost for deleting remaining characters in word1
+        }
+
+        // If the characters match, move to the next characters in both strings
+        if (word1.charAt(i) == word2.charAt(j)) {
+            return findMinDeletionsCost(word1, word2, i + 1, j + 1, cost1, cost2);
+        }
+
+        // Calculate cost for deleting a character from either string and take the minimum of both possibilities
+        int costToDeleteFromWord1 = cost1 + findMinDeletionsCost(word1, word2, i + 1, j, cost1, cost2);
+        int costToDeleteFromWord2 = cost2 + findMinDeletionsCost(word1, word2, i, j + 1, cost1, cost2);
+
+        return Math.min(costToDeleteFromWord1, costToDeleteFromWord2);
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private int[][] memo;
+
+    public int findMinCost(String word1, String word2, int cost1, int cost2) {
+        memo = new int[word1.length()][word2.length()];
+        intializeMemo();
+        return findMinDeletionsCost(word1, word2, 0, 0, cost1, cost2);
+    }
+
+    private int findMinDeletionsCost(String word1, String word2, int i, int j, int cost1, int cost2) {
+        // Base case: if we reach the end of both the strings word1 and word2
+        if (i == word1.length() && j == word2.length()) {
+            return 0; // No cost if both strings are empty
+        }
+        // Base case: if we reach the end of word1
+        if (i == word1.length()) {
+            return cost2 * (word2.length() - j); // Cost for deleting remaining characters in word2
+        }
+        // Base case: if we reach the end of word2
+        if (j == word2.length()) {
+            return cost1 * (word1.length() - i); // Cost for deleting remaining characters in word1
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        // If the characters match, move to the next characters in both strings
+        if (word1.charAt(i) == word2.charAt(j)) {
+            return memo[i][j] = findMinDeletionsCost(word1, word2, i + 1, j + 1, cost1, cost2);
+        }
+
+        // Calculate cost for deleting a character from either string and take the minimum of both possibilities
+        int costToDeleteFromWord1 = cost1 + findMinDeletionsCost(word1, word2, i + 1, j, cost1, cost2);
+        int costToDeleteFromWord2 = cost2 + findMinDeletionsCost(word1, word2, i, j + 1, cost1, cost2);
+
+        return memo[i][j] = Math.min(costToDeleteFromWord1, costToDeleteFromWord2);
+    }
+
+    private void intializeMemo() {
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+    }
+}
+
+//Optimal Approach
+
+class Solution {
+    public int findMinCost(String word1, String word2, int cost1, int cost2) {
+        // dp[i][j] represents the minimum cost to make word1[0..i-1] and word2[0..j-1] the same by deleting characters.
+        int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+        
+        // dp[0][0] = 0 : No deletion, hence no cost when both words are empty.
+        // if word2 is empty, we need to delete all characters of word1, the cost to delete the first i characters from word1 is i * cost1
+        for (int i = 1; i <= word1.length(); i++) {
+            dp[i][0] = i * cost1;
+        }
+
+        // if word1 is empty, we need to delete all characters of word2, the cost to delete the first i characters from word2 is i * cost2
+        for (int i = 1; i <= word2.length(); i++) {
+            dp[0][i] = i * cost2;
+        }
+
+        for (int i = 1; i <= word1.length(); i++) {
+            for (int j = 1; j <= word2.length(); j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(cost1 + dp[i - 1][j], cost2 + dp[i][j - 1]);
+                }
+            }
+        }
+
+        return dp[word1.length()][word2.length()];
+    }
+}
+
+//Aliter (Space optimised)
+
+class Solution {
+    public int findMinCost(String word1, String word2, int cost1, int cost2) {
+        int[]currRow=new int[word2.length()+1];
+        int[]prevRow=new int[word2.length()+1];
+        
+        //prevRow[0]=0 : No deletion, hence no cost when both words are empty.
+        
+        // if word1 is empty, we need to delete all characters of word2, the cost to delete the first i characters from word2 is i * cost2
+        for (int i = 1; i <= word2.length(); i++) {
+            prevRow[i] = i * cost2;
+        }
+        
+        for (int i = 1; i <= word1.length(); i++) {
+            // if word2 is empty, we need to delete all characters of word1, the cost to delete the first i characters from word1 is i * cost1
+            currRow[0]=i*cost1;
+            for (int j = 1; j <= word2.length(); j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    currRow[j] = prevRow[j - 1];
+                }else {
+                    currRow[j] = Math.min(cost1 + prevRow[j], cost2 + currRow[j - 1]);
+                }
+            }
+            
+            int[]temp=currRow;
+            currRow=prevRow;
+            prevRow=temp;
+        }
+
+        return prevRow[word2.length()];
+    }
+}
+
+
+//Using LCS
+
+//Bruteforce Approach
+
+class Solution {
+    public int findMinCost(String word1, String word2, int cost1, int cost2) {
+        int lcs = longestCommonSubsequence(word1, word2);
+        return (word1.length() - lcs) * cost1 + (word2.length() - lcs) * cost2;
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        List<String> subsequences1 = generateSubsequences(str1);
+        List<String> subsequences2 = generateSubsequences(str2);
+        int maxLength = 0;
+
+        for (String subsequence1 : subsequences1) {
+            for (String subsequence2 : subsequences2) {
+                if (subsequence1.equals(subsequence2)) {
+                    maxLength = Math.max(maxLength, subsequence1.length());
+                }
+            }
+        }
+
+        return maxLength;
+    }
+
+    private List<String> generateSubsequences(String str) {
+        List<String> subsequences = new ArrayList<>();
+        subsequences.add(""); // Start with the empty subsequence
+
+        for (int i = 0; i < str.length(); i++) {
+            int size = subsequences.size();
+            for (int j = 0; j < size; j++) {
+                subsequences.add(subsequences.get(j) + str.charAt(i));
+            }
+        }
+
+        return subsequences;
+    }
+}
+
+
+//Improved Approach
+
+class Solution {
+    public int findMinCost(String word1, String word2, int cost1, int cost2) {
+        int lcs = longestCommonSubsequence(word1, word2, 0, 0);
+        return (word1.length() - lcs) * cost1 + (word2.length() - lcs) * cost2;
+    }
+
+    private int longestCommonSubsequence(String str1, String str2, int i, int j) {
+        if (i == str1.length() || j == str2.length()) {
+            return 0;
+        }
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return 1 + longestCommonSubsequence(str1, str2, i + 1, j + 1);
+        }
+
+        return Math.max(longestCommonSubsequence(str1, str2, i + 1, j), longestCommonSubsequence(str1, str2, i, j + 1));
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private int[][] memo;
+
+    public int findMinCost(String word1, String word2, int cost1, int cost2) {
+        memo = new int[word1.length()][word2.length()];
+        intializeMemo();
+        int lcs = longestCommonSubsequence(word1, word2, 0, 0);
+        return (word1.length() - lcs) * cost1 + (word2.length() - lcs) * cost2;
+    }
+
+    private int longestCommonSubsequence(String str1, String str2, int i, int j) {
+        if (i == str1.length() || j == str2.length()) {
+            return 0;
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return memo[i][j] = 1 + longestCommonSubsequence(str1, str2, i + 1, j + 1);
+        }
+
+        return memo[i][j] = Math.max(longestCommonSubsequence(str1, str2, i + 1, j), longestCommonSubsequence(str1, str2, i, j + 1));
+    }
+
+    private void intializeMemo() {
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int findMinCost(String word1, String word2, int cost1, int cost2) {
+        int lcs = longestCommonSubsequence(word1, word2);
+        return (word1.length() - lcs) * cost1 + (word2.length() - lcs) * cost2;
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+
+        for (int i = 1; i <= str1.length(); i++) {
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+
+        return dp[str1.length()][str2.length()];
+    }
+}
+
+
+//Aliter (space optimised)
+
+class Solution {
+    public int findMinCost(String word1, String word2, int cost1, int cost2) {
+        int lcs = longestCommonSubsequence(word1, word2);
+        return (word1.length() - lcs) * cost1 + (word2.length() - lcs) * cost2;
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        int[] previousRow = new int[str2.length() + 1];
+        int[] currentRow = new int[str2.length() + 1];
+
+        for (int i = 1; i <= str1.length(); i++) {
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    currentRow[j] = 1 + previousRow[j - 1];
+                } else {
+                    currentRow[j] = Math.max(previousRow[j], currentRow[j - 1]);
+                }
+            }
+            int[] temp = previousRow;
+            previousRow = currentRow;
+            currentRow = temp;
+        }
+
+        return previousRow[str2.length()];
+    }
+}
