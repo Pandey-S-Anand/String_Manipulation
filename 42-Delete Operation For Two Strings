@@ -1,0 +1,151 @@
+//Using LCS
+
+//Bruteforce Approach
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int lcs = longestCommonSubsequence(word1, word2);
+        return (word1.length() - lcs) + (word2.length() - lcs);
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        List<String> subsequences1 = generateSubsequences(str1);
+        List<String> subsequences2 = generateSubsequences(str2);
+        int maxLength = 0;
+
+        for (String subsequence1 : subsequences1) {
+            for (String subsequence2 : subsequences2) {
+                if (subsequence1.equals(subsequence2)) {
+                    maxLength = Math.max(maxLength, subsequence1.length());
+                }
+            }
+        }
+
+        return maxLength;
+    }
+
+    private List<String> generateSubsequences(String str) {
+        List<String> subsequences = new ArrayList<>();
+        subsequences.add(""); // Start with the empty subsequence
+
+        for (int i = 0; i < str.length(); i++) {
+            int size = subsequences.size();
+            for (int j = 0; j < size; j++) {
+                subsequences.add(subsequences.get(j) + str.charAt(i));
+            }
+        }
+
+        return subsequences;
+    }
+}
+
+//Improved Approach
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int lcs = longestCommonSubsequence(word1, word2, 0, 0);
+        return (word1.length() - lcs) + (word2.length() - lcs);
+    }
+
+    private int longestCommonSubsequence(String str1, String str2, int i, int j) {
+        if (i == str1.length() || j == str2.length()) {
+            return 0;
+        }
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return 1 + longestCommonSubsequence(str1, str2, i + 1, j + 1);
+        }
+
+        return Math.max(longestCommonSubsequence(str1, str2, i + 1, j), longestCommonSubsequence(str1, str2, i, j + 1));
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private int[][] memo;
+
+    public int minDistance(String word1, String word2) {
+        memo = new int[word1.length()][word2.length()];
+        intializeMemo();
+        int lcs = longestCommonSubsequence(word1, word2, 0, 0);
+        return (word1.length() - lcs) + (word2.length() - lcs);
+    }
+
+    private int longestCommonSubsequence(String str1, String str2, int i, int j) {
+        if (i == str1.length() || j == str2.length()) {
+            return 0;
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return memo[i][j] = 1 + longestCommonSubsequence(str1, str2, i + 1, j + 1);
+        }
+
+        return memo[i][j] = Math.max(longestCommonSubsequence(str1, str2, i + 1, j), longestCommonSubsequence(str1, str2, i, j + 1));
+    }
+
+    private void intializeMemo() {
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int lcs = longestCommonSubsequence(word1, word2);
+        return (word1.length() - lcs) + (word2.length() - lcs);
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+
+        for (int i = 1; i <= str1.length(); i++) {
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+
+        return dp[str1.length()][str2.length()];
+    }
+}
+
+//Aliter (space optimised)
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int lcs = longestCommonSubsequence(word1, word2);
+        return (word1.length() - lcs) + (word2.length() - lcs);
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        int[] previousRow = new int[str2.length() + 1];
+        int[] currentRow = new int[str2.length() + 1];
+
+        for (int i = 1; i <= str1.length(); i++) {
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    currentRow[j] = 1 + previousRow[j - 1];
+                } else {
+                    currentRow[j] = Math.max(previousRow[j], currentRow[j - 1]);
+                }
+            }
+            int[] temp = previousRow;
+            previousRow = currentRow;
+            currentRow = temp;
+        }
+
+        return previousRow[str2.length()];
+    }
+}
