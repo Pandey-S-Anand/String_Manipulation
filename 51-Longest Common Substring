@@ -120,6 +120,12 @@ class Solution {
 class Solution {
     public int longestCommonSubstr(String str1, String str2) {
         int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+        /*
+         * Represents the length of the longest common substring that can be formed
+         * using:
+         * The first i characters of str1 i.e (str1[0..i-1])
+         * The first j characters of str2 i.e (str2[0..j-1])
+         */
         int maxLength = 0;
 
         for (int i = 1; i <= str1.length(); i++) {
