@@ -34,7 +34,7 @@ class Solution {
     private int[][] memo;
 
     int minDeletions(String str, int n) {
-        memo = new int[str.length()][str.length()];
+        memo = new int[n][n];
         intializeMemo();
         return minDeletions(str, 0, n - 1);
     }
