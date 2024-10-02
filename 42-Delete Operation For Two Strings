@@ -1,5 +1,14 @@
 //Using LCS
 
+/*
+Calculate the minimum deletions:
+
+To make word1 equal to word2, the characters that are not part of the LCS must be deleted.
+The number of deletions required for word1 is word1.length() - LCS.
+The number of deletions required for word2 is word2.length() - LCS.
+The total number of deletions is the sum of these two values.
+*/
+
 //Bruteforce Approach
 
 class Solution {
