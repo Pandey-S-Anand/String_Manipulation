@@ -1,64 +1,116 @@
+//Bruteforce Approach
+
+class Solution {
+    public int longestCommonSubstr(String str1, String str2) {
+        int maxLength = 0;
+        List<String> substrings1 = generateSubstrings(str1);
+        List<String> substrings2 = generateSubstrings(str2);
+
+        for (String substring1 : substrings1) {
+            for (String substring2 : substrings2) {
+                if (substring1.length() == substring2.length() && substring1.equals(substring2)) {
+                    maxLength = Math.max(maxLength, substring1.length());
+                }
+            }
+        }
+
+        return maxLength;
+    }
+
+    private List<String> generateSubstrings(String str) {
+        List<String> substrings = new ArrayList<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            for (int j = i; j < str.length(); j++) {
+                substrings.add(str.substring(i, j + 1));
+            }
+        }
+
+        return substrings;
+    }
+}
+
+
 //Improved Approach
 
 class Solution {
     public int longestCommonSubstr(String str1, String str2) {
-        return longestCommonSubstring(str1, str2, 0, 0, 0);
+        int maxLengthCommonSuffix = 0;
+
+        // Iterate over all combinations of prefixes of str1 and str2
+        for (int i = 0; i < str1.length(); i++) {
+            for (int j = 0; j < str2.length(); j++) {
+                // Compute the length of common suffix for the current prefixes of str1(str1[0..i]) and str2 (str2[0..j])
+                int commonSuffixLength = longestCommonSuffix(str1, str2, i, j);
+                maxLengthCommonSuffix = Math.max(maxLengthCommonSuffix, commonSuffixLength);
+            }
+        }
+
+        return maxLengthCommonSuffix;
     }
 
-    private int longestCommonSubstring(String str1, String str2, int i, int j, int currentLength) {
-        if (i == str1.length() || j == str2.length()) {
-            return currentLength;
+    private int longestCommonSuffix(String str1, String str2, int i, int j) {
+        // Base case: if either of the string is empty, no common suffix possible
+        if (i < 0 || j < 0) {
+            return 0;
         }
 
-        int len1 = currentLength;
+        // If characters at the current positions match, the common suffix extends by 1
         if (str1.charAt(i) == str2.charAt(j)) {
-            len1 = longestCommonSubstring(str1, str2, i + 1, j + 1, currentLength + 1);
+            return longestCommonSuffix(str1, str2, i - 1, j - 1) + 1;
         }
 
-        int len2 = longestCommonSubstring(str1, str2, i + 1, j, 0);
-        int len3 = longestCommonSubstring(str1, str2, i, j + 1, 0);
-
-        return Math.max(len1, Math.max(len2, len3));
+        return 0; // If characters don't match, no common suffix
     }
 }
+
 
 //Better Approach
 
 class Solution {
-    private int[][][] memo;
+    int[][] memo; // memo[i][j]=Length of longest common suffix between str1[0...i] and str2[0...j]
 
     public int longestCommonSubstr(String str1, String str2) {
-        memo = new int[str1.length()][str2.length()][Math.min(str1.length(), str2.length())];
+        memo = new int[str1.length()][str2.length()];
+
+        intializeMemo();
+
+        int maxLengthCommonSuffix = 0;
+
+        // Iterate over all combinations of prefixes of str1 and str2
         for (int i = 0; i < str1.length(); i++) {
             for (int j = 0; j < str2.length(); j++) {
-                Arrays.fill(memo[i][j], -1);
+                // Compute the length of common suffix for the current prefixes of str1 (str1[0..i]) and str2 (str2[0..j])
+                int commonSuffixLength = longestCommonSuffix(str1, str2, i, j);
+                maxLengthCommonSuffix = Math.max(maxLengthCommonSuffix, commonSuffixLength);
             }
         }
 
-        return longestCommonSubstring(str1, str2, 0, 0, 0);
+        return maxLengthCommonSuffix;
     }
 
-    private int longestCommonSubstring(String str1, String str2, int i, int j, int currentLength) {
-        if (i == str1.length() || j == str2.length()) {
-            return currentLength;
+    private int longestCommonSuffix(String str1, String str2, int i, int j) {
+        if (i < 0 || j < 0) {
+            return 0;
         }
 
-        if (memo[i][j][currentLength] != -1) {
-            return memo[i][j][currentLength];
+        if (memo[i][j] != -1) {
+            return memo[i][j];
         }
 
-        int len1 = currentLength;
         if (str1.charAt(i) == str2.charAt(j)) {
-            len1 = longestCommonSubstring(str1, str2, i + 1, j + 1, currentLength + 1);
+            return memo[i][j] = longestCommonSuffix(str1, str2, i - 1, j - 1) + 1;
         }
 
-        int len2 = longestCommonSubstring(str1, str2, i + 1, j, 0);
-        int len3 = longestCommonSubstring(str1, str2, i, j + 1, 0);
+        return memo[i][j] = 0;
+    }
 
-        return memo[i][j][currentLength] = Math.max(len1, Math.max(len2, len3));
+    private void intializeMemo() {
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
     }
 }
-
 
 
 //Optimal Approach
