@@ -1,3 +1,104 @@
+//Naive Approach
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        return minDistance(word1, word2, 0, 0);
+    }
+
+    private int minDistance(String word1, String word2, int i, int j) {
+        // Base case: if both strings have been fully processed
+        if (i == word1.length() && j == word2.length()) {
+            return 0; // No more operations needed
+        }
+
+        // If word1 is exhausted, the remaining characters of word2 need to be inserted in word1
+        if (i == word1.length()) {
+            return word2.length() - j; // Number of insert operations to add remaining characters of word2
+        }
+
+        // If word2 is exhausted, the remaining characters of word1 need to be deleted
+        if (j == word2.length()) {
+            return word1.length() - i; // Number of delete operations to remove remaining characters of word1
+        }
+
+        // If the current characters of word1 and word2 are the same, move to the next characters without any operation
+        if (word1.charAt(i) == word2.charAt(j)) {
+            return minDistance(word1, word2, i + 1, j + 1);
+        }
+
+        // If the current characters differ, we have 3 possible operations:
+        // 1. Replace the character in word1 with word2's character (substitution)
+        // 2. Insert the current character of word2 into word1 (insertion)
+        // 3. Delete the current character of word1 (deletion)
+        // The result is 1 (for performing an operation) plus the minimum of these three operations
+        return 1 + Math.min(
+                minDistance(word1, word2, i + 1, j + 1), // Substitution operation
+                Math.min(
+                        minDistance(word1, word2, i, j + 1), // Insertion operation
+                        minDistance(word1, word2, i + 1, j) // Deletion operation
+                ));
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private int[][] memo;
+
+    public int minDistance(String word1, String word2) {
+        memo = new int[word1.length()][word2.length()];
+        intializeMemo();
+        return minDistance(word1, word2, 0, 0);
+    }
+
+    private int minDistance(String word1, String word2, int i, int j) {
+        // Base case: if both strings have been fully processed
+        if (i == word1.length() && j == word2.length()) {
+            return 0; // No more operations needed
+        }
+
+        // If word1 is exhausted, the remaining characters of word2 need to be inserted in word1
+        if (i == word1.length()) {
+            return word2.length() - j; // Number of insert operations to add remaining characters of word2
+        }
+
+        // If word2 is exhausted, the remaining characters of word1 need to be deleted
+        if (j == word2.length()) {
+            return word1.length() - i; // Number of delete operations to remove remaining characters of word1
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        // If the current characters of word1 and word2 are the same, move to the next characters without any operation
+        if (word1.charAt(i) == word2.charAt(j)) {
+            return memo[i][j] = minDistance(word1, word2, i + 1, j + 1);
+        }
+
+        // If the current characters differ, we have 3 possible operations:
+        // 1. Replace the character in word1 with word2's character (substitution)
+        // 2. Insert the current character of word2 into word1 (insertion)
+        // 3. Delete the current character of word1 (deletion)
+        // The result is 1 (for performing an operation) plus the minimum of these three
+        // operations
+        return memo[i][j] = 1 + Math.min(
+                minDistance(word1, word2, i + 1, j + 1), // Substitution operation
+                Math.min(
+                        minDistance(word1, word2, i, j + 1), // Insertion operation
+                        minDistance(word1, word2, i + 1, j) // Deletion operation
+                ));
+    }
+
+    private void intializeMemo() {
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+    }
+}
+
+
 //Optimal Approach
 
 class Solution {
