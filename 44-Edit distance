@@ -1,1 +1,61 @@
+//Optimal Approach
 
+class Solution {
+    public int minDistance(String word1, String word2) {
+        // dp[i][j] will store the minimum number of operations to convert string word1[0...i-1] to word2[0...j-1]
+        int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+
+        // if word1 is empty, insert all characters of word2 in word1
+        for (int i = 1; i <= word2.length(); i++) {
+            dp[0][i] = i;
+        }
+
+        // if word2 is empty, delete all characters of word1
+        for (int i = 1; i <= word1.length(); i++) {
+            dp[i][0] = i;
+        }
+
+        for (int i = 1; i <= word1.length(); i++) {
+            for (int j = 1; j <= word2.length(); j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = 1 + Math.min(dp[i - 1][j - 1], Math.min(dp[i - 1][j], dp[i][j - 1]));
+                }
+            }
+        }
+
+        return dp[word1.length()][word2.length()];
+    }
+}
+
+//Aliter (space optimised)
+
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int[] currRow = new int[word2.length() + 1];
+        int[] prevRow = new int[word2.length() + 1];
+
+        // if word1 is empty, insert all characters of word2 in word1
+        for (int i = 1; i <= word2.length(); i++) {
+            prevRow[i] = i;
+        }
+
+        for (int i = 1; i <= word1.length(); i++) {
+            currRow[0] = i; // if word2 is empty, delete all characters of word1
+            for (int j = 1; j <= word2.length(); j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    currRow[j] = prevRow[j - 1];
+                } else {
+                    currRow[j] = 1 + Math.min(prevRow[j - 1], Math.min(prevRow[j], currRow[j - 1]));
+                }
+            }
+
+            int[] temp = currRow;
+            currRow = prevRow;
+            prevRow = temp;
+        }
+
+        return prevRow[word2.length()];
+    }
+}
