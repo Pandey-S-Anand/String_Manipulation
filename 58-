@@ -1,0 +1,122 @@
+//Optimal Approach
+
+//Naive Implementation
+
+class Solution {
+    public boolean isMatch(String text, String pattern) {
+        // dp[i][j] is true if text[0..i-1] matches pattern[0..j-1]; otherwise, it is false.
+        boolean[][] dp = new boolean[text.length() + 1][pattern.length() + 1];
+
+        // Empty text and empty pattern is a match
+        dp[0][0] = true;
+
+        /*
+         * When the text is empty but the pattern is not:
+         * Non-asterisk characters cannot match an empty text, so dp[0][i] remains false.
+         * However, if the pattern contains '*', it can skip the preceding character,
+         * potentially allowing a match with the empty text(if dp[0][i-2] is true).
+         * We check dp[0][i-2] to see if the rest of the
+         * pattern up to that point can match the empty text.
+         */
+
+        for (int i = 1; i <= pattern.length(); i++) {
+            if (pattern.charAt(i - 1) == '*') {
+                dp[0][i] = dp[0][i - 2];
+            }
+        }
+
+        // If the pattern is empty but the text is not, the match is always false, as an empty pattern cannot match any non-empty text.
+        for (int i = 1; i <= text.length(); i++) {
+            dp[i][0] = false;
+        }
+
+        for (int i = 1; i <= text.length(); i++) {
+            for (int j = 1; j <= pattern.length(); j++) {
+                if (pattern.charAt(j - 1) == text.charAt(i - 1) || pattern.charAt(j - 1) == '.') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (pattern.charAt(j - 1) == '*') {
+                    dp[i][j] = dp[i][j - 2];
+                    if (pattern.charAt(j - 2) == text.charAt(i - 1) || pattern.charAt(j - 2) == '.') {
+                        dp[i][j] = dp[i][j] || dp[i - 1][j];
+                    }
+                } else {
+                    dp[i][j] = false;
+                }
+            }
+        }
+
+        return dp[text.length()][pattern.length()];
+    }
+}
+
+
+//Optimal Implementation
+
+class Solution {
+    public boolean isMatch(String text, String pattern) {
+        boolean[][] dp = new boolean[text.length() + 1][pattern.length() + 1];
+
+        dp[0][0] = true;
+
+        for (int i = 1; i <= pattern.length(); i++) {
+            if (pattern.charAt(i - 1) == '*') {
+                dp[0][i] = dp[0][i - 2];
+            }
+        }
+
+        for (int i = 1; i <= text.length(); i++) {
+            for (int j = 1; j <= pattern.length(); j++) {
+                if (pattern.charAt(j - 1) == text.charAt(i - 1) || pattern.charAt(j - 1) == '.') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (pattern.charAt(j - 1) == '*') {
+                    dp[i][j] = dp[i][j - 2];
+                    if (pattern.charAt(j - 2) == text.charAt(i - 1) || pattern.charAt(j - 2) == '.') {
+                        dp[i][j] = dp[i][j] || dp[i - 1][j];
+                    }
+                }
+            }
+        }
+
+        return dp[text.length()][pattern.length()];
+    }
+}
+
+
+//Aliter (Space optimised)
+
+class Solution {
+    public boolean isMatch(String text, String pattern) {
+        boolean[] currRow = new boolean[pattern.length() + 1];
+        boolean[] prevRow = new boolean[pattern.length() + 1];
+
+        prevRow[0] = true;
+
+        for (int i = 1; i <= pattern.length(); i++) {
+            if (pattern.charAt(i - 1) == '*') {
+                prevRow[i] = prevRow[i - 2];
+            }
+        }
+
+        for (int i = 1; i <= text.length(); i++) {
+            currRow[0] = false;
+            for (int j = 1; j <= pattern.length(); j++) {
+                if (pattern.charAt(j - 1) == text.charAt(i - 1) || pattern.charAt(j - 1) == '.') {
+                    currRow[j] = prevRow[j - 1];
+                } else if (pattern.charAt(j - 1) == '*') {
+                    currRow[j] = currRow[j - 2];
+                    if (pattern.charAt(j - 2) == text.charAt(i - 1) || pattern.charAt(j - 2) == '.') {
+                        currRow[j] = currRow[j] || prevRow[j];
+                    }
+                } else {
+                    currRow[j] = false;
+                }
+            }
+
+            boolean[] temp = currRow;
+            currRow = prevRow;
+            prevRow = temp;
+        }
+
+        return prevRow[pattern.length()];
+    }
+}
