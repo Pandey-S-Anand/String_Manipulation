@@ -1,0 +1,206 @@
+//Naive Approach
+
+class Solution {
+    public boolean isMatch(String text, String pattern) {
+        return isMatching(text, pattern, 0, 0);
+    }
+
+    private boolean isMatching(String text, String pattern, int i, int j) {
+        // Base case: If both strings are fully processed, it's a match
+        if (i == text.length() && j == pattern.length()) {
+            return true;
+        }
+
+        // If the pattern is fully processed but the text is not, return false
+        if (j == pattern.length()) {
+            return false;
+        }
+
+        // If the text is fully processed but the pattern is not
+        if (i == text.length()) {
+            // Ensure the remaining pattern is all '*', which can match an empty string
+            while (j < pattern.length() && pattern.charAt(j) == '*') {
+                j++;
+            }
+            return j == pattern.length(); // Return true if we processed the entire pattern
+        }
+
+        // Match if current characters are the same or pattern has '?'
+        if (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '?') {
+            return isMatching(text, pattern, i + 1, j + 1);
+        }
+
+        /*
+         * If pattern has '*', we can:
+         * 1. Skip the '*' in the pattern
+         * 2. Use '*' to match one character in the text and continue matching
+         */
+        if (pattern.charAt(j) == '*') {
+            return isMatching(text, pattern, i, j + 1) || isMatching(text, pattern, i + 1, j);
+        }
+
+        // If the current characters don't match, and the pattern character is neither '?' nor '*', the match fails
+        return false;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private int[][] memo;
+
+    public boolean isMatch(String text, String pattern) {
+        memo = new int[text.length()][pattern.length()];
+        intializeMemo();
+        return isMatching(text, pattern, 0, 0);
+    }
+
+    private boolean isMatching(String text, String pattern, int i, int j) {
+        if (i == text.length() && j == pattern.length()) {
+            return true;
+        }
+
+        if (j == pattern.length()) {
+            return false;
+        }
+
+        if (i == text.length()) {
+            while (j < pattern.length() && pattern.charAt(j) == '*') {
+                j++;
+            }
+            return j == pattern.length();
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j] == 1;
+        }
+
+        if (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '?') {
+            memo[i][j] = isMatching(text, pattern, i + 1, j + 1) ? 1 : 0;
+            return memo[i][j] == 1;
+        }
+
+        if (pattern.charAt(j) == '*') {
+            memo[i][j] = (isMatching(text, pattern, i, j + 1) || isMatching(text, pattern, i + 1, j)) ? 1 : 0;
+            return memo[i][j] == 1;
+        }
+
+        memo[i][j] = 0;
+        return memo[i][j] == 1;
+    }
+
+    private void intializeMemo() {
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+    }
+}
+
+//Optimal Approach
+
+//Naive Implementation
+
+class Solution {
+    public boolean isMatch(String text, String pattern) {
+        // dp[i][j] represents whether the substring text[0..i-1] matches the substring pattern[0..j-1].
+        boolean[][] dp = new boolean[text.length() + 1][pattern.length() + 1];
+
+        // If both the text and the pattern are empty, they match by definition. Therefore, dp[0][0] = true
+        dp[0][0] = true;
+
+        // If text is empty, we can only match if the pattern contains '*' at each
+        // position
+        for (int i = 1; i <= pattern.length(); i++) {
+            dp[0][i] = pattern.charAt(i - 1) == '*' && dp[0][i - 1];
+        }
+
+        /*
+         * If the pattern is empty but the text is not, matching the text is not possible.
+         * This means dp[i][0] = false for all i from 1 to text.length() as there's no
+         * way to match a non-empty text with an empty pattern.
+         */
+
+        for (int i = 1; i <= text.length(); i++) {
+            dp[i][0] = false;
+        }
+
+        for (int i = 1; i <= text.length(); i++) {
+            for (int j = 1; j <= pattern.length(); j++) {
+                if (pattern.charAt(j - 1) == text.charAt(i - 1) || pattern.charAt(j - 1) == '?') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    if (pattern.charAt(j - 1) == '*') {
+                        dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+                    } else {
+                        dp[i][j] = false;
+                    }
+                }
+            }
+        }
+
+        return dp[text.length()][pattern.length()];
+    }
+}
+
+
+//Optimal implementation 
+
+class Solution {
+    public boolean isMatch(String text, String pattern) {
+        boolean[][] dp = new boolean[text.length() + 1][pattern.length() + 1];
+
+        dp[0][0] = true;
+
+        for (int i = 1; i <= pattern.length(); i++) {
+            dp[0][i] = pattern.charAt(i - 1) == '*' && dp[0][i - 1];
+        }
+
+        for (int i = 1; i <= text.length(); i++) {
+            for (int j = 1; j <= pattern.length(); j++) {
+                if (pattern.charAt(j - 1) == text.charAt(i - 1) || pattern.charAt(j - 1) == '?') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (pattern.charAt(j - 1) == '*') {
+                    dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+                }
+            }
+        }
+
+        return dp[text.length()][pattern.length()];
+    }
+}
+
+
+//Aliter (Space optimised)
+
+class Solution {
+    public boolean isMatch(String text, String pattern) {
+        boolean[] currRow = new boolean[pattern.length() + 1];
+        boolean[] prevRow = new boolean[pattern.length() + 1];
+
+        prevRow[0] = true;
+
+        for (int i = 1; i <= pattern.length(); i++) {
+            prevRow[i] = pattern.charAt(i - 1) == '*' && prevRow[i - 1];
+        }
+
+        for (int i = 1; i <= text.length(); i++) {
+            currRow[0] = false;
+            for (int j = 1; j <= pattern.length(); j++) {
+                if (pattern.charAt(j - 1) == text.charAt(i - 1) || pattern.charAt(j - 1) == '?') {
+                    currRow[j] = prevRow[j - 1];
+                } else if (pattern.charAt(j - 1) == '*') {
+                    currRow[j] = prevRow[j] || currRow[j - 1];
+                } else {
+                    currRow[j] = false;
+                }
+            }
+
+            boolean[] temp = currRow;
+            currRow = prevRow;
+            prevRow = temp;
+        }
+
+        return prevRow[pattern.length()];
+    }
+}
