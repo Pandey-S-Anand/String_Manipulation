@@ -86,9 +86,10 @@ class Solution {
         }
 
         boolean isNextStar = (j + 1 < pattern.length() && pattern.charAt(j + 1) == '*');
+        boolean isSame = (i < text.length() && (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '.'));
 
         if (!isNextStar) {
-            if (i < text.length() && (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '.')) {
+            if (isSame) {
                 memo[i][j] = isMatchHelper(text, pattern, i + 1, j + 1) ? 1 : 0;
             } else {
                 memo[i][j] = 0;
@@ -97,11 +98,11 @@ class Solution {
             return memo[i][j] == 1;
         }
 
-        if (i < text.length() && (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '.')) {
+        if (isSame) {
             memo[i][j] = (isMatchHelper(text, pattern, i, j + 2) || isMatchHelper(text, pattern, i + 1, j)) ? 1 : 0;
             return memo[i][j] == 1;
         }
-        
+
         memo[i][j] = isMatchHelper(text, pattern, i, j + 2) ? 1 : 0;
         return memo[i][j] == 1;
     }
