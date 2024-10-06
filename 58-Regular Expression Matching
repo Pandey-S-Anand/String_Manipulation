@@ -67,7 +67,7 @@ class Solution {
     private int[][] memo;
 
     public boolean isMatch(String text, String pattern) {
-        memo = new int[text.length() + 1][pattern.length() + 1];
+        memo = new int[text.length()][pattern.length()];
         initializeMemo();
         return isMatchHelper(text, pattern, 0, 0);
     }
