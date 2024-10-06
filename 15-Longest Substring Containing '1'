@@ -20,24 +20,3 @@ class GfG {
         return maxConsecutiveOnes;
     }
 }
-
-
-//Recursive Approach
-
-class GfG {
-    public int count(String str) {
-        return countMaxConsecutiveOnesSubstring(str, 0, 0, 0);
-    }
-
-    private int countMaxConsecutiveOnesSubstring(String binaryString, int index, int currentConsecutiveOnes, int maxConsecutiveOnes) {
-        if (index == binaryString.length()) {
-            return Math.max(maxConsecutiveOnes, currentConsecutiveOnes);
-        }
-
-        if (binaryString.charAt(index) == '1') {
-            return countMaxConsecutiveOnesSubstring(binaryString, index + 1, currentConsecutiveOnes + 1, maxConsecutiveOnes);
-        }
-
-        return countMaxConsecutiveOnesSubstring(binaryString, index + 1, 0, Math.max(maxConsecutiveOnes, currentConsecutiveOnes));
-    }
-}
