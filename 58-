@@ -1,3 +1,119 @@
+//Naive Approach
+
+class Solution {
+    public boolean isMatch(String text, String pattern) {
+        return isMatchHelper(text, pattern, 0, 0);
+    }
+
+    private boolean isMatchHelper(String text, String pattern, int i, int j) {
+        // Base Case 1: If both text and pattern are fully matched, return true.
+        if (i == text.length() && j == pattern.length()) {
+            return true;
+        }
+
+        // Base Case 2: If the pattern is exhausted but the text isn't fully matched,return false.
+        // This ensures that partial matching is not accepted.
+        if (j == pattern.length()) {
+            return false;
+        }
+
+        /*
+         * Explanation for the case when the text is empty but the pattern is not:
+         * If the remaining pattern contains characters followed by '*', we can still
+         * match the empty text since 'char*' can match zero occurrences of 'char'.
+         * This case is handled implicitly by the recursive calls.
+         * 
+         * Example:
+         * Testcase 1:
+         * text = "", pattern = "a*b*c*"
+         * The pattern can match an empty string since each 'char*' means zero
+         * occurrences.
+         * Expected Output: true
+         * 
+         * Testcase 2:
+         * text = "", pattern = "a*b*cd"
+         * Here, the remaining "cd" cannot match an empty string, hence the output is
+         * false.
+         * Expected Output: false
+         */
+
+        boolean isNextStar = (j + 1 < pattern.length() && pattern.charAt(j + 1) == '*');
+
+        if (!isNextStar) {
+            // Check if the current characters of text and pattern match or if the pattern has '.'. ( '.' can match any single character.)
+            if (i < text.length() && (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '.')) {
+                // If they match, recursively check the remaining text and pattern.
+                return isMatchHelper(text, pattern, i + 1, j + 1);
+            }
+            // If the current characters do not match and the pattern does not contain a '.', return false.
+            return false;
+        }
+
+        // If the current characters match
+        if (i < text.length() && (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '.')) {
+            return isMatchHelper(text, pattern, i, j + 2) // Match zero occurrences of char*
+                    || isMatchHelper(text, pattern, i + 1, j); // Match one occurrence of char
+        }
+
+        // If the current characters don't match
+        return isMatchHelper(text, pattern, i, j + 2); // Match zero occurrences of char*
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private int[][] memo;
+
+    public boolean isMatch(String text, String pattern) {
+        memo = new int[text.length() + 1][pattern.length() + 1];
+        initializeMemo();
+        return isMatchHelper(text, pattern, 0, 0);
+    }
+
+    private boolean isMatchHelper(String text, String pattern, int i, int j) {
+        if (i == text.length() && j == pattern.length()) {
+            return true;
+        }
+
+        if (j == pattern.length()) {
+            return false;
+        }
+
+        if (memo[i][j] != -1) {
+            return memo[i][j] == 1;
+        }
+
+        boolean isNextStar = (j + 1 < pattern.length() && pattern.charAt(j + 1) == '*');
+
+        if (!isNextStar) {
+            if (i < text.length() && (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '.')) {
+                memo[i][j] = isMatchHelper(text, pattern, i + 1, j + 1) ? 1 : 0;
+            } else {
+                memo[i][j] = 0;
+            }
+
+            return memo[i][j] == 1;
+        }
+
+        if (i < text.length() && (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '.')) {
+            memo[i][j] = (isMatchHelper(text, pattern, i, j + 2) || isMatchHelper(text, pattern, i + 1, j)) ? 1 : 0;
+            return memo[i][j] == 1;
+        }
+        
+        memo[i][j] = isMatchHelper(text, pattern, i, j + 2) ? 1 : 0;
+        return memo[i][j] == 1;
+    }
+
+    private void initializeMemo() {
+        for (int i = 0; i < memo.length; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+    }
+}
+
+
 //Optimal Approach
 
 //Naive Implementation
