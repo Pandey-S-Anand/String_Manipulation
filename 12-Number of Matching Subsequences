@@ -1,0 +1,65 @@
+//Naive Approach
+
+
+
+//Optimal Approach
+
+//Naive Implementation
+
+class Solution {
+    public int numMatchingSubseq(String str, String[] words) {
+        Map<Character, List<Integer>> characterToIndicesMap = new HashMap<>();
+
+        // Populate the characterIndicesMap with the indices of each character in the string `str`
+        for (int i = 0; i < str.length(); i++) {
+            characterToIndicesMap.computeIfAbsent(str.charAt(i), k -> new ArrayList<>()).add(i);
+        }
+
+        int matchingCount = 0;
+
+        for (String word : words) {
+            if (word.length() <= str.length() && isSubsequence(word, characterToIndicesMap)) {
+                matchingCount++;
+            }
+        }
+
+        return matchingCount;
+    }
+
+    private boolean isSubsequence(String word, Map<Character, List<Integer>> characterToIndicesMap) {
+        int lastIndex = -1; // Initialize with -1 to start searching from the beginning of `str`
+
+        for (int i = 0; i < word.length(); i++) {
+            if (!characterToIndicesMap.containsKey(word.charAt(i))) {
+                return false; // If the character is not in `str`, it's not a subsequence
+            }
+
+            List<Integer> indices = characterToIndicesMap.get(word.charAt(i));
+            lastIndex = upperBound(indices, lastIndex); // Find the next valid index in `str`
+
+            if (lastIndex == -1) {
+                return false; // If no valid index is found, it's not a subsequence
+            }
+        }
+
+        return true; // If all characters are found in order, it's a subsequence
+    }
+
+    // Binary search to find the smallest index greater than `lastIndex`
+    private int upperBound(List<Integer> arr, int target) {
+        int low = 0, high = arr.size() - 1, upperBound = -1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (arr.get(mid) > target) {
+                upperBound = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return upperBound != -1 ? arr.get(upperBound) : -1;
+    }
+}
