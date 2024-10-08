@@ -1,10 +1,73 @@
 //Naive Approach
 
+class Solution {
+    private Set<String> subsequences;
+
+    public int numMatchingSubseq(String str, String[] words) {
+        subsequences = new HashSet<>();
+        generateSubsequences(str, 0, new StringBuilder());
+        int matchingCount = 0;
+
+        for (String word : words) {
+            if (subsequences.contains(word)) {
+                matchingCount++;
+            }
+        }
+
+        return matchingCount;
+    }
+
+    private void generateSubsequences(String str, int index, StringBuilder currentSubsequence) {
+        if (index == str.length()) {
+            subsequences.add(currentSubsequence.toString());
+            return;
+        }
+
+        // Include element
+        currentSubsequence.append(str.charAt(index));
+        generateSubsequences(str, index + 1, currentSubsequence);
+        // Exclude element
+        currentSubsequence.deleteCharAt(currentSubsequence.length() - 1);
+        generateSubsequences(str, index + 1, currentSubsequence);
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public int numMatchingSubseq(String str, String[] words) {
+        int matchingCount = 0;
+
+        for (String word : words) {
+            if (isSubsequence(word, str)) {
+                matchingCount++;
+            }
+        }
+
+        return matchingCount;
+    }
+
+    private boolean isSubsequence(String target, String str) {
+        int targetIndex = 0, strIndex = 0;
+
+        while (targetIndex < target.length() && strIndex < str.length()) {
+            if (str.length() - strIndex < target.length() - targetIndex) {
+                return false; // Not enough characters left in str to match target
+            }
+
+            if (target.charAt(targetIndex) == str.charAt(strIndex)) {
+                targetIndex++;
+            }
+            strIndex++;
+        }
+
+        return targetIndex == target.length();
+    }
+}
 
 
 //Optimal Approach
-
-//Naive Implementation
 
 class Solution {
     public int numMatchingSubseq(String str, String[] words) {
