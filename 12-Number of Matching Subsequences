@@ -47,6 +47,10 @@ class Solution {
 
     // Binary search to find the smallest index greater than `lastIndex`
     private int upperBound(List<Integer> arr, int target) {
+        if (arr.get(arr.size() - 1) <= target) {
+            return -1; // Early exit : No valid index if the largest index is <= target index
+        }
+
         int low = 0, high = arr.size() - 1, upperBound = -1;
 
         while (low <= high) {
