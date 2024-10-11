@@ -79,7 +79,6 @@ class Solution {
 }
 
 
-
 //Better Approach
 
 class Solution {
@@ -89,28 +88,28 @@ class Solution {
          * ASCII code for lower case it start from 97(a) to 122(z)
          * ASCII code for digit start from 48(0) to 57(9)
          */
-        int[] frequencyArray = new int[123];
-
-        for (int i = 0; i < str.length(); i++) {
-            frequencyArray[str.charAt(i)]++;
-        }
 
         int[][] characterFrequencyArray = new int[123][2];
 
+        for (int i = 0; i < str.length(); i++) {
+            characterFrequencyArray[str.charAt(i)][0] = str.charAt(i);
+            characterFrequencyArray[str.charAt(i)][1]++;
+        }
+
         int index = 0;
         for (int i = 0; i < 123; i++) {
-            if (frequencyArray[i] != 0) {
-                characterFrequencyArray[index][0] = i;
-                characterFrequencyArray[index][1] = frequencyArray[i];
+            if (characterFrequencyArray[i][0] != 0) {
+                characterFrequencyArray[index][0] = characterFrequencyArray[i][0];
+                characterFrequencyArray[index][1] = characterFrequencyArray[i][1];
                 index++;
             }
         }
 
-        Arrays.sort(characterFrequencyArray, (arr1, arr2) -> Integer.compare(arr2[1], arr1[1]));
+        Arrays.sort(characterFrequencyArray, 0, index, (arr1, arr2) -> Integer.compare(arr2[1], arr1[1]));
 
         StringBuilder result = new StringBuilder();
 
-        for (int i = 0; i < characterFrequencyArray.length; i++) {
+        for (int i = 0; i < index; i++) {
             char ch = (char) characterFrequencyArray[i][0];
             int frequency = characterFrequencyArray[i][1];
 
@@ -123,71 +122,9 @@ class Solution {
         return result.toString();
     }
 }
-
 
 
 //Optimal Approach
-
-class Solution {
-    public String frequencySort(String str) {
-        /*
-         * ASCII code for uppercase A to Z starts from 65(A) to 90(Z)
-         * ASCII code for lower case it start from 97(a) to 122(z)
-         * ASCII code for digit start from 48(0) to 57(9)
-         */
-        int[] frequencyArray = new int[62];
-
-        for (int i = 0; i < str.length(); i++) {
-            char ch = str.charAt(i);
-
-            if (Character.isDigit(ch)) {
-                frequencyArray[ch - 48]++; // index 0 to 9 => character '0' to '9'
-            } else if (Character.isUpperCase(ch)) {
-                frequencyArray[ch - 55]++; // index 10 to 35 => character 'A' to 'Z'
-            } else { // if (Character.isLowerCase(ch))
-                frequencyArray[ch - 61]++; // index 36 to 61 => character 'a' to 'z'
-            }
-        }
-
-        int[][] characterFrequencyArray = new int[62][2];
-
-        int index = 0;
-        for (int i = 0; i < 62; i++) {
-            if (frequencyArray[i] != 0) {
-                characterFrequencyArray[index][1] = frequencyArray[i];
-
-                if (i <= 9) {
-                    characterFrequencyArray[index][0] = i + 48;
-                } else if (i >= 10 && i <= 35) {
-                    characterFrequencyArray[index][0] = i + 55;
-                } else if (i >= 36 && i <= 61) {
-                    characterFrequencyArray[index][0] = i + 61;
-                }
-
-                index++;
-            }
-        }
-
-        Arrays.sort(characterFrequencyArray, (arr1, arr2) -> Integer.compare(arr2[1], arr1[1]));
-
-        StringBuilder result = new StringBuilder();
-
-        for (int i = 0; i < characterFrequencyArray.length; i++) {
-            char ch = (char) characterFrequencyArray[i][0];
-            int frequency = characterFrequencyArray[i][1];
-
-            while (frequency != 0) {
-                result.append(ch);
-                frequency--;
-            }
-        }
-
-        return result.toString();
-    }
-}
-
-
-//Further Optimised
 
 class Solution {
     public String frequencySort(String str) {
