@@ -1,1 +1,92 @@
+//Method 1
 
+//Brutefore Approach
+
+class Solution {
+    private ArrayList<String> permutations;
+
+    public ArrayList<String> permutation(String str) {
+        permutations = new ArrayList<>();
+        findPermutations(str, new StringBuilder());
+        Collections.sort(permutations);
+        return permutations;
+    }
+
+    private void findPermutations(String str, StringBuilder permutation) {
+        if (str.isEmpty()) {
+            permutations.add(permutation.toString());
+            return;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            permutation.append(str.charAt(i));
+            findPermutations(str.substring(0, i) + str.substring(i + 1), permutation);
+            permutation.setLength(permutation.length() - 1);
+        }
+    }
+}
+
+
+// Optimal Approach
+
+class Solution {
+    private ArrayList<String> permutations;
+
+    public ArrayList<String> permutation(String str) {
+        permutations = new ArrayList<>();
+        findPermutations(str, new StringBuilder(), new boolean[str.length()]);
+        Collections.sort(permutations);
+        return permutations;
+    }
+
+    private void findPermutations(String str, StringBuilder permutation, boolean[] visited) {
+        if (permutation.length() == str.length()) {
+            permutations.add(permutation.toString());
+            return;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                permutation.append(str.charAt(i));
+                findPermutations(str, permutation, visited);
+                permutation.setLength(permutation.length() - 1);
+                visited[i] = false;
+            }
+        }
+    }
+}
+
+
+//Method 2
+
+
+class Solution {
+    private ArrayList<String> permutations;
+
+    public ArrayList<String> permutation(String str) {
+        permutations = new ArrayList<>();
+        findPermutations(str.toCharArray(), 0);
+        Collections.sort(permutations);
+        return permutations;
+    }
+
+    private void findPermutations(char[] arr, int index) {
+        if (index == arr.length) {
+            permutations.add(new String(arr));
+            return;
+        }
+
+        for (int i = index; i < arr.length; i++) {
+            swap(arr, index, i);
+            findPermutations(arr, index + 1);
+            swap(arr, index, i);
+        }
+    }
+
+    private void swap(char[] arr, int i, int j) {
+        char temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
