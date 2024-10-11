@@ -1,7 +1,16 @@
-//Iterative Approach
-
-
 //Bruteforce Approach
+
+/*
+Note 1:
+To determine the number of binary strings of length n, we need to calculate the different ways to form a string consisting of n bits, where each bit can be either 0 or 1.
+
+Since each position in the binary string has 2 options (0 or 1), the total number of binary strings of length n can be expressed as: 2 ^ n.
+
+Note 2:
+By generating numbers from 0 to 2^n - 1 and converting each number to its binary form (while ensuring it is padded to a length of N), we capture all possible combinations of N bits.
+
+Each bit position can be independently set to 0 or 1, and this systematic approach guarantees that every possible bit configuration is represented exactly once.
+*/
 
 class Solution {
     private static final long MOD = 1000000007L;
@@ -9,25 +18,90 @@ class Solution {
     long countStrings(int n) {
         long countValidNLengthBinaryStrings = 0;
         int totalNLengthBinaryStrings = 1 << n; // x<<y = x*2^n
-        char[] currentBinaryString = new char[n];
+        char[] nLengthBinaryString = new char[n];
 
         for (int num = 0; num < totalNLengthBinaryStrings; num++) {
             for (int i = 0; i < n; i++) {
                 if ((num & (1 << i)) != 0) {
-                    currentBinaryString[n - 1 - i] = '1';
+                    nLengthBinaryString[n - 1 - i] = '1';
                 } else {
-                    currentBinaryString[n - 1 - i] = '0';
+                    nLengthBinaryString[n - 1 - i] = '0';
                 }
             }
 
-            String nLengthBinaryString = new String(currentBinaryString);
-
-            if (!nLengthBinaryString.contains("11")) {
+            if (isValidBinaryString(nLengthBinaryString)) {
                 countValidNLengthBinaryStrings = (countValidNLengthBinaryStrings + 1) % MOD;
             }
         }
 
         return countValidNLengthBinaryStrings;
+    }
+
+    private boolean isValidBinaryString(char[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] == '1' && arr[i] == arr[i - 1]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private long countValidNLengthBinaryStrings = 0;
+    private static final long MOD = 1000000007L;
+
+    long countStrings(int n) {
+        countValidNLengthBinaryStrings(new char[n], 0);
+        return countValidNLengthBinaryStrings;
+    }
+
+    private void countValidNLengthBinaryStrings(char[] currentNLengthBinaryString, int index) {
+        if (index == currentNLengthBinaryString.length) {
+            countValidNLengthBinaryStrings = (countValidNLengthBinaryStrings + 1) % MOD;
+            return;
+        }
+        
+        // Place '0' at the current index
+        currentNLengthBinaryString[index] = '0';
+        countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1);
+
+        // Place '1' at the current index only if the previous bit is not '1'
+        if (index == 0 || (index > 0 && currentNLengthBinaryString[index - 1] != '1')) {
+            currentNLengthBinaryString[index] = '1';
+            countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1);
+        }
+    }
+}
+
+
+//Aliter
+
+class Solution {
+    private static final long MOD = 1000000007L;
+
+    long countStrings(int n) {
+        return countValidNLengthBinaryStrings(new char[n], 0, false);
+    }
+
+    private long countValidNLengthBinaryStrings(char[] currentNLengthBinaryString, int index, boolean wasLastBitOne) {
+        if (index == currentNLengthBinaryString.length) {
+            return 1L;
+        }
+
+        currentNLengthBinaryString[index] = '0';
+        long count = countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1, false);
+
+        if (!wasLastBitOne) {
+            currentNLengthBinaryString[index] = '1';
+            count = (count + countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1, true)) % MOD;
+        }
+
+        return count;
     }
 }
 
@@ -85,126 +159,23 @@ thus reducing the space complexity of the algorithm can be reduced from O(n) to 
 class Solution {
     private static final long MOD = 1000000007L;
 
-    long countStrings(int n) {
-        long prevEndWithZeroCount = 1;
-        long prevEndWith1Count = 1;
+    long countStrings(int length) {
+        long countEndingWithZeroPrev, countEndingWithOnePrev, countEndingWithZeroCurr, countEndingWithOneCurr;
+        
+        // Initialize counts for strings of length 1
+        countEndingWithZeroPrev = countEndingWithOnePrev = 1;
 
-        for (int i = 2; i <= n; i++) {
-            long currEndWithZeroCount = (prevEndWithZeroCount + prevEndWith1Count) % MOD;
-            long currEndWithOneCount = prevEndWithZeroCount;
+        for (int i = 2; i <= length; i++) {
+            // Current counts for strings of length i
+            countEndingWithZeroCurr = (countEndingWithZeroPrev + countEndingWithOnePrev) % MOD;
+            countEndingWithOneCurr = countEndingWithZeroPrev;
 
-            prevEndWithZeroCount = currEndWithZeroCount;
-            prevEndWith1Count = currEndWithOneCount;
+            // Update previous counts for the next iteration
+            countEndingWithZeroPrev = countEndingWithZeroCurr;
+            countEndingWithOnePrev = countEndingWithOneCurr;
         }
 
-        return (prevEndWithZeroCount + prevEndWith1Count) % MOD;
-    }
-}
-
-
-
-
-//Recursive Approach
-
-//Naive Implementation
-
-class Solution {
-    private long countValidNLengthBinaryStrings = 0;
-    private static final long MOD = 1000000007L;
-
-    long countStrings(int n) {
-        countAllValidNLengthBinaryStrings(new char[n], 0);
-        return countValidNLengthBinaryStrings;
-    }
-
-    private void countAllValidNLengthBinaryStrings(char[] currentBinaryString, int index) {
-        if (index == currentBinaryString.length) {
-            countValidNLengthBinaryStrings = (countValidNLengthBinaryStrings + 1) % MOD;
-            return;
-        }
-
-        currentBinaryString[index] = '0';
-        countAllValidNLengthBinaryStrings(currentBinaryString, index + 1);
-
-        if (index == 0 || index > 0 && currentBinaryString[index - 1] != '1') {
-            currentBinaryString[index] = '1';
-            countAllValidNLengthBinaryStrings(currentBinaryString, index + 1);
-        }
-    }
-}
-
-
-//Better Implementation
-
-class Solution {
-    private static final long MOD = 1000000007L;
-
-    long countStrings(int n) {
-        return countAllValidNLengthBinaryStrings(new char[n], 0);
-    }
-
-    private long countAllValidNLengthBinaryStrings(char[] currentBinaryString, int index) {
-        if (index == currentBinaryString.length) {
-            return 1L;
-        }
-
-        currentBinaryString[index] = '0';
-        long count = countAllValidNLengthBinaryStrings(currentBinaryString, index + 1);
-
-        if (index == 0 || index > 0 && currentBinaryString[index - 1] != '1') {
-            currentBinaryString[index] = '1';
-            count = (count + countAllValidNLengthBinaryStrings(currentBinaryString, index + 1)) % MOD;
-        }
-
-        return count;
-    }
-}
-
-
-//Optimal Implementation
-
-class Solution {
-    private static final long MOD = 1000000007L;
-
-    long countStrings(int n) {
-        return countAllValidNLengthBinaryStrings(0, n, '0');
-    }
-
-    private long countAllValidNLengthBinaryStrings(int index, int n, char prevChar) {
-        if (index == n) {
-            return 1L;
-        }
-
-        long count = countAllValidNLengthBinaryStrings(index + 1, n, '0');
-
-        if (prevChar != '1') {
-            count = (count + countAllValidNLengthBinaryStrings(index + 1, n, '1')) % MOD;
-        }
-
-        return count;
-    }
-}
-
-//Aliter
-
-class Solution {
-    private static final long MOD = 1000000007L;
-
-    long countStrings(int n) {
-        return countAllValidNLengthBinaryStrings(0, n, false);
-    }
-
-    private long countAllValidNLengthBinaryStrings(int index, int n, boolean isPrevious1) {
-        if (index == n) {
-            return 1L;
-        }
-
-        long count = countAllValidNLengthBinaryStrings(index + 1, n, false);
-
-        if (!isPrevious1) {
-            count = (count + countAllValidNLengthBinaryStrings(index + 1, n, true)) % MOD;
-        }
-
-        return count;
+        // Return the total count of valid binary strings of the given length
+        return (countEndingWithZeroPrev + countEndingWithOnePrev) % MOD;
     }
 }
