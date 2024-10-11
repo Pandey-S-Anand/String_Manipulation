@@ -1,5 +1,4 @@
 //Bruteforce Approach
-
 /*
 Note 1:
 To determine the number of binary strings of length n, we need to calculate the different ways to form a string consisting of n bits, where each bit can be either 0 or 1.
