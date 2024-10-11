@@ -2,66 +2,46 @@
 
 class Solution {
     public String arrangeWords(String text) {
-       String[]arr=text.split(" ");
-       TreeMap<Integer,List<String>>tm=new TreeMap<>();
-       StringBuilder res=new StringBuilder();       
+        Map<Integer, List<String>> lengthToWordsMap = new TreeMap<>();
+        StringBuilder arrangedWords = new StringBuilder();
 
-       for(String word:arr)
-       {
-         int len=word.length();
+        String[] words = text.split(" ");
 
-         if(tm.containsKey(len))
-           tm.get(len).add(word);
-         else
-         {
-           List<String>list=new ArrayList<>();
-           list.add(word);
-           tm.put(len,list);
-         }
-       } 
+        for (String word : words) {
+            lengthToWordsMap.computeIfAbsent(word.length(), k -> new ArrayList<>()).add(word);
+        }
 
-       for(int len:tm.keySet())
-         for(String str:tm.get(len))
-           res.append(str.toLowerCase()).append(" ");
-       
-       res.deleteCharAt(res.length()-1);
-       res.insert(0,Character.toUpperCase(res.charAt(0)));
-       res.deleteCharAt(1);
+        for (int wordLength : lengthToWordsMap.keySet()) {
+            for (String word : lengthToWordsMap.get(wordLength)) {
+                arrangedWords.append(word.toLowerCase()).append(" ");
+            }
+        }
 
-       return res.toString();
+        arrangedWords.deleteCharAt(arrangedWords.length() - 1); // Remove last space
+        arrangedWords.setCharAt(0, Character.toUpperCase(arrangedWords.charAt(0))); // Capitalize first letter
+
+        return arrangedWords.toString();
     }
 }
+
 
 
 //Optimal Approach
 
 class Solution {
     public String arrangeWords(String text) {
-      String[]arr=text.split(" ");
-      Arrays.sort(arr,new comp());
+        StringBuilder arrangedWords = new StringBuilder();
+        String[] words = text.split(" ");
 
-      StringBuilder res=new StringBuilder();  
+        Arrays.sort(words, (str1, str2) -> str1.length() - str2.length());
 
-      for(String str:arr)
-        res.append(str.toLowerCase()).append(" ");
-       
-      res.deleteCharAt(res.length()-1);
-      res.insert(0,Character.toUpperCase(res.charAt(0)));
-      res.deleteCharAt(1);
+        for (String word : words) {
+            arrangedWords.append(word.toLowerCase()).append(" ");
+        }
 
-      return res.toString();
-    }
-}
+        arrangedWords.deleteCharAt(arrangedWords.length() - 1); // Remove last space
+        arrangedWords.setCharAt(0, Character.toUpperCase(arrangedWords.charAt(0))); // Capitalize first letter
 
-class comp implements Comparator<String>
-{
-    public int compare(String str1,String str2)
-    {
-        if(str1.length()<str2.length())
-          return -1;
-        else if(str1.length()>str2.length())
-          return 1;
-        else
-          return 0;
+        return arrangedWords.toString();
     }
 }
