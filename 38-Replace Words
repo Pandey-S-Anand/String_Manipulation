@@ -2,73 +2,52 @@
 
 class Solution {
     public String replaceWords(List<String> dict, String sentence) {
-      String[]arr=sentence.split(" ");
-      StringBuilder ans=new StringBuilder();
+        String[] words = sentence.split(" ");
+        StringBuilder modifiedSentence = new StringBuilder();
 
-      for(String str : arr)
-      {
-         StringBuilder temp=new StringBuilder();
-         int n=str.length(),j;
-
-         for(j=0;j<n;j++)
-         {
-            temp.append(str.charAt(j));
-
-            if(dict.contains(temp.toString()))
-            {
-              ans.append(temp);  
-              break;
+        for (String word : words) {
+            String prefix = "";
+            for (int i = 0; i < word.length(); i++) {
+                prefix += word.charAt(i);
+                if (dict.contains(prefix)) {
+                    break;
+                }
             }
-         }   
-         
-         if(j==n)
-          ans.append(str);
 
-          ans.append(" ");    
-      }  
-      
-      ans.deleteCharAt(ans.length()-1);
+            modifiedSentence.append(prefix).append(" ");
+        }
 
-      return ans.toString();
+        modifiedSentence.deleteCharAt(modifiedSentence.length() - 1);
+
+        return modifiedSentence.toString();
     }
 }
-
 
 
 //Better Approach
 
 class Solution {
     public String replaceWords(List<String> dict, String sentence) {
-      HashSet<String>hs=new HashSet<>();
-      StringBuilder ans=new StringBuilder();
+        String[] words = sentence.split(" ");
+        StringBuilder modifiedSentence = new StringBuilder();
+        Set<String> dictionary = new HashSet<>(dict);
 
-      String[]arr=sentence.split(" ");
-
-      hs.addAll(dict);
-
-      for(String str:arr)
-      {
-         int n=str.length(),j;
-
-         for(j=0;j<n;j++)
-         {
-            String temp=str.substring(0,j+1);
-
-            if(hs.contains(temp))
-            {
-              ans.append(temp);
-              break;
+        for (String word : words) {
+            String prefix = "";
+            for (int i = 0; i < word.length(); i++) {
+                prefix += word.charAt(i);
+                if (dictionary.contains(prefix)) {
+                    break;
+                }
             }
-         }
 
-         if(j==n)
-           ans.append(str);
-        
-         ans.append(" ");    
-      }
+            modifiedSentence.append(prefix).append(" ");
+        }
 
-      ans.deleteCharAt(ans.length()-1);
+        modifiedSentence.deleteCharAt(modifiedSentence.length() - 1);
 
-      return ans.toString();
+        return modifiedSentence.toString();
     }
 }
+
+//Optimal Approach (Using Trie)
