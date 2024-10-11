@@ -1,5 +1,6 @@
 //Bruteforce Approach
 
+
 class Solution {
     public long countVowels(String word) {
       int n=word.length();
