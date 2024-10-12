@@ -6,7 +6,7 @@ Finding all permutations of an string of size n is equivalent to calculating nPr
 
 nPr :  It is a way to count how many different ways you can arrange r items selected from a larger set of 𝑛 distinct items, where the order of selection matters.
 
-When you generate all permutations of an string of size n, you are essentially arranging n items into n distinct positions.
+When you generate all permutations of an string of size n, you are essentially arranging n distinct items into n positions.
 
 ### Formula for Permutations
 
