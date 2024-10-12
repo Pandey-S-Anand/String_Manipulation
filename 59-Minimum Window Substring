@@ -130,8 +130,7 @@ class Solution {
              * window does not exceed the required frequency in 'sub', we increment
              * matchCount
              */
-            if (subFreqMap.containsKey(str.charAt(end))
-                    && windowFreqMap.get(str.charAt(end)) <= subFreqMap.get(str.charAt(end))) {
+            if (subFreqMap.containsKey(str.charAt(end)) && windowFreqMap.get(str.charAt(end)) <= subFreqMap.get(str.charAt(end))) {
                 matchCount++; // This indicates one more character is correctly matched
             }
 
@@ -166,8 +165,7 @@ class Solution {
                  */
 
                 if (subFreqMap.containsKey(str.charAt(start))) {
-                    if (!windowFreqMap.containsKey(str.charAt(start)) ||
-                            windowFreqMap.get(str.charAt(start)) < subFreqMap.get(str.charAt(start))) {
+                    if (!windowFreqMap.containsKey(str.charAt(start)) || windowFreqMap.get(str.charAt(start)) < subFreqMap.get(str.charAt(start))) {
                         matchCount--;
                     }
                 }
