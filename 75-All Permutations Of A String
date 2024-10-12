@@ -1,5 +1,4 @@
 /*
-
 # Understanding Permutations
 
 Finding all permutations of an string of size n is equivalent to calculating nPr where n = r and r is the length of the string.
