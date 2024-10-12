@@ -2,24 +2,23 @@
 
 # Understanding Permutations
 
-Finding all permutations of an string of size n is equivalent to calculating nPr where n = r and r is the length of the string.
+The term nPr refers to the number of permutations of n distinct objects taken r at a time. It is mathematically represented by the formula:
+nPr= n! / (n−r)!
 
-nPr :  It is a way to count how many different ways you can arrange r items selected from a larger set of 𝑛 distinct items, where the order of selection matters.
+When discussing permutations of a string, the terms n and r in the context of nPr can be defined as follows:
 
-When you generate all permutations of an string of size n, you are essentially arranging n distinct items into n positions.
+n: This represents the total number of distinct characters in the string (i.e., the length of the string).
+r: This represents the number of characters you want to arrange.
 
-### Formula for Permutations
+Case 1: Permutations of All Characters
 
-The formula for permutations is:
+If you want to find the permutations of all characters in a string of length n, then you would set:
 
-nPr = n! / (n - r)! (where n>=r)
-
-Numerator n!: Represents all possible arrangements of 𝑛 items.
-Denominator (n−r)!: Divides out the arrangements of the items not chosen, leaving only those arrangements of the r items.
-
-When r = n, this simplifies to:
+r = n, In this case, the formula simplifies to:
 
 nPn = n! / (n - n)! = n!
+
+This means you are calculating all possible arrangements of the entire string.
 
 ### Example
 
@@ -33,6 +32,33 @@ For a string of size 3, say "abc", the permutations are:
 - "cba"
 
 There are 3! = 6 permutations in total, which matches 3P3.
+
+
+Case 2: Permutations of a Subset of Characters
+
+If you want to find permutations where you only arrange a subset of characters (say r characters from the string), then you would set:
+
+In this case, you would use:
+nPr= n! / (n−r)!
+
+### Example
+
+For a string "abcd" (size 4) and r = 2 (i.e., we are choosing 2 characters at a time), the possible permutations of 2 characters are:
+
+- "ab"
+- "ac"
+- "ad"
+- "ba"
+- "bc"
+- "bd"
+- "ca"
+- "cb"
+- "cd"
+- "da"
+- "db"
+- "dc"
+
+There are 4P2 = 4! / (4 - 2)! = 4! / 2! = (4 × 3 × 2 × 1) / (2 × 1) = 12 permutations in total.
 
 ### Additional Information
 
