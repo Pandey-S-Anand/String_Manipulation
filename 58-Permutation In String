@@ -1,2 +1,247 @@
+//Bruteforce Approach
+
+class Solution {
+    private List<String> permutations;
+
+    public boolean checkInclusion(String str1, String str2) {
+        permutations = new ArrayList<>();
+        generatePermutations(str1);
+        Set<String> substrings = generateSubstrings(str2);
+
+        for (String permutation : permutations) {
+            if (substrings.contains(permutation)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private List<String> generatePermutations(String str) {
+        permutations = new ArrayList<>();
+        generatePermutations(str, new StringBuilder(), new boolean[str.length()]);
+        return permutations;
+    }
+
+    private void generatePermutations(String str, StringBuilder permutation, boolean[] visited) {
+        if (permutation.length() == str.length()) {
+            permutations.add(permutation.toString());
+            return;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                permutation.append(str.charAt(i));
+                generatePermutations(str, permutation, visited);
+                permutation.setLength(permutation.length() - 1);
+                visited[i] = false;
+            }
+        }
+    }
+
+    private Set<String> generateSubstrings(String str) {
+        Set<String> substrings = new HashSet<>();
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                substrings.add(str.substring(start, end + 1));
+            }
+        }
+        return substrings;
+    }
+}
 
 
+//Improved Approach
+
+class Solution {
+    private Set<String> substrings;
+
+    public boolean checkInclusion(String str1, String str2) {
+        substrings = generateSubstrings(str2);
+        return generatePermutations(str1);
+    }
+
+    private boolean generatePermutations(String str) {
+        return generatePermutations(str, new StringBuilder(), new boolean[str.length()]);
+    }
+
+    private boolean generatePermutations(String str, StringBuilder permutation, boolean[] visited) {
+        if (permutation.length() == str.length()) {
+            if (substrings.contains(permutation.toString())) {
+                return true;
+            }
+            return false;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                permutation.append(str.charAt(i));
+                if (generatePermutations(str, permutation, visited)) {
+                    return true;
+                }
+                permutation.setLength(permutation.length() - 1);
+                visited[i] = false;
+            }
+        }
+
+        // This return statement will be executed when all permutations have been generated, and none of them are found in the set of substrings of str2.
+        return false;
+    }
+
+    private Set<String> generateSubstrings(String str) {
+        Set<String> substrings = new HashSet<>();
+        for (int start = 0; start < str.length(); start++) {
+            for (int end = start; end < str.length(); end++) {
+                substrings.add(str.substring(start, end + 1));
+            }
+        }
+        return substrings;
+    }
+}
+
+
+//Optimal Approach
+
+//Naive implementation
+
+class Solution {
+    public boolean checkInclusion(String str1, String str2) {
+        // If str2 is shorter than str1, it's impossible for str1 to be a substring
+        if (str2.length() < str1.length()) {
+            return false;
+        }
+
+        int start = 0; // Start index of the window in str2
+        int end = str1.length() - 1; // End index of the window in str2
+
+        // Maintain a window of size str1.length() to generate all substrings of str2 of the same size
+        while (end < str2.length()) {
+            /*
+             * If a permutation of str1 is present in any substring (of size str1.length())
+             * in str2, it must have the same characters with the same counts.
+             * This means that if we can match the character counts of
+             * a substring (of size str1.length()) in str2 with those in str1,
+             * we can confirm that the substring is a permutation of str1.
+             */
+            if (isAnagram(str2.substring(start, end + 1), str1)) {
+                return true; // Found a permutation of str1 in str2
+            }
+            start++; // Move the window to the right
+            end++; // Extend the window by one character
+        }
+
+        return false; // No permutation found
+    }
+
+    private boolean isAnagram(String str1, String str2) {
+        int[] frequencyArray = new int[26];
+
+        for (int i = 0; i < str1.length(); i++) {
+            frequencyArray[str1.charAt(i) - 'a']++;
+        }
+
+        for (int i = 0; i < str2.length(); i++) {
+            frequencyArray[str2.charAt(i) - 'a']--;
+        }
+
+        for (int i = 0; i < 26; i++) {
+            if (frequencyArray[i] != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+
+//Better implementation
+
+class Solution {
+    public boolean checkInclusion(String str1, String str2) {
+        if (str2.length() < str1.length()) {
+            return false;
+        }
+
+        int start = 0;
+        int end = str1.length() - 1;
+
+        while (end < str2.length()) {
+            if (isAnagram(str2, start, end, str1)) {
+                return true;
+            }
+            start++;
+            end++;
+        }
+
+        return false;
+    }
+
+    private boolean isAnagram(String str1, int start, int end, String str2) {
+        int[] frequencyArray = new int[26];
+
+        for (int i = start; i <= end; i++) {
+            frequencyArray[str1.charAt(i) - 'a']++;
+        }
+
+        for (int i = 0; i < str2.length(); i++) {
+            frequencyArray[str2.charAt(i) - 'a']--;
+        }
+
+        for (int i = 0; i < 26; i++) {
+            if (frequencyArray[i] != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+
+//Optimal Implementation 
+
+class Solution {
+    public boolean checkInclusion(String str1, String str2) {
+        if (str2.length() < str1.length()) {
+            return false;
+        }
+
+        int start = 0, end = str1.length() - 1;
+        int[] str1Count = new int[26];
+        int[] str2Count = new int[26];
+
+        for (int i = 0; i < str1.length(); i++) {
+            // Populate frequency array for str1
+            str1Count[str1.charAt(i) - 'a']++;
+            // Intilize frequency array for the first (str1.length() - 1) characters of str2.
+            if (i < str1.length() - 1) {
+                str2Count[str2.charAt(i) - 'a']++;
+            }
+        }
+
+        while (end < str2.length()) {
+            str2Count[str2.charAt(end) - 'a']++; // Include the character at end
+            if (isFrequencyEqual(str1Count, str2Count)) {
+                return true;
+            }
+            str2Count[str2.charAt(start) - 'a']--; // Exclude the character at start
+            start++;
+            end++;
+        }
+
+        return false;
+    }
+
+    private boolean isFrequencyEqual(int[] str1Count, int[] str2Count) {
+        for (int i = 0; i < 26; i++) {
+            if (str1Count[i] != str2Count[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
