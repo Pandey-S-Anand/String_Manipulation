@@ -1,3 +1,60 @@
+//Iterative Approach
+
+public class Solution {
+    public static ArrayList<String> binaryStrings(String str) {
+        ArrayList<String> combinations = new ArrayList<>();
+        // Start with an initial combination (the original string)
+        combinations.add(str);
+
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == '?') {
+                // Create a temporary list to hold new combinations
+                ArrayList<String> newCombinations = new ArrayList<>();
+
+                // Replace '?' with '0' and '1' for each existing combination
+                for (String combination : combinations) {
+                    // Replace '?' with '0'
+                    newCombinations.add(combination.substring(0, i) + '0' + combination.substring(i + 1));
+                    // Replace '?' with '1'
+                    newCombinations.add(combination.substring(0, i) + '1' + combination.substring(i + 1));
+                }
+
+                // Clear the original combinations and add new ones
+                combinations.clear();
+                combinations.addAll(newCombinations);
+            }
+        }
+
+        return combinations;
+    }
+}
+
+
+//Aliter
+
+public class Solution {
+    public static ArrayList<String> binaryStrings(String str) {
+        ArrayList<String> combinations = new ArrayList<>();
+        combinations.add(str);
+
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == '?') {
+                ArrayList<String> newCombinations = new ArrayList<>();
+
+                for (String combination : combinations) {
+                    newCombinations.add(combination.substring(0, i) + '0' + combination.substring(i + 1));
+                    newCombinations.add(combination.substring(0, i) + '1' + combination.substring(i + 1));
+                }
+
+                combinations = newCombinations;
+            }
+        }
+
+        return combinations;
+    }
+}
+
+
 //Recursive approach
 
 public class Solution {
