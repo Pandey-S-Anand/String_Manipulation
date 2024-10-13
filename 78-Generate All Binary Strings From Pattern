@@ -1,1 +1,42 @@
+//Recursive approach
 
+public class Solution {
+    private static ArrayList<String> combinations;
+
+    public static ArrayList<String> binaryStrings(String str) {
+        combinations = new ArrayList<>();
+        generateAllStrings(str, 0, new StringBuilder());
+        return combinations;
+    }
+
+    private static void generateAllStrings(String str, int index, StringBuilder currentCombination) {
+        // Base case: If we've processed all characters of the string, add the current combination to the list
+        if (index == str.length()) {
+            combinations.add(currentCombination.toString());
+            return;
+        }
+
+        // If the current character is '?', replace it with both '0' and '1'
+        if (str.charAt(index) == '?') {
+            // Replace '?' with '0' and recursively process the next character
+            currentCombination.append('0');
+            generateAllStrings(str, index + 1, currentCombination);
+
+            // Backtrack: Replace the last character (which is '0') with '1' and recursively process the next character
+            currentCombination.setCharAt(currentCombination.length() - 1, '1');
+            generateAllStrings(str, index + 1, currentCombination);
+
+            // Backtrack: Remove the last character to restore the combination and move up the recursion tree.
+            currentCombination.setLength(currentCombination.length() - 1);
+        } else {
+            // If the current character is not '?', simply append it to the current combination
+            currentCombination.append(str.charAt(index));
+
+            // Recurse to process the next character in the string
+            generateAllStrings(str, index + 1, currentCombination);
+
+            // Backtrack: Remove the last character to restore the combination and move up the recursion tree.
+            currentCombination.setLength(currentCombination.length() - 1);
+        }
+    }
+}
