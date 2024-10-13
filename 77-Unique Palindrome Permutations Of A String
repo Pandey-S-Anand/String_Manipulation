@@ -52,3 +52,93 @@ class Solution {
         return true;
     }
 }
+
+
+//Optimal Approach
+
+//Intuitive implementation
+
+class Solution {
+    private List<String> palindromePermutations;
+
+    public List<String> all_palindromes(String str) {
+        palindromePermutations = new ArrayList<>();
+        Map<Character, Integer> frequencyMap = new HashMap<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            frequencyMap.put(str.charAt(i), frequencyMap.getOrDefault(str.charAt(i), 0) + 1);
+        }
+
+        boolean oddFreqCharFound = false;
+        String middleChar = "";
+
+        for (char ch : frequencyMap.keySet()) {
+            int frequency = frequencyMap.get(ch);
+            if (frequency % 2 != 0) {
+                if (oddFreqCharFound) {
+                    return palindromePermutations; // If we've already found an odd frequency character, a palindrome isn't possible
+                }
+
+                oddFreqCharFound = true;
+                // Add only one occurrence of the odd frequency character to the middle
+                middleChar = Character.toString(ch);
+            }
+        }
+
+        // To construct half of the palindrome
+        StringBuilder half = new StringBuilder();
+
+        for (char ch : frequencyMap.keySet()) {
+            int frequency = frequencyMap.get(ch);
+            /*
+             * Add half of the even count characters to the half string.
+             * For the only character with odd frequency, add (frequency - 1) / 2
+             * occurrences to the half string,
+             * and the remaining (frequency - 1) will go in the second half, with 1
+             * occurrence in the middle.
+             * Ex: If a char has occurred 5 times, 2 occurrences will go in the first half,
+             * 2 occurrences in the second half, and 1 in the middle.
+             */
+            for (int i = 1; i <= frequency / 2; i++) {
+                half.append(ch);
+            }
+        }
+        /*
+         * Generate all unique palindromic permutations using the half string
+         * All these generated permutations will be palindromes by default
+         */
+        findUniquePalindromePermutations(half.toString(), new boolean[half.length()], new StringBuilder(), middleChar);
+        Collections.sort(palindromePermutations);
+        return palindromePermutations;
+    }
+
+    private void findUniquePalindromePermutations(String str, boolean[] visited, StringBuilder permutation, String middle) {
+        if (permutation.length() == str.length()) {
+            // Construct the full palindrome permutation and add it to the list
+            palindromePermutations.add(permutation.toString() + middle + permutation.reverse().toString());
+            permutation.reverse();
+            return;
+        }
+
+        Set<Character> used = new HashSet<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            if (used.contains(str.charAt(i))) {
+                continue;
+            }
+
+            if (!visited[i]) {
+                used.add(str.charAt(i));
+                visited[i] = true;
+                permutation.append(str.charAt(i));
+                findUniquePalindromePermutations(str, visited, permutation, middle);
+                permutation.setLength(permutation.length() - 1);
+                visited[i] = false;
+            }
+        }
+    }
+}
+
+
+//Optimal implementation 
+
