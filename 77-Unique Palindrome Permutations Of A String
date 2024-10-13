@@ -77,16 +77,16 @@ c: 2 (even)
 Conclusion :
 
 Valid: The frequencies meet the criteria for forming palindromic permutations. The character b can be placed in the middle of the palindrome, while the others can be mirrored.
+
 Forming the Half Palindrome
 
 The half palindrome can be constructed as follows:
 For a (4 occurrences), take 2 for the half.
 For b (3 occurrences), take 1 for the half.
 For c (2 occurrences), take 1 for the half.
-So, the first half becomes:
-First half: "aabc" or any other permutations like (baac ..etc)
 
-Full Palindrome Construction
+So, the first half becomes: "aabc" or any other permutations like (baac ..etc)
+
 To form the complete palindrome:
 
 First half: "aabc"
