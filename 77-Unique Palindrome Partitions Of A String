@@ -1,1 +1,54 @@
+//Bruteforce Approach
 
+class Solution {
+    private List<String> palindromePermutations;
+
+    public List<String> all_palindromes(String str) {
+        palindromePermutations = new ArrayList<>();
+        findUniquePalindromePermutations(str, new StringBuilder(), new boolean[str.length()]);
+        Collections.sort(palindromePermutations);
+        return palindromePermutations;
+    }
+
+    private void findUniquePalindromePermutations(String str, StringBuilder permutation, boolean[] visited) {
+        if (permutation.length() == str.length()) {
+            String currentPermutation = permutation.toString();
+            if (isPalindrome(currentPermutation)) {
+                palindromePermutations.add(currentPermutation);
+            }
+            return;
+        }
+
+        Set<Character> used = new HashSet<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            if (used.contains(str.charAt(i))) {
+                continue;
+            }
+
+            if (!visited[i]) {
+                used.add(str.charAt(i));
+                visited[i] = true;
+                permutation.append(str.charAt(i));
+                findUniquePalindromePermutations(str, permutation, visited);
+                permutation.setLength(permutation.length() - 1);
+                visited[i] = false;
+            }
+        }
+    }
+
+    private boolean isPalindrome(String str) {
+        int start = 0, end = str.length() - 1;
+
+        while (start < end) {
+            if (str.charAt(start) != str.charAt(end)) {
+                return false;
+            }
+
+            start++;
+            end--;
+        }
+
+        return true;
+    }
+}
