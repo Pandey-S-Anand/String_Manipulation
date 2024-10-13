@@ -1,4 +1,4 @@
-//Naive Approach
+//Bruteforce Approach
 
 class Solution {
     private List<List<String>> allPartitions;
