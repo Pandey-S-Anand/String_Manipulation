@@ -56,6 +56,75 @@ class Solution {
 
 //Optimal Approach
 
+/*
+Ex: "abbabccaa".
+Character Count
+First, we count the frequency of each character in the string:
+
+a: 4
+b: 3
+c: 2
+Checking Frequencies
+For a string to have palindromic permutations:
+
+All characters must have even frequencies, except for at most one character which can have an odd frequency (this character would be placed in the middle of the palindrome).
+In this case:
+a: 4 (even)
+b: 3 (odd)
+c: 2 (even)
+
+Conclusion :
+
+Valid: The frequencies meet the criteria for forming palindromic permutations. The character b can be placed in the middle of the palindrome, while the others can be mirrored.
+Forming the Half Palindrome
+
+The half palindrome can be constructed as follows:
+For a (4 occurrences), take 2 for the half.
+For b (3 occurrences), take 1 for the half.
+For c (2 occurrences), take 1 for the half.
+So, the first half becomes:
+First half: "aabc" or any other permutations like (baac ..etc)
+
+Full Palindrome Construction
+To form the complete palindrome:
+
+First half: "aabc"
+Middle character: "b"
+Second half: Same as the first half but reversed: "cbaa"
+
+The full palindrome would be:
+"aabcbcbaa" (or any other arrangement derived from permutations).
+
+All unique permutations of “aabc” are:
+aabc
+aacb
+abac
+abca
+acab
+acba
+baac
+baca
+bcaa
+caab
+caba
+cbaa
+
+All unique palindrome permutations of “abbabccaa”:
+aabc => aabc + b + cbaa => aabcbcbaa
+aacb => aacb + b + bcaa => aacbbbcaa
+abac => abac + b + caba => abacbcaba
+abca => abca + b + acba => abcabacba
+acab => acab + b + baca => acabbbaca
+acba => acba + b + abca => acbababca
+baac => baac + b + caab => baacbcaab
+baca => baca + b + acab => bacabacab
+bcaa => bcaa + b + aacb => bcaabaacb
+caab => caab + b + baac => caabbbaac
+caba => caba + b + abac => cabababac
+cbaa => cbaa + b + aabc => cbaabaabc
+
+*/
+
 //Intuitive implementation
 
 class Solution {
@@ -103,10 +172,8 @@ class Solution {
                 half.append(ch);
             }
         }
-        /*
-         * Generate all unique palindromic permutations using the half string
-         * All these generated permutations will be palindromes by default
-         */
+
+        //Generate all unique  permutations using the half string
         findUniquePalindromePermutations(half.toString(), new boolean[half.length()], new StringBuilder(), middleChar);
         Collections.sort(palindromePermutations);
         return palindromePermutations;
@@ -114,7 +181,7 @@ class Solution {
 
     private void findUniquePalindromePermutations(String str, boolean[] visited, StringBuilder permutation, String middle) {
         if (permutation.length() == str.length()) {
-            // Construct the full palindrome permutation and add it to the list
+            // Construct the palindrome permutation and add it to the list
             palindromePermutations.add(permutation.toString() + middle + permutation.reverse().toString());
             permutation.reverse();
             return;
@@ -142,3 +209,68 @@ class Solution {
 
 //Optimal implementation 
 
+class Solution {
+    private List<String> palindromePermutations;
+
+    public List<String> all_palindromes(String str) {
+        palindromePermutations = new ArrayList<>();
+        int[] frequencyArray = new int[26];
+
+        for (int i = 0; i < str.length(); i++) {
+            frequencyArray[str.charAt(i) - 'a']++;
+        }
+
+        StringBuilder half = new StringBuilder();
+        boolean oddFreqCharFound = false;
+        String middleChar = "";
+
+        for (int i = 0; i < 26; i++) {
+            if (frequencyArray[i] == 0) {
+                continue;
+            }
+
+            int frequency = frequencyArray[i];
+            if (frequency % 2 != 0) {
+                if (oddFreqCharFound) {
+                    return palindromePermutations;
+                }
+
+                oddFreqCharFound = true;
+                middleChar = Character.toString((char) (i + 'a'));
+            }
+
+            for (int j = 1; j <= frequency / 2; j++) {
+                half.append((char) (i + 'a'));
+            }
+        }
+
+        findUniquePalindromePermutations(half.toString(), new boolean[half.length()], new StringBuilder(), middleChar);
+        Collections.sort(palindromePermutations);
+        return palindromePermutations;
+    }
+
+    private void findUniquePalindromePermutations(String str, boolean[] visited, StringBuilder permutation, String middle) {
+        if (permutation.length() == str.length()) {
+            palindromePermutations.add(permutation.toString() + middle + permutation.reverse().toString());
+            permutation.reverse();
+            return;
+        }
+
+        Set<Character> used = new HashSet<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            if (used.contains(str.charAt(i))) {
+                continue;
+            }
+
+            if (!visited[i]) {
+                used.add(str.charAt(i));
+                visited[i] = true;
+                permutation.append(str.charAt(i));
+                findUniquePalindromePermutations(str, visited, permutation, middle);
+                permutation.setLength(permutation.length() - 1);
+                visited[i] = false;
+            }
+        }
+    }
+}
