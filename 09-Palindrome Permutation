@@ -1,0 +1,118 @@
+//Bruteforce Approach
+
+public class Solution {
+    public static boolean palindromeString(String str) {
+        return anyPalindromePermutationExist(str, new StringBuilder(), new boolean[str.length()]);
+    }
+
+    private static boolean anyPalindromePermutationExist(String str, StringBuilder permutation, boolean[] visited) {
+        if (permutation.length() == str.length()) {
+            if (isPalindrome(permutation)) {
+                return true;
+            }
+            return false;
+        }
+
+        Set<Character> used = new HashSet<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            if (used.contains(str.charAt(i))) {
+                continue;
+            }
+
+            if (!visited[i]) {
+                used.add(str.charAt(i));
+                visited[i] = true;
+                permutation.append(str.charAt(i));
+                if (anyPalindromePermutationExist(str, permutation, visited)) {
+                    return true;
+                }
+                permutation.setLength(permutation.length() - 1);
+                visited[i] = false;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isPalindrome(StringBuilder str) {
+        int start = 0, end = str.length() - 1;
+
+        while (start < end) {
+            if (str.charAt(start) != str.charAt(end)) {
+                return false;
+            }
+
+            start++;
+            end--;
+        }
+
+        return true;
+    }
+}
+
+
+//Better Approach
+
+/*
+For a string to have palindromic permutations:
+
+All characters must have even frequencies, except for at most one character which can have an odd frequency 
+(this character would be placed in the middle of the palindrome).
+*/
+public class Solution {
+    public static boolean palindromeString(String str) {
+        Map<Character, Integer> frequencyMap = new HashMap<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            frequencyMap.put(str.charAt(i), frequencyMap.getOrDefault(str.charAt(i), 0) + 1);
+        }
+
+        boolean oddFreqCharFound = false;
+
+        for (char ch : frequencyMap.keySet()) {
+            int frequency = frequencyMap.get(ch);
+            if (frequency % 2 != 0) {
+                if (oddFreqCharFound) {
+                    return false; // If we've already found an odd frequency character, a palindrome isn't possible
+                }
+
+                oddFreqCharFound = true;
+            }
+        }
+
+        return true;
+    }
+}
+
+
+//Optimal Approach
+
+public class Solution {
+    public static boolean palindromeString(String str) {
+        int[] frequencyArray = new int[26];
+
+        for (int i = 0; i < str.length(); i++) {
+            frequencyArray[str.charAt(i) - 'a']++;
+        }
+
+        boolean oddFreqCharFound = false;
+
+        for (int i = 0; i < 26; i++) {
+            int frequency = frequencyArray[i];
+            if (frequency == 0) {
+                continue;
+            }
+
+            if (frequency % 2 != 0) {
+                if (oddFreqCharFound) {
+                    return false;
+                }
+
+                oddFreqCharFound = true;
+            }
+        }
+
+        return true;
+    }
+}
