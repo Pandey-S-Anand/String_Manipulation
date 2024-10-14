@@ -7,7 +7,7 @@ nPr= n! / (n−r)!
 
 When discussing permutations of a string, the terms n and r in the context of nPr can be defined as follows:
 
-n: This represents the total number of distinct characters in the string (i.e., the length of the string).
+n: This represents the total number of distinct characters in the string.
 r: This represents the number of characters you want to arrange.
 
 Case 1: Permutations of All Characters
