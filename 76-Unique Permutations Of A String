@@ -1,5 +1,5 @@
 /*
-Number of distinct permutations of all the characters in a string = n! / (k1! × k2! × … × km!)
+Number of distinct permutations of all the characters in a string(including duplicate characters) = n! / (k1! × k2! × … × km!)
 
 Where:
 
