@@ -1,6 +1,4 @@
 /*
-The formula to calculate the number of distinct permutations of all the characters in a string is based on the number of total characters and how many times each character is repeated. The formula is as follows:
-
 Number of distinct permutations of all the characters in a string = n! / (k1! × k2! × … × km!)
 
 Where:
