@@ -1,7 +1,7 @@
 /*
-The formula to calculate the number of distinct permutations of a string is based on the number of total characters and how many times each character is repeated. The formula is as follows:
+The formula to calculate the number of distinct permutations of all the characters in a string is based on the number of total characters and how many times each character is repeated. The formula is as follows:
 
-Number of distinct permutations = n! / (k1! × k2! × … × km!)
+Number of distinct permutations of all the characters in a string = n! / (k1! × k2! × … × km!)
 
 Where:
 
@@ -26,8 +26,8 @@ Plugging in the values:
 Number of distinct permutations = 6 / (2 × 1) = 3
 
 The distinct permutations of "AAB" are: "AAB", "ABA", and "BAA".
-
 */
+
 
 
 //Method 1
