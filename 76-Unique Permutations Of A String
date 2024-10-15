@@ -1,5 +1,8 @@
 /*
-Number of distinct permutations of all the characters in a string(including duplicate characters) = n! / (k1! × k2! × … × km!)
+If a string contains duplicate characters and we try to generate the permutations of the string (i.e., permutations of all the characters in the string, where  n=r in nPr),
+then duplicate permutations will be generated. To find the number of distinct permutations of a string containing duplicate characters, we use the following formula:
+
+Number of distinct permutations of a string (containing duplicate characters) = n! / (k1! × k2! × … × km!)
 
 Where:
 
