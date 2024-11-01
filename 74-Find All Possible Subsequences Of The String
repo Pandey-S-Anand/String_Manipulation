@@ -1,224 +1,131 @@
-/*
+//Iterative Approach
 
-Subsequence : 
+//Method 1
 
-> A subsequence is a sequence that can be derived from another sequence by removing zero or more elements, without changing the order of the remaining elements.
-> Subsequence need not to be contigious (i.e may or may not be contigious)
-> For a sequence/array/string of size n, we can have 2^n Subsequence in total i.e ((2^n)-1) non-empty sub-sequences + 1 Empty Subsequence. 
-> Every Subarray is a Subequence but not every subsequence is an subarray.
-> Subsequence always maintain orer of appearence.
-> Subarray/Substring are always contigious and maintains order of appearence of elements while subsequence may or maynot be contigious but always maintains order of appearence of elements.
-> For a sequence/array/string of size n, we can have  ( (n*(n+1))/2 + 1 ) Subarray in total i.e (n*(n+1))/2 non-empty subarray + 1 Empty subarray. 
+class Solution {
+    public List<String> AllPossibleStrings(String str) {
+        List<String> subsequences = new ArrayList<>();
+        subsequences.add(""); // Initialize with the empty subsequence
 
->Subsets:
+        for (int i = 0; i < str.length(); i++) {
+            int currentSize = subsequences.size();
+            for (int j = 0; j < currentSize; j++) {
+                subsequences.add(subsequences.get(j) + str.charAt(i));
+            }
+        }
+        subsequences.remove(""); // Remove the empty subsequence
 
-Subsets and subsequence ae exactly same thing the only difference between them is that subsequence should maintain order of appearence of elements while subsets 
-don't need to preserve order of appearence of elements for ex : {1,2} and {2,1} represent the same subset however while writing/listing the subsets of the sets 
-you can either write {1,2} or {2,1} it doesnot matter but you can not list both at the same time since they are exactly the same thing.
+        Collections.sort(subsequences); // Sort the subsequences in alphabetical order
 
->For example : arr[] = {1, 2, 3, 4}; there are 16 sub-sequences. 
+        return subsequences;
+    }
+}
 
-They are 
-{ } => (Subarray and subsequence)
-(1) => (Subarray and subsequence)
-(1,2) => (Subarray and subsequence)
-(1,3) =>(Only subsequence) Reason : Its not contigious
-(1,4) =>(Only subsequence) Reason : Its not contigious
-(1,2,3) => (Subarray and subsequence)
-(1,2,4) =>(Only subsequence) Reason : Its not contigious
-(1,3,4) =>(Only subsequence) Reason : Its not contigious
-(1,2,3,4) => (Subarray and subsequence)
-(2) => (Subarray and subsequence)
-(2,3) => (Subarray and subsequence)
-(2,4) =>(Only subsequence) Reason : Its not contigious
-(2,3,4) => (Subarray and subsequence)
-(3) => (Subarray and subsequence)
-(3,4) => (Subarray and subsequence)
-(4) => (Subarray and subsequence)
+//Method 2
 
+//Naive Implementation 
 
-The total number of subsets/subsequence of any given set is equal to 2^ (no. of elements in the set).It is nothing but binary numbers from 0 to (2^n)-1. 
- 
->For example : arr[] = {1, 2, 3, 4}; there are 16 (i.e 2^4) sub-sequences.
- If we carefully notice it is nothing but binary numbers from 0 to 15 which can be shown as below: 
+class Solution {
+    public List<String> AllPossibleStrings(String str) {
+        List<String> subsequences = new ArrayList<>();
+        StringBuilder currentSubsequence = new StringBuilder();
 
-0000    {} 
- 
-0001    {1} 
- 
-0010    {2} 
- 
-0011    {1, 2} 
- 
-0100    {3} 
- 
-0101    {1, 3} 
- 
-0110    {2, 3} 
- 
-0111    {1, 2, 3} 
- 
-1000    {4} 
- 
-1001    {1, 4} 
- 
-1010    {1, 4} 
- 
-1011    {1, 2, 4} 
- 
-1100    {3, 4} 
- 
-1101    {1, 3, 4} 
- 
-1110    {2, 3, 4} 
- 
-1111    {1, 2, 3, 4} 
- 
- 
+        int totalSubsequences = 1 << str.length();
 
-Starting from right,whenever we encounter set bit(1) in a number at ith position the we print the element present at (i-1)th index in the array. 
-*/
+        for (int num = 1; num < totalSubsequences; num++) {
+            String binaryWithoutLeadingZeroes = Integer.toBinaryString(num);
 
-// Iterative Approach
+            int length = binaryWithoutLeadingZeroes.length();
+            for (int i = length - 1; i >= 0; i--) {
+                if (binaryWithoutLeadingZeroes.charAt(i) == '1') {
+                    currentSubsequence.append(str.charAt(length - i - 1));
+                }
+            }
 
-class Solution{
-    public List<String> AllPossibleStrings(String str){
-      int n=str.length();
-      int powerSetSize=1<<n; // Math.pow(2,n)=1<<n (x<<y = x*(2^y))
-      
-      List<String>list=new ArrayList<>();
-      
-      for(int num=0;num<powerSetSize;num++)
-      {
-         StringBuilder res=new StringBuilder();
-         
-         for(int i=0;i<n;i++)
-            if(((1<<i)&num)!=0)
-              res.append(str.charAt(i));
-                
-         if(res.compareTo(new StringBuilder(""))!=0) // Ignore Empty Subsequence
-            list.add(res.toString());
-      }
-      
-      Collections.sort(list);
-      
-      return list;
+            subsequences.add(currentSubsequence.toString());
+            currentSubsequence.setLength(0);
+        }
+
+        Collections.sort(subsequences);
+        return subsequences;
+    }
+}
+
+//Optimal Implementation 
+
+class Solution {
+    public List<String> AllPossibleStrings(String str) {
+        List<String> subsequences = new ArrayList<>();
+        StringBuilder currentSubsequence = new StringBuilder();
+
+        int totalSubsequences = 1 << str.length();
+
+        for (int num = 1; num < totalSubsequences; num++) {
+            for (int i = 0; i < str.length(); i++) {
+                if ((num & (1 << i)) != 0) {
+                    currentSubsequence.append(str.charAt(i));
+                }
+            }
+            subsequences.add(currentSubsequence.toString());
+            currentSubsequence.setLength(0);
+        }
+
+        Collections.sort(subsequences);
+        return subsequences;
     }
 }
 
 
+// Recursive Approach
 
-/*
+//Method 1
 
-Note :
-Above Program will only work for array having size <=30
+class Solution {
+    private List<String> subsequences;
 
-Reason :
+    public List<String> AllPossibleStrings(String str) {
+        subsequences = new ArrayList<>();
+        generateSubsequences(str, 0, new StringBuilder());
+        Collections.sort(subsequences);
+        return subsequences;
+    }
 
-Integer.MAX_VALUE=(2^31)-1 = 2147483647
-Integer.MIN_VALUE= -2^31 = -2147483648
-
-if(n==31) then 1<<31 = -2^31 = -2147483648
-
-Possible Fix :
-
-class Solution{
-    public List<String> AllPossibleStrings(String str){
-      int n=str.length();
-      long powerSetSize=1L<<n; // Math.pow(2,n)=1L<<n (x<<y = x*(2^y))
-      
-      List<String>list=new ArrayList<>();
-      
-      for(long num=0;num<powerSetSize;num++)
-      {
-         StringBuilder res=new StringBuilder();
-         
-         for(int i=0;i<n;i++)
-            if(((1L<<i)&num)!=0)
-              res.append(str.charAt(i));
-                
-         if(res.compareTo(new StringBuilder(""))!=0) // Ignore Empty Subsequence
-            list.add(res.toString());
-      }
-      
-      Collections.sort(list);
-      
-      return list;
+    private void generateSubsequences(String str, int index, StringBuilder currentSubsequence) {
+        if (index == str.length()) {
+            if (currentSubsequence.length() != 0) {
+                subsequences.add(currentSubsequence.toString());
+            }
+            return;
+        }
+        currentSubsequence.append(str.charAt(index));
+        generateSubsequences(str, index + 1, currentSubsequence);
+        currentSubsequence.setLength(currentSubsequence.length() - 1);
+        generateSubsequences(str, index + 1, currentSubsequence);
     }
 }
 
-  But again the above program will only work for array having size <=62
-  
-  Reason :
-  
-  Long.MAX_VALUE =  2^63 -1 = 9,223,372,036,854,775,807.
-  Long.MIN_VALUE = -2^63 = -9,223,372,036,854,775,808.
-  
-  if(n==63) then (long)1<<63 = -2^63 = -9,223,372,036,854,775,808
-  */
 
+//Method 2
 
-  //Recursive Approach
+class Solution {
+    private List<String> subsequences;
 
-  class Solution{
-    public List<String> AllPossibleStrings(String str){
-       List<String>list=new ArrayList<>();
-       String subsequence="";
-       
-       allPossibleSubsequences(str,str.length(),0,subsequence,list);
-	   
-       Collections.sort(list);
-	   
-       return list;
+    public List<String> AllPossibleStrings(String str) {
+        subsequences = new ArrayList<>();
+        generateSubsequences(str, 0, new StringBuilder());
+        Collections.sort(subsequences);
+        return subsequences;
     }
 
-    public void allPossibleSubsequences(String str,int n,int strIdx,String ss,List<String>list)
-    {
-          if(strIdx==n)
-          {
-            if(ss.equals("")==false)
-              list.add(ss);
-          }
-          else
-          {
-            //Include element
-            allPossibleSubsequences(str,n,strIdx+1,ss+str.charAt(strIdx),list);
-            //Exclude element
-            allPossibleSubsequences(str,n,strIdx+1,ss,list); 
-          }
+    private void generateSubsequences(String str, int index, StringBuilder currentSubsequence) {
+        if (currentSubsequence.length() != 0) {
+            subsequences.add(currentSubsequence.toString());
+        }
+
+        for (int i = index; i < str.length(); i++) {
+            currentSubsequence.append(str.charAt(i));
+            generateSubsequences(str, i + 1, currentSubsequence);
+            currentSubsequence.setLength(currentSubsequence.length() - 1);
+        }
     }
 }
-
-/*
-Logic :
-
-For every element in the array we are having two choices either to include it in the subsequence or exclude it.Apply this for every element in the array starting from
-index 0 until we reach the last index.print the subsequence once the last index is reached.
-
-EX: arr[]={1 , 2 , 3};
-
-(E=>Exclude and I=> Include)
-                                                                              {}
-                                                                             /  \
-                                                                           /      \
-                                                                         /          \
-                                                                       /              \
-                                                                     /                  \            
-							           /		          \             
-						                 /		      	    \          
-						               /			      \         
-							     /		                        \
-						           /			                  \
-					             (E1)/                                          \ (I1)
-						        /                                            \ 
-						       {}                                             {1}
-			                       (E2)  /     \ (I2)                                (E2)/     \ (I2)
-						    /       \                                       /        \
-						  {}         {2}                                   {1}         {1,2}
-						  / \         /\                              (E3) /\           /\
-				            (E3) /   \   (E3)/  \(I3)                             /  \    (E3) /  \ (I3)
-						/ (I3)\     /    \                               /(I3)\       /    \
-					       {}     {3}  {2}	 {2,3}                         {1}    {1,3} {1,2}  {1,2,3}
-						  
-					  
-*/
