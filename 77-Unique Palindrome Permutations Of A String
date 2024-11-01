@@ -1,43 +1,40 @@
 //Bruteforce Approach
 
 class Solution {
-    private List<String> palindromePermutations;
+    private List<String> uniquePalindromePermutations;
 
     public List<String> all_palindromes(String str) {
-        palindromePermutations = new ArrayList<>();
-        findUniquePalindromePermutations(str, new StringBuilder(), new boolean[str.length()]);
-        Collections.sort(palindromePermutations);
-        return palindromePermutations;
+        char[] arr = str.toCharArray();
+        Arrays.sort(arr);
+        uniquePalindromePermutations = new ArrayList<>();
+        findUniquePalindromePermutations(arr, new StringBuilder(), new boolean[str.length()]);
+        return uniquePalindromePermutations;
     }
 
-    private void findUniquePalindromePermutations(String str, StringBuilder permutation, boolean[] visited) {
-        if (permutation.length() == str.length()) {
-            String currentPermutation = permutation.toString();
-            if (isPalindrome(currentPermutation)) {
-                palindromePermutations.add(currentPermutation);
+    private void findUniquePalindromePermutations(char[] arr, StringBuilder permutation, boolean[] visited) {
+        if (permutation.length() == arr.length) {
+            if (isPalindrome(permutation)) {
+                uniquePalindromePermutations.add(permutation.toString());
             }
             return;
         }
 
-        Set<Character> used = new HashSet<>();
-
-        for (int i = 0; i < str.length(); i++) {
-            if (used.contains(str.charAt(i))) {
+        for (int i = 0; i < arr.length; i++) {
+            if (i > 0 && arr[i - 1] == arr[i] && !visited[i - 1]) {
                 continue;
             }
 
             if (!visited[i]) {
-                used.add(str.charAt(i));
                 visited[i] = true;
-                permutation.append(str.charAt(i));
-                findUniquePalindromePermutations(str, permutation, visited);
+                permutation.append(arr[i]);
+                findUniquePalindromePermutations(arr, permutation, visited);
                 permutation.setLength(permutation.length() - 1);
                 visited[i] = false;
             }
         }
     }
 
-    private boolean isPalindrome(String str) {
+    private boolean isPalindrome(StringBuilder str) {
         int start = 0, end = str.length() - 1;
 
         while (start < end) {
@@ -52,6 +49,7 @@ class Solution {
         return true;
     }
 }
+
 
 
 //Optimal Approach
@@ -146,7 +144,8 @@ class Solution {
             int frequency = frequencyMap.get(ch);
             if (frequency % 2 != 0) {
                 if (oddFreqCharFound) {
-                    return palindromePermutations; // If we've already found an odd frequency character, a palindrome isn't possible
+                    return palindromePermutations; // If we've already found an odd frequency character, a palindrome
+                                                   // isn't possible
                 }
 
                 oddFreqCharFound = true;
@@ -163,9 +162,8 @@ class Solution {
             /*
              * Add half of the even count characters to the half string.
              * For the only character with odd frequency, add (frequency - 1) / 2
-             * occurrences to the half string,
-             * and the remaining (frequency - 1) will go in the second half, with 1
-             * occurrence in the middle.
+             * occurrences to the half string, and the remaining (frequency - 1)/2 will go in the second half,
+             * with 1 occurrence in the middle.
              * Ex: If a char has occurred 5 times, 2 occurrences will go in the first half,
              * 2 occurrences in the second half, and 1 in the middle.
              */
@@ -174,32 +172,30 @@ class Solution {
             }
         }
 
-        //Generate all unique  permutations using the half string
-        findUniquePalindromePermutations(half.toString(), new boolean[half.length()], new StringBuilder(), middleChar);
-        Collections.sort(palindromePermutations);
+        // Generate all unique permutations using the half string
+        char[] arr = half.toString().toCharArray();
+        Arrays.sort(arr);
+        findUniquePalindromePermutations(arr, new StringBuilder(), new boolean[half.length()], middleChar);
         return palindromePermutations;
     }
 
-    private void findUniquePalindromePermutations(String str, boolean[] visited, StringBuilder permutation, String middle) {
-        if (permutation.length() == str.length()) {
+    private void findUniquePalindromePermutations(char[] arr, StringBuilder permutation, boolean[] visited, String middle) {
+        if (permutation.length() == arr.length) {
             // Construct the palindrome permutation and add it to the list
             palindromePermutations.add(permutation.toString() + middle + permutation.reverse().toString());
             permutation.reverse();
             return;
         }
 
-        Set<Character> used = new HashSet<>();
-
-        for (int i = 0; i < str.length(); i++) {
-            if (used.contains(str.charAt(i))) {
+        for (int i = 0; i < arr.length; i++) {
+            if (i > 0 && arr[i - 1] == arr[i] && !visited[i - 1]) {
                 continue;
             }
 
             if (!visited[i]) {
-                used.add(str.charAt(i));
                 visited[i] = true;
-                permutation.append(str.charAt(i));
-                findUniquePalindromePermutations(str, visited, permutation, middle);
+                permutation.append(arr[i]);
+                findUniquePalindromePermutations(arr, permutation, visited, middle);
                 permutation.setLength(permutation.length() - 1);
                 visited[i] = false;
             }
@@ -245,30 +241,28 @@ class Solution {
             }
         }
 
-        findUniquePalindromePermutations(half.toString(), new boolean[half.length()], new StringBuilder(), middleChar);
-        Collections.sort(palindromePermutations);
+        char[] arr = half.toString().toCharArray();
+        Arrays.sort(arr);
+        findUniquePalindromePermutations(arr, new StringBuilder(), new boolean[half.length()], middleChar);
         return palindromePermutations;
     }
 
-    private void findUniquePalindromePermutations(String str, boolean[] visited, StringBuilder permutation, String middle) {
-        if (permutation.length() == str.length()) {
+    private void findUniquePalindromePermutations(char[] arr, StringBuilder permutation, boolean[] visited, String middle) {
+        if (permutation.length() == arr.length) {
             palindromePermutations.add(permutation.toString() + middle + permutation.reverse().toString());
             permutation.reverse();
             return;
         }
 
-        Set<Character> used = new HashSet<>();
-
-        for (int i = 0; i < str.length(); i++) {
-            if (used.contains(str.charAt(i))) {
+        for (int i = 0; i < arr.length; i++) {
+            if (i > 0 && arr[i - 1] == arr[i] && !visited[i - 1]) {
                 continue;
             }
 
             if (!visited[i]) {
-                used.add(str.charAt(i));
                 visited[i] = true;
-                permutation.append(str.charAt(i));
-                findUniquePalindromePermutations(str, visited, permutation, middle);
+                permutation.append(arr[i]);
+                findUniquePalindromePermutations(arr, permutation, visited, middle);
                 permutation.setLength(permutation.length() - 1);
                 visited[i] = false;
             }
