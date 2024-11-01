@@ -36,13 +36,14 @@ The distinct permutations of "AAB" are: "AAB", "ABA", and "BAA".
 //Brutefore Approach
 
 class Solution {
-    private List<String> uniquePermutations;
+    private Set<String> uniquePermutations;
 
     public List<String> find_permutation(String str) {
-        uniquePermutations = new ArrayList<>();
+        uniquePermutations = new HashSet<>();
         findUniquePermutations(str, new StringBuilder());
-        Collections.sort(uniquePermutations);
-        return uniquePermutations;
+        List<String> sortedUniquePermutations = new ArrayList<>(uniquePermutations);
+        Collections.sort(sortedUniquePermutations);
+        return sortedUniquePermutations;
     }
 
     private void findUniquePermutations(String str, StringBuilder permutation) {
@@ -58,40 +59,6 @@ class Solution {
             permutation.append(str.charAt(i));
             findUniquePermutations(str.substring(0, i) + str.substring(i + 1), permutation);
             permutation.setLength(permutation.length() - 1);
-        }
-    }
-}
-
-
-// Improved Approach
-
-class Solution {
-    private List<String> uniquePermutations;
-
-    public List<String> find_permutation(String str) {
-        uniquePermutations = new ArrayList<>();
-        findUniquePermutations(str, new StringBuilder(), new boolean[str.length()]);
-        Collections.sort(uniquePermutations);
-        return uniquePermutations;
-    }
-
-    private void findUniquePermutations(String str, StringBuilder permutation, boolean[] visited) {
-        if (permutation.length() == str.length()) {
-            String currentPermutation = permutation.toString();
-            if (!uniquePermutations.contains(currentPermutation)) {
-                uniquePermutations.add(currentPermutation);
-            }
-            return;
-        }
-
-        for (int i = 0; i < str.length(); i++) {
-            if (!visited[i]) {
-                visited[i] = true;
-                permutation.append(str.charAt(i));
-                findUniquePermutations(str, permutation, visited);
-                permutation.setLength(permutation.length() - 1);
-                visited[i] = false;
-            }
         }
     }
 }
@@ -131,6 +98,90 @@ class Solution {
 
 
 //Better Approach
+
+class Solution {
+    private List<String> uniquePermutations;
+
+    public List<String> find_permutation(String str) {
+        /*
+         * If we sort a string and then generate all its permutations, the
+         * resulting permutations will be in lexicographical order (dictionary order).
+         * Sorting the string arranges its characters in alphabetical order, which
+         * directly influences the order in which the permutations are generated.
+         */
+        char[] arr = str.toCharArray();
+        Arrays.sort(arr);
+        uniquePermutations = new ArrayList<>();
+        findUniquePermutations(arr, new StringBuilder(), new boolean[str.length()]);
+        return uniquePermutations;
+    }
+
+    private void findUniquePermutations(char[] arr, StringBuilder permutation, boolean[] visited) {
+        if (permutation.length() == arr.length) {
+            uniquePermutations.add(permutation.toString());
+            return;
+        }
+        // To keep track of elements used at the current level of recursion
+        Set<Character> used = new HashSet<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            if (used.contains(arr[i])) {
+                continue; // Skip duplicates
+            }
+
+            if (!visited[i]) {
+                used.add(arr[i]);
+                visited[i] = true;
+                permutation.append(arr[i]);
+                findUniquePermutations(arr, permutation, visited);
+                permutation.setLength(permutation.length() - 1);
+                visited[i] = false;
+            }
+        }
+    }
+}
+
+
+//Even Better Approach
+
+class Solution {
+    private List<String> uniquePermutations;
+
+    public List<String> find_permutation(String str) {
+        char[] arr = str.toCharArray();
+        Arrays.sort(arr);
+        uniquePermutations = new ArrayList<>();
+        findUniquePermutations(arr, new StringBuilder(), new boolean[str.length()]);
+        return uniquePermutations;
+    }
+
+    private void findUniquePermutations(char[] arr, StringBuilder permutation, boolean[] visited) {
+        if (permutation.length() == arr.length) {
+            uniquePermutations.add(permutation.toString());
+            return;
+        }
+
+        boolean[] used = new boolean[128];
+
+        for (int i = 0; i < arr.length; i++) {
+            if (used[arr[i]]) {
+                continue;
+            }
+
+            if (!visited[i]) {
+                used[arr[i]] = true;
+                visited[i] = true;
+                permutation.append(arr[i]);
+                findUniquePermutations(arr, permutation, visited);
+                permutation.setLength(permutation.length() - 1);
+                visited[i] = false;
+            }
+        }
+    }
+}
+
+
+//Optimal Approach
 
 class Solution {
     private List<String> uniquePermutations;
@@ -179,99 +230,20 @@ class Solution {
 }
 
 
-//Optimal Approach
-
-class Solution {
-    private List<String> uniquePermutations;
-
-    public List<String> find_permutation(String str) {
-        uniquePermutations = new ArrayList<>();
-        findUniquePermutations(str, new StringBuilder(), new boolean[str.length()]);
-        Collections.sort(uniquePermutations);
-        return uniquePermutations;
-    }
-
-    private void findUniquePermutations(String str, StringBuilder permutation, boolean[] visited) {
-        if (permutation.length() == str.length()) {
-            uniquePermutations.add(permutation.toString());
-            return;
-        }
-
-        // To keep track of elements used at the current level of recursion
-        Set<Character> used = new HashSet<>();
-
-        for (int i = 0; i < str.length(); i++) {
-
-            if (used.contains(str.charAt(i))) {
-                continue; // Skip duplicates
-            }
-
-            if (!visited[i]) {
-                used.add(str.charAt(i));
-                visited[i] = true;
-                permutation.append(str.charAt(i));
-                findUniquePermutations(str, permutation, visited);
-                permutation.setLength(permutation.length() - 1);
-                visited[i] = false;
-            }
-        }
-    }
-}
-
-
-// Further optimised
-
-class Solution {
-    private List<String> uniquePermutations;
-
-    public List<String> find_permutation(String str) {
-        uniquePermutations = new ArrayList<>();
-        findUniquePermutations(str, new StringBuilder(), new boolean[str.length()]);
-        Collections.sort(uniquePermutations);
-        return uniquePermutations;
-    }
-
-    private void findUniquePermutations(String str, StringBuilder permutation, boolean[] visited) {
-        if (permutation.length() == str.length()) {
-            uniquePermutations.add(permutation.toString());
-            return;
-        }
-
-        // To keep track of elements used at the current level of recursion
-        boolean[] used = new boolean[128];
-
-        for (int i = 0; i < str.length(); i++) {
-
-            if (used[str.charAt(i)]) {
-                continue; // Skip duplicates
-            }
-
-            if (!visited[i]) {
-                used[str.charAt(i)] = true;
-                visited[i] = true;
-                permutation.append(str.charAt(i));
-                findUniquePermutations(str, permutation, visited);
-                permutation.setLength(permutation.length() - 1);
-                visited[i] = false;
-            }
-        }
-    }
-}
-
-
 
 //Method 2
 
 //Bruteforce Approach
 
 class Solution {
-    private List<String> uniquePermutations;
+    private Set<String> uniquePermutations;
 
     public List<String> find_permutation(String str) {
-        uniquePermutations = new ArrayList<>();
+        uniquePermutations = new HashSet<>();
         findUniquePermutations(str.toCharArray(), 0);
-        Collections.sort(uniquePermutations);
-        return uniquePermutations;
+        List<String>sortedUniquePermutations=new ArrayList<>(uniquePermutations);
+        Collections.sort(sortedUniquePermutations);
+        return sortedUniquePermutations;
     }
 
     private void findUniquePermutations(char[] arr, int index) {
