@@ -81,12 +81,12 @@ class Solution {
 
 class Solution {
     private List<List<String>> allPartitions;
-    private int[][] memo;
+    private int[][] cache;
 
     public List<List<String>> partition(String str) {
         allPartitions = new ArrayList<>();
-        memo = new int[str.length()][str.length()];
-        intializeMemo();
+        cache = new int[str.length()][str.length()];
+        intializeCache();
         partitionHelper(str, 0, new ArrayList<>(str.length()));
         return allPartitions;
     }
@@ -106,29 +106,30 @@ class Solution {
         }
     }
 
-    private boolean isPalindrome(String str, int i, int j) {
-        if (memo[i][j] != -1) {
-            return memo[i][j] == 1;
+    private boolean isPalindrome(String str, int start, int end) {
+        if (cache[start][end] != -1) {
+            return cache[start][end] == 1;
         }
 
-        while (i < j) {
-            if (str.charAt(i) != str.charAt(j)) {
-                memo[i][j] = 0;
-                return false;
+        while (start < end) {
+            if (str.charAt(start) != str.charAt(end)) {
+                cache[start][end] = 0;
+                return cache[start][end] == 1;
             }
-            i++;
-            j--;
+            start++;
+            end--;
         }
-        memo[i][j] = 1;
-        return true;
+        cache[start][end] = 1;
+        return cache[start][end] == 1;
     }
 
-    private void intializeMemo() {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
         }
     }
 }
+
 
 //Optimal Approach
 
