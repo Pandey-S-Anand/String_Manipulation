@@ -31,11 +31,11 @@ class Solution {
 //Better Approach 
 
 class Solution {
-    private int[][] memo;
+    private int[][] cache;
 
     public int minInsertions(String str) {
-        memo = new int[str.length()][str.length()];
-        intializeMemo();
+        cache = new int[str.length()][str.length()];
+        intializeCache();
         return minInsertions(str, 0, str.length() - 1);
     }
 
@@ -44,20 +44,20 @@ class Solution {
             return 0;
         }
 
-        if (memo[i][j] != -1) {
-            return memo[i][j];
+        if (cache[i][j] != -1) {
+            return cache[i][j];
         }
 
         if (str.charAt(i) != str.charAt(j)) {
-            return memo[i][j] = 1 + Math.min(minInsertions(str, i + 1, j), minInsertions(str, i, j - 1));
+            return cache[i][j] = 1 + Math.min(minInsertions(str, i + 1, j), minInsertions(str, i, j - 1));
         }
 
-        return memo[i][j] = minInsertions(str, i + 1, j - 1);
+        return cache[i][j] = minInsertions(str, i + 1, j - 1);
     }
 
-    private void intializeMemo() {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
         }
     }
 }
@@ -97,7 +97,6 @@ class Solution {
 class Solution {
     public int minInsertions(String str) {
         int[][] dp = new int[str.length()][str.length()];
-        // dp[i][j] represents the minimum number of insertions required to make the substring str[i..j] a palindrome.
 
         for (int gap = 1; gap < str.length(); gap++) {
             for (int i = 0, j = gap; j < str.length(); i++, j++) {
@@ -124,30 +123,22 @@ class Solution {
     }
 
     private int longestPalindromeSubsequence(String str) {
-        List<String> subsequences = generateSubsequences(str);
         int maxLength = 0;
-
-        for (String subsequence : subsequences) {
-            if (isPalindrome(subsequence)) {
-                maxLength = Math.max(maxLength, subsequence.length());
-            }
-        }
-
-        return maxLength;
-    }
-
-    private List<String> generateSubsequences(String str) {
         List<String> subsequences = new ArrayList<>();
         subsequences.add(""); // Start with the empty subsequence
 
         for (int i = 0; i < str.length(); i++) {
             int size = subsequences.size();
             for (int j = 0; j < size; j++) {
-                subsequences.add(subsequences.get(j) + str.charAt(i));
+                String subsequence = subsequences.get(j) + str.charAt(i);
+                if (isPalindrome(subsequence)) {
+                    maxLength = Math.max(maxLength, subsequence.length());
+                }
+                subsequences.add(subsequence);
             }
         }
 
-        return subsequences;
+        return maxLength;
     }
 
     private boolean isPalindrome(String str) {
@@ -165,8 +156,7 @@ class Solution {
     }
 }
 
-
-//Improved Approach
+//Good Approach
 
 class Solution {
     public int minInsertions(String str) {
@@ -174,10 +164,6 @@ class Solution {
     }
 
     private int longestPalindromeSubsequence(String str, int start, int end) {
-        if (start > end) {
-            return 0;
-        }
-
         if (start == end) {
             return 1;
         }
@@ -194,15 +180,14 @@ class Solution {
     }
 }
 
-
 //Better Approach
 
 class Solution {
-    private int[][]memo;
+    private int[][] cache;
 
     public int minInsertions(String str) {
-        memo = new int[str.length()][str.length()];
-        intializeMemo();
+        cache = new int[str.length()][str.length()];
+        intializeCache();
         return str.length() - longestPalindromeSubsequence(str, 0, str.length() - 1);
     }
 
@@ -211,28 +196,24 @@ class Solution {
             return 0;
         }
 
-        if (memo[start][end] != -1) {
-            return memo[start][end];
+        if (end - start <= 1) {
+            return (start == end) ? 1 : (str.charAt(start) == str.charAt(end) ? 2 : 1);
         }
 
-        if (start == end) {
-            return 1;
-        }
-
-        if (end - start == 1) {
-            return str.charAt(start) == str.charAt(end) ? 2 : 1;
+        if (cache[start][end] != -1) {
+            return cache[start][end];
         }
 
         if (str.charAt(start) == str.charAt(end)) {
-            return memo[start][end] = 2 + longestPalindromeSubsequence(str, start + 1, end - 1);
+            return cache[start][end] = 2 + longestPalindromeSubsequence(str, start + 1, end - 1);
         }
 
-        return memo[start][end] = Math.max(longestPalindromeSubsequence(str, start + 1, end), longestPalindromeSubsequence(str, start, end - 1));
+        return cache[start][end] = Math.max(longestPalindromeSubsequence(str, start + 1, end), longestPalindromeSubsequence(str, start, end - 1));
     }
 
-    private void intializeMemo() {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
         }
     }
 }
