@@ -48,7 +48,7 @@ public class Solution {
         }
 
         if (str1.charAt(i) == str2.charAt(j)) {
-            return str1.charAt(i) + computeLcs(str1, str2, i - 1, j - 1);
+            return computeLcs(str1, str2, i - 1, j - 1) + str1.charAt(i);
         }
 
         String option1 = computeLcs(str1, str2, i - 1, j);
