@@ -31,19 +31,16 @@ class Solution {
 //Better Approach
 
 class Solution {
-    /*
-     * memo[i][j]==-1 => str[i..j] is not solved yet
-     * memo[i][j]==0 => str[i..j] is not palindrome
-     * memo[i][j]==1 => str[i..j] is palindrome
-     */
+    private int[][] cache;
+
     public int countSubstrings(String str) {
-        int[][] memo = new int[str.length()][str.length()];
-        initializeMemo(memo);
+        cache = new int[str.length()][str.length()];
+        initializeCache();
         int count = 0;
 
         for (int start = 0; start < str.length(); start++) {
             for (int end = start; end < str.length(); end++) {
-                if (isPalindrome(str, start, end, memo)) {
+                if (isPalindrome(str, start, end)) {
                     count++;
                 }
             }
@@ -52,28 +49,28 @@ class Solution {
         return count;
     }
 
-    private void initializeMemo(int[][] memo) {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
-        }
-    }
-
-    private boolean isPalindrome(String str, int start, int end, int[][] memo) {
+    private boolean isPalindrome(String str, int start, int end) {
         if (start >= end) {
             return true;
         }
 
-        if (memo[start][end] != -1) {
-            return memo[start][end] == 1;
+        if (cache[start][end] != -1) {
+            return cache[start][end] == 1;
         }
 
         if (str.charAt(start) != str.charAt(end)) {
-            memo[start][end] = 0;
-            return false;
+            cache[start][end] = 0;
+            return cache[start][end] == 1;
         }
 
-        memo[start][end] = isPalindrome(str, start + 1, end - 1, memo) ? 1 : 0;
-        return memo[start][end] == 1;
+        cache[start][end] = isPalindrome(str, start + 1, end - 1) ? 1 : 0;
+        return cache[start][end] == 1;
+    }
+
+    private void initializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
+        }
     }
 }
 
