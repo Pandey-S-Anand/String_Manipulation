@@ -2,32 +2,32 @@
 
 class Solution {
     public boolean isMatch(String text, String pattern) {
-        return isMatching(text, pattern, 0, 0);
+        return isMatching(text, pattern, text.length() - 1, pattern.length() - 1);
     }
 
     private boolean isMatching(String text, String pattern, int i, int j) {
         // Base case: If both strings are fully processed, it's a match
-        if (i == text.length() && j == pattern.length()) {
+        if (i < 0 && j < 0) {
             return true;
         }
 
         // If the pattern is fully processed but the text is not, return false
-        if (j == pattern.length()) {
+        if (j < 0) {
             return false;
         }
 
         // If the text is fully processed but the pattern is not
-        if (i == text.length()) {
+        if (i < 0) {
             // Ensure the remaining pattern is all '*', which can match an empty string
-            while (j < pattern.length() && pattern.charAt(j) == '*') {
-                j++;
+            while (j >= 0 && pattern.charAt(j) == '*') {
+                j--;
             }
-            return j == pattern.length(); // Return true if we processed the entire pattern
+            return j < 0; // Return true if we processed the entire pattern
         }
 
         // Match if current characters are the same or pattern has '?'
         if (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '?') {
-            return isMatching(text, pattern, i + 1, j + 1);
+            return isMatching(text, pattern, i - 1, j - 1);
         }
 
         /*
@@ -36,7 +36,7 @@ class Solution {
          * 2. Use '*' to match one character in the text and continue matching
          */
         if (pattern.charAt(j) == '*') {
-            return isMatching(text, pattern, i, j + 1) || isMatching(text, pattern, i + 1, j);
+            return isMatching(text, pattern, i, j - 1) || isMatching(text, pattern, i - 1, j);
         }
 
         // If the current characters don't match, and the pattern character is neither '?' nor '*', the match fails
@@ -48,54 +48,55 @@ class Solution {
 //Better Approach
 
 class Solution {
-    private int[][] memo;
+    private int[][] cache;
 
     public boolean isMatch(String text, String pattern) {
-        memo = new int[text.length()][pattern.length()];
-        intializeMemo();
-        return isMatching(text, pattern, 0, 0);
+        cache = new int[text.length()][pattern.length()];
+        intializeCache();
+        return isMatching(text, pattern, text.length() - 1, pattern.length() - 1);
     }
 
     private boolean isMatching(String text, String pattern, int i, int j) {
-        if (i == text.length() && j == pattern.length()) {
+        if (i < 0 && j < 0) {
             return true;
         }
 
-        if (j == pattern.length()) {
+        if (j < 0) {
             return false;
         }
 
-        if (i == text.length()) {
-            while (j < pattern.length() && pattern.charAt(j) == '*') {
-                j++;
+        if (i < 0) {
+            while (j >= 0 && pattern.charAt(j) == '*') {
+                j--;
             }
-            return j == pattern.length();
+            return j < 0;
         }
 
-        if (memo[i][j] != -1) {
-            return memo[i][j] == 1;
+        if (cache[i][j] != -1) {
+            return cache[i][j] == 1;
         }
 
         if (pattern.charAt(j) == text.charAt(i) || pattern.charAt(j) == '?') {
-            memo[i][j] = isMatching(text, pattern, i + 1, j + 1) ? 1 : 0;
-            return memo[i][j] == 1;
+            cache[i][j] = isMatching(text, pattern, i - 1, j - 1) ? 1 : 0;
+            return cache[i][j] == 1;
         }
 
         if (pattern.charAt(j) == '*') {
-            memo[i][j] = (isMatching(text, pattern, i, j + 1) || isMatching(text, pattern, i + 1, j)) ? 1 : 0;
-            return memo[i][j] == 1;
+            cache[i][j] = (isMatching(text, pattern, i, j - 1) || isMatching(text, pattern, i - 1, j)) ? 1 : 0;
+            return cache[i][j] == 1;
         }
 
-        memo[i][j] = 0;
-        return memo[i][j] == 1;
+        cache[i][j] = 0;
+        return cache[i][j] == 1;
     }
 
-    private void intializeMemo() {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
         }
     }
 }
+
 
 //Optimal Approach
 
@@ -109,8 +110,7 @@ class Solution {
         // If both the text and the pattern are empty, they match by definition. Therefore, dp[0][0] = true
         dp[0][0] = true;
 
-        // If text is empty, we can only match if the pattern contains '*' at each
-        // position
+        // If text is empty, we can only match if the pattern contains '*' at each position
         for (int i = 1; i <= pattern.length(); i++) {
             dp[0][i] = pattern.charAt(i - 1) == '*' && dp[0][i - 1];
         }
