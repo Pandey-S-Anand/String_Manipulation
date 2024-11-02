@@ -48,7 +48,9 @@ class Solution {
             return 1;// only one char is always palindrome
         }
 
+        // Case: Two characters
         if (end - start == 1) {
+            // If characters at 'start' and 'end' are the same, return 2 (one pair as a palindrome); otherwise return 1, representing the single character as a palindromic subsequence.
             return str.charAt(start) == str.charAt(end) ? 2 : 1;
         }
 
