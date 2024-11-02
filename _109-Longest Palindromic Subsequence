@@ -135,9 +135,138 @@ This symmetry means the characters can be read the same way from either end, whi
 Thus, any common subsequence found in both the original string and its reverse must be a palindrome.
 */
 
+//Bruteforce Approach
+
 class Solution {
     public int longestPalindromeSubseq(String str) {
-        return longestCommonSubsequence(str, reverse(str));
+        return longestCommonSubsequence(str, new StringBuilder(str).reverse().toString());
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        List<String> subsequencesStr1 = generateSubsequences(str1);
+        List<String> subsequencesStr2 = generateSubsequences(str2);
+        int maxLength = 0;
+
+        for (String subsequence1 : subsequencesStr1) {
+            for (String subsequence2 : subsequencesStr2) {
+                if (subsequence1.equals(subsequence2)) {
+                    maxLength = Math.max(maxLength, subsequence1.length());
+                }
+            }
+        }
+
+        return maxLength;
+    }
+
+    private List<String> generateSubsequences(String str) {
+        List<String> subsequences = new ArrayList<>();
+        subsequences.add(""); // Start with the empty subsequence
+
+        for (int i = 0; i < str.length(); i++) {
+            int size = subsequences.size();
+            for (int j = 0; j < size; j++) {
+                subsequences.add(subsequences.get(j) + str.charAt(i));
+            }
+        }
+
+        return subsequences;
+    }
+}
+
+//Improved Approach
+
+class Solution {
+    public int longestPalindromeSubseq(String str) {
+        return longestCommonSubsequence(str, new StringBuilder(str).reverse().toString());
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        return computeLcs(str1, str2, str1.length() - 1, str2.length() - 1);
+    }
+
+    private int computeLcs(String str1, String str2, int i, int j) {
+        if (i < 0 || j < 0) {
+            return 0;
+        }
+
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return 1 + computeLcs(str1, str2, i - 1, j - 1);
+        }
+
+        return Math.max(computeLcs(str1, str2, i - 1, j), computeLcs(str1, str2, i, j - 1));
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private int[][] cache;
+
+    public int longestPalindromeSubseq(String str) {
+        return longestCommonSubsequence(str, new StringBuilder(str).reverse().toString());
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        cache = new int[str1.length()][str2.length()];
+        intializeCache();
+        return computeLcs(str1, str2, str1.length() - 1, str2.length() - 1);
+    }
+
+    private int computeLcs(String str1, String str2, int i, int j) {
+        if (i < 0 || j < 0) {
+            return 0;
+        }
+
+        if (cache[i][j] != -1) {
+            return cache[i][j];
+        }
+
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return 1 + computeLcs(str1, str2, i - 1, j - 1);
+        }
+
+        return cache[i][j] = Math.max(computeLcs(str1, str2, i - 1, j), computeLcs(str1, str2, i, j - 1));
+    }
+
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
+        }
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int longestPalindromeSubseq(String str) {
+        return longestCommonSubsequence(str, new StringBuilder(str).reverse().toString());
+    }
+
+    private int longestCommonSubsequence(String str1, String str2) {
+        int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+
+        for (int i = 1; i <= str1.length(); i++) {
+            for (int j = 1; j <= str2.length(); j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+
+        return dp[str1.length()][str2.length()];
+    }
+}
+
+
+//Aliter (Space optimised)
+
+class Solution {
+    public int longestPalindromeSubseq(String str) {
+        return longestCommonSubsequence(str, new StringBuilder(str).reverse().toString());
     }
 
     private int longestCommonSubsequence(String str1, String str2) {
@@ -152,23 +281,11 @@ class Solution {
                     currentRow[j] = Math.max(previousRow[j], currentRow[j - 1]);
                 }
             }
-            int[] temp = previousRow;
-            previousRow = currentRow;
-            currentRow = temp;
+            int[] temp = currentRow;
+            currentRow = previousRow;
+            previousRow = temp;
         }
 
         return previousRow[str2.length()];
-    }
-
-    private String reverse(String str) {
-        char[] arr = str.toCharArray();
-
-        for (int i = 0; i < (arr.length / 2); i++) {
-            char temp = arr[i];
-            arr[i] = arr[arr.length - 1 - i];
-            arr[arr.length - 1 - i] = temp;
-        }
-
-        return new String(arr);
     }
 }
