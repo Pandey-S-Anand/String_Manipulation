@@ -2,40 +2,42 @@
 
 class Solution {
     public int minDistance(String word1, String word2) {
-        return minDistance(word1, word2, 0, 0);
+        return minDistance(word1, word2, word1.length() - 1, word2.length() - 1);
     }
 
     private int minDistance(String word1, String word2, int i, int j) {
         // Base case: if both strings have been fully processed
-        if (i == word1.length() && j == word2.length()) {
+        if (i < 0 && j < 0) {
             return 0; // No more operations needed
         }
 
         // If word1 is exhausted, the remaining characters of word2 need to be inserted in word1
-        if (i == word1.length()) {
-            return word2.length() - j; // Number of insert operations to add remaining characters of word2
+        if (i < 0) {
+            return j + 1; // Number of insert operations to add remaining characters of word2
         }
 
         // If word2 is exhausted, the remaining characters of word1 need to be deleted
-        if (j == word2.length()) {
-            return word1.length() - i; // Number of delete operations to remove remaining characters of word1
+        if (j < 0) {
+            return i + 1; // Number of delete operations to remove remaining characters of word1
         }
 
         // If the current characters of word1 and word2 are the same, move to the next characters without any operation
         if (word1.charAt(i) == word2.charAt(j)) {
-            return minDistance(word1, word2, i + 1, j + 1);
+            return minDistance(word1, word2, i - 1, j - 1);
         }
 
-        // If the current characters differ, we have 3 possible operations:
-        // 1. Replace the character in word1 with word2's character (substitution)
-        // 2. Insert the current character of word2 into word1 (insertion)
-        // 3. Delete the current character of word1 (deletion)
-        // The result is 1 (for performing an operation) plus the minimum of these three operations
+        /*
+         * If the current characters differ, we have 3 possible operations:
+         * 1. Replace the character in word1 with word2's character (substitution)
+         * 2. Insert the current character of word2 into word1 (insertion)
+         * 3. Delete the current character of word1 (deletion)
+         * The result is 1 (for performing an operation) plus the minimum of these three operations
+         */
         return 1 + Math.min(
-                minDistance(word1, word2, i + 1, j + 1), // Substitution operation
+                minDistance(word1, word2, i - 1, j - 1), // Substitution operation
                 Math.min(
-                        minDistance(word1, word2, i, j + 1), // Insertion operation
-                        minDistance(word1, word2, i + 1, j) // Deletion operation
+                        minDistance(word1, word2, i, j - 1), // Insertion operation
+                        minDistance(word1, word2, i - 1, j) // Deletion operation
                 ));
     }
 }
@@ -44,56 +46,42 @@ class Solution {
 //Better Approach
 
 class Solution {
-    private int[][] memo;
+    private int[][] cache;
 
     public int minDistance(String word1, String word2) {
-        memo = new int[word1.length()][word2.length()];
-        intializeMemo();
-        return minDistance(word1, word2, 0, 0);
+        cache = new int[word1.length()][word2.length()];
+        intializeCache();
+        return minDistance(word1, word2, word1.length() - 1, word2.length() - 1);
     }
 
     private int minDistance(String word1, String word2, int i, int j) {
-        // Base case: if both strings have been fully processed
-        if (i == word1.length() && j == word2.length()) {
-            return 0; // No more operations needed
+        if (i < 0 && j < 0) {
+            return 0;
         }
 
-        // If word1 is exhausted, the remaining characters of word2 need to be inserted in word1
-        if (i == word1.length()) {
-            return word2.length() - j; // Number of insert operations to add remaining characters of word2
+        if (i < 0) {
+            return j + 1;
         }
 
-        // If word2 is exhausted, the remaining characters of word1 need to be deleted
-        if (j == word2.length()) {
-            return word1.length() - i; // Number of delete operations to remove remaining characters of word1
+        if (j < 0) {
+            return i + 1;
         }
 
-        if (memo[i][j] != -1) {
-            return memo[i][j];
+        if (cache[i][j] != -1) {
+            return cache[i][j];
         }
 
-        // If the current characters of word1 and word2 are the same, move to the next characters without any operation
         if (word1.charAt(i) == word2.charAt(j)) {
-            return memo[i][j] = minDistance(word1, word2, i + 1, j + 1);
+            return cache[i][j] = minDistance(word1, word2, i - 1, j - 1);
         }
 
-        // If the current characters differ, we have 3 possible operations:
-        // 1. Replace the character in word1 with word2's character (substitution)
-        // 2. Insert the current character of word2 into word1 (insertion)
-        // 3. Delete the current character of word1 (deletion)
-        // The result is 1 (for performing an operation) plus the minimum of these three
-        // operations
-        return memo[i][j] = 1 + Math.min(
-                minDistance(word1, word2, i + 1, j + 1), // Substitution operation
-                Math.min(
-                        minDistance(word1, word2, i, j + 1), // Insertion operation
-                        minDistance(word1, word2, i + 1, j) // Deletion operation
-                ));
+        return cache[i][j] = (1 + Math.min(minDistance(word1, word2, i - 1, j - 1),
+                Math.min(minDistance(word1, word2, i, j - 1), minDistance(word1, word2, i - 1, j))));
     }
 
-    private void intializeMemo() {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
         }
     }
 }
@@ -105,6 +93,9 @@ class Solution {
     public int minDistance(String word1, String word2) {
         // dp[i][j] will store the minimum number of operations to convert string word1[0...i-1] to word2[0...j-1]
         int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+        
+        //If both strings are empty, they are considered identical, so no operations are needed
+        dp[0][0]=0;
 
         // if word1 is empty, insert all characters of word2 in word1
         for (int i = 1; i <= word2.length(); i++) {
@@ -129,6 +120,7 @@ class Solution {
         return dp[word1.length()][word2.length()];
     }
 }
+
 
 //Aliter (space optimised)
 
