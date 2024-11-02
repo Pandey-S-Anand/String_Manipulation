@@ -1,10 +1,16 @@
 /*
-For problems where we need to print the solution and subsequences are involved, backward recursion is unsuitable because subsequences require maintaining the order of characters 
-as they appear. In such cases, forward recursion should be used. However, if we're only concerned with finding the length, backward recursion can be a viable option.
-The backward recursive approach can still be applied in scenarios where printing the solution is necessary and involves the concept of subsequences. 
-This can be achieved by converting the backward recursive code into a tabulation (bottom-up dynamic programming) approach to compute the length of the solution 
-(for example, the length of the shortest common supersequence). After constructing the DP matrix, we can then traverse it from the bottom up to print the solution, 
-such as the printing the shortest common supersequence.
+Why does the backward recursive approach fail when printing the Shortest Common Supersequence (SCS) but work well for the Longest Common Subsequence (LCS)?
+
+In the case of LCS, we only print matching characters, so the backward recursion is effective as it preserves the order by definition. However, for SCS, 
+we must account for both matching and non-matching characters. Working backward can result in non-matching characters being inserted incorrectly relative to the original strings,
+which necessitates the use of a forward recursive approach.
+
+To ensure accuracy when printing results for problems that involve subsequences, it is generally safer to employ a forward recursive approach. 
+Conversely, if the objective is solely to determine the length of the result, a backward recursion can still be a viable option.
+
+The backward recursive approach for computing the length of a result (such as the length of the Shortest Common Supersequence), when converted to a tabulation method, 
+can also be applied in situations where printing the solution is necessary and involves subsequence concepts. After constructing the dynamic programming (DP) matrix, 
+we can traverse it from the bottom up to extract and print the solution, such as the Shortest Common Supersequence.
 */
 
 //Bruteforce Approach
