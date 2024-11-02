@@ -81,11 +81,11 @@ class Solution {
         }
 
         if (end == start) {
-            return 1;
+            return 1; // A single character is a palindrome
         }
 
         if (end - start == 1) {
-            return 2;
+            return 2; // If chars are different, count both individually. If same, count one character and the pair as palindrome.
         }
 
         if (str.charAt(start) != str.charAt(end)) {
@@ -110,15 +110,15 @@ class Solution {
 class Solution {
     private int[] prevIndex;
     private int[] nextIndex;
-    private int[][] memo;
+    private int[][] cache;
     private final int mod = 1000000007;
 
     public int countPalindromicSubsequences(String str) {
+        cache = new int[str.length()][str.length()];
+        intializeCache();
         nextIndex = new int[str.length()];
         prevIndex = new int[str.length()];
-        memo = new int[str.length()][str.length()];
         Map<Character, Integer> map = new HashMap<>();
-        intializeMemo();
 
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
@@ -137,12 +137,6 @@ class Solution {
         return computeDps(str, 0, str.length() - 1);
     }
 
-    private void intializeMemo() {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
-        }
-    }
-
     private int computeDps(String str, int start, int end) {
         if (start > end) {
             return 0;
@@ -156,50 +150,56 @@ class Solution {
             return 2;
         }
 
-        if (memo[start][end] != -1) {
-            return memo[start][end];
+        if (cache[start][end] != -1) {
+            return cache[start][end];
         }
 
         if (str.charAt(start) != str.charAt(end)) {
-            memo[start][end] = computeDps(str, start, end - 1) + computeDps(str, start + 1, end) - computeDps(str, start + 1, end - 1);
-            if (memo[start][end] < 0) {
-                memo[start][end] += mod;
+            cache[start][end] = computeDps(str, start, end - 1) + computeDps(str, start + 1, end) - computeDps(str, start + 1, end - 1);
+            if (cache[start][end] < 0) {
+                cache[start][end] += mod;
             } else {
-                memo[start][end] %= mod;
+                cache[start][end] %= mod;
             }
 
-            return memo[start][end];
+            return cache[start][end];
         }
 
         if (nextIndex[start] > prevIndex[end]) {
-            memo[start][end] = (2 * computeDps(str, start + 1, end - 1) + 2);
-            if (memo[start][end] < 0) {
-                memo[start][end] += mod;
+            cache[start][end] = (2 * computeDps(str, start + 1, end - 1) + 2);
+            if (cache[start][end] < 0) {
+                cache[start][end] += mod;
             } else {
-                memo[start][end] %= mod;
+                cache[start][end] %= mod;
             }
 
-            return memo[start][end];
+            return cache[start][end];
         }
 
         if (nextIndex[start] == prevIndex[end]) {
-            memo[start][end] = 2 * computeDps(str, start + 1, end - 1) + 1;
-            if (memo[start][end] < 0) {
-                memo[start][end] += mod;
+            cache[start][end] = 2 * computeDps(str, start + 1, end - 1) + 1;
+            if (cache[start][end] < 0) {
+                cache[start][end] += mod;
             } else {
-                memo[start][end] %= mod;
+                cache[start][end] %= mod;
             }
-            return memo[start][end];
+            return cache[start][end];
         }
 
-        memo[start][end] = (2 * computeDps(str, start + 1, end - 1) - computeDps(str, nextIndex[start] + 1, prevIndex[end] - 1));
-        if (memo[start][end] < 0) {
-            memo[start][end] += mod;
+        cache[start][end] = (2 * computeDps(str, start + 1, end - 1) - computeDps(str, nextIndex[start] + 1, prevIndex[end] - 1));
+        if (cache[start][end] < 0) {
+            cache[start][end] += mod;
         } else {
-            memo[start][end] %= mod;
+            cache[start][end] %= mod;
         }
 
-        return memo[start][end];
+        return cache[start][end];
+    }
+
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
+        }
     }
 }
 
@@ -233,7 +233,7 @@ class Solution {
         for (int gap = 0; gap < str.length(); gap++) {
             for (int i = 0, j = gap; j < str.length(); i++, j++) {
                 if (gap == 0) {
-                    dp[i][j] = 1;// A single character is a palindrome of length 1
+                    dp[i][j] = 1;// A single character is a palindrome
                 } else if (gap == 1) {
                     dp[i][j] = 2;// If chars are different, count both individually. If same, count one character and the pair as palindrome.
                 } else {
