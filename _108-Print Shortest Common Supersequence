@@ -1,3 +1,12 @@
+/*
+For problems where we need to print the solution and subsequences are involved, backward recursion is unsuitable because subsequences require maintaining the order of characters 
+as they appear. In such cases, forward recursion should be used. However, if we're only concerned with finding the length, backward recursion can be a viable option.
+The backward recursive approach can still be applied in scenarios where printing the solution is necessary and involves the concept of subsequences. 
+This can be achieved by converting the backward recursive code into a tabulation (bottom-up dynamic programming) approach to compute the length of the solution 
+(for example, the length of the shortest common supersequence). After constructing the DP matrix, we can then traverse it from the bottom up to print the solution, 
+such as the printing the shortest common supersequence.
+*/
+
 //Bruteforce Approach
 
 class Solution {
@@ -39,6 +48,8 @@ class Solution {
 class Solution {
     public String shortestCommonSupersequence(String str1, String str2) {
         int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+
+        dp[0][0] = 0;
 
         for (int i = 1; i <= str2.length(); i++) {
             dp[0][i] = i;
