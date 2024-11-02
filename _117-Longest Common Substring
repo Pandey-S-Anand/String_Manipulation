@@ -68,12 +68,12 @@ class Solution {
 //Better Approach
 
 class Solution {
-    int[][] memo; // memo[i][j]=Length of longest common suffix between str1[0...i] and str2[0...j]
+    private int[][] cache;
 
     public int longestCommonSubstr(String str1, String str2) {
-        memo = new int[str1.length()][str2.length()];
+        cache = new int[str1.length()][str2.length()];
 
-        intializeMemo();
+        intializeCache();
 
         int maxLengthCommonSuffix = 0;
 
@@ -94,20 +94,20 @@ class Solution {
             return 0;
         }
 
-        if (memo[i][j] != -1) {
-            return memo[i][j];
+        if (cache[i][j] != -1) {
+            return cache[i][j];
         }
 
         if (str1.charAt(i) == str2.charAt(j)) {
-            return memo[i][j] = longestCommonSuffix(str1, str2, i - 1, j - 1) + 1;
+            return cache[i][j] = longestCommonSuffix(str1, str2, i - 1, j - 1) + 1;
         }
 
-        return memo[i][j] = 0;
+        return cache[i][j] = 0;
     }
 
-    private void intializeMemo() {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
         }
     }
 }
@@ -119,13 +119,21 @@ class Solution {
 
 class Solution {
     public int longestCommonSubstr(String str1, String str2) {
-        int[][] dp = new int[str1.length() + 1][str2.length() + 1];
         /*
-         * Represents the length of the longest common substring that can be formed
-         * using:
+         * Represents the length of the longest common substring that can be formed using:
          * The first i characters of str1 i.e (str1[0..i-1])
          * The first j characters of str2 i.e (str2[0..j-1])
          */
+        int[][] dp = new int[str1.length() + 1][str2.length() + 1];
+
+        for (int i = 0; i <= str2.length(); i++) {
+            dp[0][i] = 0;
+        }
+
+        for (int i = 0; i <= str1.length(); i++) {
+            dp[i][0] = 0;
+        }
+
         int maxLength = 0;
 
         for (int i = 1; i <= str1.length(); i++) {
