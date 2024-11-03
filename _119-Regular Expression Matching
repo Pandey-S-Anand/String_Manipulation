@@ -1,3 +1,19 @@
+/*
+ * The problem constraint guarantees that each '*' in the pattern p will have a
+ * preceding character, ensuring well-formed patterns. This means that we won't
+ * encounter cases where '*' appears as the first character in p.
+ * 
+ * However, if we were to iterate backward, we might run into '*' as the very
+ * first character, without any preceding character to reference. This would
+ * violate the problem's constraints, making forward recursion the necessary
+ * approach here.
+ * 
+ * Example:
+ * 
+ * Input: s = "aa", p = "a*"
+ * Expected Output: true
+ */
+
 //Naive Approach
 
 class Solution {
@@ -64,11 +80,11 @@ class Solution {
 //Better Approach
 
 class Solution {
-    private int[][] memo;
+    private int[][] cache;
 
     public boolean isMatch(String text, String pattern) {
-        memo = new int[text.length() + 1][pattern.length()];
-        initializeMemo();
+        cache = new int[text.length() + 1][pattern.length()];
+        initializeCache();
         return isMatchHelper(text, pattern, 0, 0);
     }
 
@@ -81,8 +97,8 @@ class Solution {
             return false;
         }
 
-        if (memo[i][j] != -1) {
-            return memo[i][j] == 1;
+        if (cache[i][j] != -1) {
+            return cache[i][j] == 1;
         }
 
         boolean isNextStar = (j + 1 < pattern.length() && pattern.charAt(j + 1) == '*');
@@ -90,26 +106,26 @@ class Solution {
 
         if (!isNextStar) {
             if (isSame) {
-                memo[i][j] = isMatchHelper(text, pattern, i + 1, j + 1) ? 1 : 0;
+                cache[i][j] = isMatchHelper(text, pattern, i + 1, j + 1) ? 1 : 0;
             } else {
-                memo[i][j] = 0;
+                cache[i][j] = 0;
             }
 
-            return memo[i][j] == 1;
+            return cache[i][j] == 1;
         }
 
         if (isSame) {
-            memo[i][j] = (isMatchHelper(text, pattern, i, j + 2) || isMatchHelper(text, pattern, i + 1, j)) ? 1 : 0;
-            return memo[i][j] == 1;
+            cache[i][j] = (isMatchHelper(text, pattern, i, j + 2) || isMatchHelper(text, pattern, i + 1, j)) ? 1 : 0;
+            return cache[i][j] == 1;
         }
 
-        memo[i][j] = isMatchHelper(text, pattern, i, j + 2) ? 1 : 0;
-        return memo[i][j] == 1;
+        cache[i][j] = isMatchHelper(text, pattern, i, j + 2) ? 1 : 0;
+        return cache[i][j] == 1;
     }
 
-    private void initializeMemo() {
-        for (int i = 0; i < memo.length; i++) {
-            Arrays.fill(memo[i], -1);
+    private void initializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
         }
     }
 }
