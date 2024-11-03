@@ -48,56 +48,28 @@ class Solution {
 }
 
 
-//Better Approach
-
-class Solution {
-    private long countValidNLengthBinaryStrings = 0;
-    private static final long MOD = 1000000007L;
-
-    long countStrings(int n) {
-        countValidNLengthBinaryStrings(new char[n], 0);
-        return countValidNLengthBinaryStrings;
-    }
-
-    private void countValidNLengthBinaryStrings(char[] currentNLengthBinaryString, int index) {
-        if (index == currentNLengthBinaryString.length) {
-            countValidNLengthBinaryStrings = (countValidNLengthBinaryStrings + 1) % MOD;
-            return;
-        }
-        
-        // Place '0' at the current index
-        currentNLengthBinaryString[index] = '0';
-        countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1);
-
-        // Place '1' at the current index only if the previous bit is not '1'
-        if (index == 0 || (index > 0 && currentNLengthBinaryString[index - 1] != '1')) {
-            currentNLengthBinaryString[index] = '1';
-            countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1);
-        }
-    }
-}
-
-
-//Aliter
+//Improved Approach
 
 class Solution {
     private static final long MOD = 1000000007L;
 
     long countStrings(int n) {
-        return countValidNLengthBinaryStrings(new char[n], 0, false);
+        return countValidNLengthBinaryStrings(new char[n], n - 1, false);
     }
 
     private long countValidNLengthBinaryStrings(char[] currentNLengthBinaryString, int index, boolean wasLastBitOne) {
-        if (index == currentNLengthBinaryString.length) {
+        if (index < 0) {
             return 1L;
         }
 
+        // Place '0' at the current index
         currentNLengthBinaryString[index] = '0';
-        long count = countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1, false);
+        long count = countValidNLengthBinaryStrings(currentNLengthBinaryString, index - 1, false);
 
+        // Place '1' at the current index only if the previous bit is not '1'
         if (!wasLastBitOne) {
             currentNLengthBinaryString[index] = '1';
-            count = (count + countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1, true)) % MOD;
+            count = (count + countValidNLengthBinaryStrings(currentNLengthBinaryString, index - 1, true)) % MOD;
         }
 
         return count;
@@ -105,76 +77,129 @@ class Solution {
 }
 
 
-//Optimal Approach
-
-//Naive Implementation
+//Good Approach
 
 class Solution {
     private static final long MOD = 1000000007L;
 
     long countStrings(int n) {
-        // endWithZero[i] = count of binary substring of length 'i' that ends with 0
-        long[] endWithZero = new long[n + 1];
-        // endWithOne[i] = count of binary substring of length 'i' that ends with 1
-        long[] endWithOne = new long[n + 1];
+        return countValidNLengthBinaryStrings(n-1, false);
+    }
 
-        // Base case: There is one binary string of length 1 ending with 0 ("0")
-        endWithZero[1] = 1;
-        // Base case: There is one binary string of length 1 ending with 1 ("1")
-        endWithOne[1] = 1;
-
-        for (int i = 2; i <= n; i++) {
-            /*
-             * A binary string of length i that ends with 0 can be formed by appending 0 to
-             * any binary string of length i-1 that ends with '0' or '1'.
-             */
-            endWithZero[i] = (endWithZero[i - 1] + endWithOne[i - 1]) % MOD;
-            /*
-             * A valid binary string(that donot contain consecutive 1's) of length i that
-             * ends with '1' can only be formed by appending '1' to any binary string of
-             * length i-1 that ends with '0'.
-             */
-            endWithOne[i] = endWithZero[i - 1];
+    private long countValidNLengthBinaryStrings(int index, boolean wasLastBitOne) {
+        if (index < 0) {
+            return 1L;
         }
-        /*
-         * The total number of valid binary strings of length 'n' is the sum of the
-         * numbers of binary strings of length 'n' ending with '0' and ending with '1'
-         * (without consecutive 1's).
-         */
-        return (endWithZero[n] + endWithOne[n]) % MOD;
+
+        // Place '0' at the current index
+        long count = countValidNLengthBinaryStrings(index - 1, false);
+
+        // Place '1' at the current index only if the previous bit is not '1'
+        if (!wasLastBitOne) {
+            count = (count + countValidNLengthBinaryStrings(index - 1, true)) % MOD;
+        }
+
+        return count;
     }
 }
 
 
-//Optimal Implementation
-/*
-Intuition :
-In the above implementation we can clearly see that  we are only required to keep track of 'previous end With zero count', 
-'previous End with one count', 'current end with zero count' and 'current end with one count' 
-hence we can make use of 4 variables to denote those state eliminating the need of two 1D array's 
-thus reducing the space complexity of the algorithm can be reduced from O(n) to O(1).
-*/
+//Better Approach
+
+class Solution {
+    private static final long MOD = 1000000007L;
+    private long[][] cache;
+
+    long countStrings(int n) {
+        cache = new long[n][2];
+        intializeCache();
+        return countValidNLengthBinaryStrings(n - 1, 0);
+    }
+
+    private long countValidNLengthBinaryStrings(int index, int wasLastBitOne) {
+        if (index < 0) {
+            return 1L;
+        }
+
+        if (cache[index][wasLastBitOne] != -1) {
+            return cache[index][wasLastBitOne];
+        }
+
+        long count = countValidNLengthBinaryStrings(index - 1, 0);
+
+        if (wasLastBitOne == 0) {
+            count = (count + countValidNLengthBinaryStrings(index - 1, 1)) % MOD;
+        }
+
+        return cache[index][wasLastBitOne] = count;
+    }
+
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
+        }
+    }
+}
+
+
+//Optimal Approach
 
 class Solution {
     private static final long MOD = 1000000007L;
 
-    long countStrings(int length) {
-        long countEndingWithZeroPrev, countEndingWithOnePrev, countEndingWithZeroCurr, countEndingWithOneCurr;
-        
-        // Initialize counts for strings of length 1
-        countEndingWithZeroPrev = countEndingWithOnePrev = 1;
+    long countStrings(int n) {
+        /*
+         * dp[i][0] -> Count of valid strings of length i ending with '0'
+         * dp[i][1] -> Count of valid strings of length i ending with '1'
+         */
+        long[][] dp = new long[n + 1][2];
 
-        for (int i = 2; i <= length; i++) {
-            // Current counts for strings of length i
-            countEndingWithZeroCurr = (countEndingWithZeroPrev + countEndingWithOnePrev) % MOD;
-            countEndingWithOneCurr = countEndingWithZeroPrev;
+        // Base case: An empty string can be considered as both ending with '0' and '1'
+        dp[0][0] = 1L;
+        dp[0][1] = 1L;
 
-            // Update previous counts for the next iteration
-            countEndingWithZeroPrev = countEndingWithZeroCurr;
-            countEndingWithOnePrev = countEndingWithOneCurr;
+        for (int index = 1; index <= n; index++) {
+            for (int wasLastBitOne = 0; wasLastBitOne <= 1; wasLastBitOne++) {
+                long count = dp[index - 1][0];
+                if (wasLastBitOne == 0) {
+                    count = (count + dp[index - 1][1]) % MOD;
+                }
+
+                dp[index][wasLastBitOne] = count;
+            }
         }
 
-        // Return the total count of valid binary strings of the given length
-        return (countEndingWithZeroPrev + countEndingWithOnePrev) % MOD;
+        return dp[n][0];
+    }
+}
+
+
+//Aliter (Space optimised)
+
+class Solution {
+    private static final long MOD = 1000000007L;
+
+    long countStrings(int n) {
+        long[] previousRow=new long[2];
+        long[] currentRow=new long[2];
+
+        previousRow[0]=1L;
+        previousRow[1]=1L;
+        
+        for(int index=1;index<=n;index++){
+            for(int wasLastBitOne=0;wasLastBitOne<=1;wasLastBitOne++){
+              long count=previousRow[0];
+              if(wasLastBitOne==0){
+                  count=(count+previousRow[1])%MOD;
+              }
+               
+              currentRow[wasLastBitOne]=count;
+            }
+            long[] temp=currentRow;
+            currentRow=previousRow;
+            previousRow=temp;
+        }
+        
+        return previousRow[0];
     }
 }
