@@ -2,46 +2,6 @@
 
 class Solution {
     public int numDecodings(String str) {
-        return numDecodingsHelper(str);
-    }
-
-    private int numDecodingsHelper(String str) {
-        // Base case: If the string is empty, we have found one valid decoding
-        if (str.isEmpty()) {
-            return 1; // Return 1 for this valid decoding
-        }
-
-        int count = 0;
-
-        for (int i = 0; i < str.length(); i++) {
-            if (isValidPartition(str.substring(0, i + 1))) {
-                count += numDecodingsHelper(str.substring(i + 1));
-            }
-        }
-
-        return count;
-    }
-
-    private boolean isValidPartition(String str) {
-        if (str.length() > 2) {
-            return false; // If the length of the string is greater than 2, it's invalid
-        }
-
-        if (str.charAt(0) == '0') {
-            return false; // Invalid if the number has a leading zero
-        }
-
-        int num = Integer.parseInt(str);
-
-        return num >= 1 && num <= 26;
-    }
-}
-
-
-//Improved Approach
-
-class Solution {
-    public int numDecodings(String str) {
         return numDecodingsHelper(str, 0);
     }
 
@@ -62,117 +22,15 @@ class Solution {
     }
 
     private boolean isValidPartition(String str, int start, int end) {
-        if ((end - start + 1) > 2) {
+        if ((end - start) >= 2) { // If the length of the string is greater than 2, it's invalid
             return false;
         }
-
-        if (str.charAt(start) == '0') {
-            return false;
-        }
-
-        int num = Integer.parseInt(str.substring(start, end + 1));
-
-        return num >= 1 && num <= 26;
-    }
-}
-
-
-//Good Approach
-
-class Solution {
-    private int[] memo;
-
-    public int numDecodings(String str) {
-        memo = new int[str.length()];
-        Arrays.fill(memo, -1);
-        return numDecodingsHelper(str, 0);
-    }
-
-    private int numDecodingsHelper(String str, int start) {
-        if (start == str.length()) {
-            return 1;
-        }
-
-        if (memo[start] != -1) {
-            return memo[start];
-        }
-
-        int count = 0;
-
-        for (int i = start; i < str.length(); i++) {
-            if (isValidPartition(str, start, i)) {
-                count += numDecodingsHelper(str, i + 1);
-            }
-        }
-
-        return memo[start] = count;
-    }
-
-    private boolean isValidPartition(String str, int start, int end) {
-        if ((end - start + 1) > 2) {
-            return false;
-        }
-
-        if (str.charAt(start) == '0') {
-            return false;
-        }
-
-        int num = Integer.parseInt(str.substring(start, end + 1));
-
-        return num >= 1 && num <= 26;
-    }
-}
-
-
-//Better Approach
-
-class Solution {
-    private int[] memo;
-
-    public int numDecodings(String str) {
-        memo = new int[str.length()];
-        Arrays.fill(memo, -1);
-        return numDecodingsHelper(str, 0);
-    }
-
-    private int numDecodingsHelper(String str, int index) {
-        if (index == str.length()) {
-            return 1;
-        }
-
-        if (memo[index] != -1) {
-            return memo[index];
-        }
-
-        int count = 0;
-
         /*
          * Check for single digit decoding (valid if the digit is not '0')
          * A single digit can only be decoded if it is between '1' and '9'
          */
-        if (str.charAt(index) != '0') {
-            count = numDecodingsHelper(str, index + 1);
-        }
-
-        /*
-         * Check for double digit decoding
-         * A double digit can be decoded if:
-         * - The first digit is not '0'
-         * - The number formed by the two digits is between 10 and 26
-         */
-        if (isValidPartition(str, index, index + 1)) {
-            count += numDecodingsHelper(str, index + 2);
-        }
-
-        // Partitions longer than two digits are invalid since we only have mappings for 1 to 26
-
-        return memo[index] = count;
-    }
-
-    private boolean isValidPartition(String str, int start, int end) {
-        // Check if the end index exceeds the string length
-        if (end == str.length()) {
-            return false;
+        if ((end - start) == 0) { 
+            return str.charAt(start) != '0';
         }
 
         /*
@@ -184,7 +42,103 @@ class Solution {
             return true;
         }
 
-        return false; // Invalid partition if not in valid range
+        return false;
+    }
+}
+
+
+//Good Approach
+
+class Solution {
+    private int[] cache;
+
+    public int numDecodings(String str) {
+        cache = new int[str.length()];
+        Arrays.fill(cache, -1);
+        return numDecodingsHelper(str, 0);
+    }
+
+    private int numDecodingsHelper(String str, int start) {
+        if (start == str.length()) {
+            return 1;
+        }
+
+        if (cache[start] != -1) {
+            return cache[start];
+        }
+
+        int count = 0;
+
+        for (int i = start; i < str.length(); i++) {
+            if (isValidPartition(str, start, i)) {
+                count += numDecodingsHelper(str, i + 1);
+            }
+        }
+
+        return cache[start] = count;
+    }
+
+    private boolean isValidPartition(String str, int start, int end) {
+        if ((end - start) >= 2) {
+            return false;
+        }
+
+        if ((end - start) == 0) {
+            return str.charAt(start) != '0';
+        }
+
+        if (str.charAt(start) == '1' || (str.charAt(start) == '2' && str.charAt(end) <= '6')) {
+            return true;
+        }
+
+        return false;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private int[] cache;
+
+    public int numDecodings(String str) {
+        cache = new int[str.length()];
+        Arrays.fill(cache, -1);
+        return numDecodingsHelper(str, 0);
+    }
+
+    private int numDecodingsHelper(String str, int index) {
+        if (index == str.length()) {
+            return 1;
+        }
+
+        if (cache[index] != -1) {
+            return cache[index];
+        }
+
+        int count = 0;
+        
+        if (str.charAt(index) != '0') {
+            count = numDecodingsHelper(str, index + 1);
+        }
+
+        if (isValidPartition(str, index, index + 1)) {
+            count += numDecodingsHelper(str, index + 2);
+        }
+
+        return cache[index] = count;
+    }
+
+    private boolean isValidPartition(String str, int start, int end) {
+        if (end == str.length()) {
+            return false;
+        }
+
+        if (str.charAt(start) == '1' || (str.charAt(start) == '2' && str.charAt(end) <= '6')) {
+            return true;
+        }
+
+        return false;
     }
 }
 
