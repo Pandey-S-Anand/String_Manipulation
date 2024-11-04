@@ -84,6 +84,17 @@ As you can see, the reversed logic results in the strings being generated in the
 To maintain lexicographical order with reversed approach, you would need to sort the generated binary strings after generating them. 
 */
 
+/*
+When generating binary strings of length 'n' without consecutive 1s, backward recursion cannot be used because it reverses the lexicographical ordering of output strings. 
+However, this ordering would not matter if we were just generating all possible 'n' length binary strings without constraints.
+
+Example:
+Input: n = 3
+
+Backward recursion output: "000 100 010 001 101" (incorrect lexicographical order)
+Forward recursion output: "000 001 010 100 101" (correct lexicographical order)
+Therefore, forward recursion must be used to maintain proper lexicographical ordering when generating binary strings without consecutive 1s.
+*/
 
 //Aliter
 
@@ -121,22 +132,22 @@ class Solution {
 
     public static List<String> generateBinaryStrings(int n) {
         validNLengthBinaryStrings = new ArrayList<>();
-        generateAllValidNLengthBinaryStrings(new char[n], 0);
+        generateAllValidNLengthBinaryStrings(new char[n], 0, false);
         return validNLengthBinaryStrings;
     }
 
-    private static void generateAllValidNLengthBinaryStrings(char[] currentBinaryString, int index) {
+    private static void generateAllValidNLengthBinaryStrings(char[] currentBinaryString, int index, boolean wasLastBit1) {
         if (index == currentBinaryString.length) {
             validNLengthBinaryStrings.add(new String(currentBinaryString));
             return;
         }
 
         currentBinaryString[index] = '0';
-        generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1);
+        generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1, false);
 
-        if (index == 0 || index > 0 && currentBinaryString[index - 1] != '1') {
+        if (!wasLastBit1) {
             currentBinaryString[index] = '1';
-            generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1);
+            generateAllValidNLengthBinaryStrings(currentBinaryString, index + 1, true);
         }
     }
 }
