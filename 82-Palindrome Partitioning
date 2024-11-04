@@ -54,46 +54,9 @@ class Solution {
 }
 
 
-//Good Approach
-
-class Solution {
-    private List<List<String>> allPartitions;
-
-    public List<List<String>> partition(String str) {
-        allPartitions = new ArrayList<>();
-        partitionHelper(str, 0, new ArrayList<>(str.length()));
-        return allPartitions;
-    }
-
-    private void partitionHelper(String str, int start, List<String> currentPartitions) {
-        if (start == str.length()) {
-            allPartitions.add(new ArrayList<>(currentPartitions));
-            return;
-        }
-
-        for (int i = start; i < str.length(); i++) {
-            if (isPalindrome(str, start, i)) {
-                currentPartitions.add(str.substring(start, i + 1));
-                partitionHelper(str, i + 1, currentPartitions);
-                currentPartitions.remove(currentPartitions.size() - 1);
-            }
-        }
-    }
-
-    private boolean isPalindrome(String str, int i, int j) {
-        while (i < j) {
-            if (str.charAt(i) != str.charAt(j)) {
-                return false;
-            }
-            i++;
-            j--;
-        }
-        return true;
-    }
-}
-
-
 //Better Approach
+
+//Forward recursive approach
 
 class Solution {
     private List<List<String>> allPartitions;
@@ -118,6 +81,59 @@ class Solution {
                 currentPartitions.add(str.substring(start, i + 1));
                 partitionHelper(str, i + 1, currentPartitions);
                 currentPartitions.remove(currentPartitions.size() - 1);
+            }
+        }
+    }
+
+    private boolean isPalindrome(String str, int start, int end) {
+        if (cache[start][end] != -1) {
+            return cache[start][end] == 1;
+        }
+
+        while (start < end) {
+            if (str.charAt(start) != str.charAt(end)) {
+                cache[start][end] = 0;
+                return cache[start][end] == 1;
+            }
+            start++;
+            end--;
+        }
+        cache[start][end] = 1;
+        return cache[start][end] == 1;
+    }
+
+    private void intializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            Arrays.fill(cache[i], -1);
+        }
+    }
+}
+
+//Backward recursive approach
+
+class Solution {
+    private List<List<String>> allPartitions;
+    private int[][] cache;
+
+    public List<List<String>> partition(String str) {
+        cache = new int[str.length()][str.length()];
+        intializeCache();
+        allPartitions = new ArrayList<>();
+        partitionHelper(str, str.length() - 1, new ArrayList<>(str.length()));
+        return allPartitions;
+    }
+
+    private void partitionHelper(String str, int start, List<String> currentPartitions) {
+        if (start < 0) {
+            allPartitions.add(new ArrayList<>(currentPartitions));
+            return;
+        }
+
+        for (int i = start; i >= 0; i--) {
+            if (isPalindrome(str, i, start)) {
+                currentPartitions.add(0, str.substring(i, start + 1));
+                partitionHelper(str, i - 1, currentPartitions);
+                currentPartitions.remove(0);
             }
         }
     }
