@@ -314,8 +314,54 @@ class Solution {
     }
 }
 
+//Backward recursive approach
+
+class Solution {
+    private List<String> validCombinations;
+
+    public List<String> generateParenthesis(int n) {
+        validCombinations = new ArrayList<>();
+        generateAllValidCombinations(new char[2 * n], (2 * n) - 1);
+        return validCombinations;
+    }
+
+    private void generateAllValidCombinations(char[] currentCombination, int index) {
+        if (index < 0) { // index == 2 * n
+            if (isValidCombination(currentCombination)) {
+                validCombinations.add(new String(currentCombination));
+            }
+            return;
+        }
+
+        currentCombination[index] = '(';
+        generateAllValidCombinations(currentCombination, index - 1);
+        currentCombination[index] = ')';
+        generateAllValidCombinations(currentCombination, index - 1);
+    }
+
+    private boolean isValidCombination(char[] combination) {
+        int balance = 0;
+
+        for (char ch : combination) {
+            if (ch == '(') {
+                balance++;
+            } else {
+                balance--;
+            }
+
+            if (balance < 0) {
+                return false;
+            }
+        }
+
+        return balance == 0;
+    }
+}
+
 
 //Optimal Approach
+
+//Forward recursive approach
 
 class Solution {
     private List<String> validCombinations;
@@ -326,8 +372,7 @@ class Solution {
         return validCombinations;
     }
 
-    private void generateValidCombinations(char[] currentCombination, int index, int openUsedSoFar, int closeUsedSoFar,
-            int n) {
+    private void generateValidCombinations(char[] currentCombination, int index, int openUsedSoFar, int closeUsedSoFar,int n) {
         if (index == currentCombination.length) {
             validCombinations.add(new String(currentCombination));
             return;
@@ -341,6 +386,36 @@ class Solution {
         if (closeUsedSoFar < openUsedSoFar) {
             currentCombination[index] = ')';
             generateValidCombinations(currentCombination, index + 1, openUsedSoFar, closeUsedSoFar + 1, n);
+        }
+    }
+}
+
+
+//Backward recursive approach
+
+class Solution {
+    private List<String> validCombinations;
+
+    public List<String> generateParenthesis(int n) {
+        validCombinations = new ArrayList<>();
+        generateValidCombinations(new char[2 * n], (2 * n) - 1, 0, 0, n);
+        return validCombinations;
+    }
+
+    private void generateValidCombinations(char[] currentCombination, int index, int openUsedSoFar, int closeUsedSoFar, int n) {
+        if (index < 0) {
+            validCombinations.add(new String(currentCombination));
+            return;
+        }
+
+        if (closeUsedSoFar < n) {
+            currentCombination[index] = ')';
+            generateValidCombinations(currentCombination, index - 1, openUsedSoFar, closeUsedSoFar + 1, n);
+        }
+
+        if (openUsedSoFar < closeUsedSoFar) {
+            currentCombination[index] = '(';
+            generateValidCombinations(currentCombination, index - 1, openUsedSoFar + 1, closeUsedSoFar, n);
         }
     }
 }
