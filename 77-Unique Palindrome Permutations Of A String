@@ -260,6 +260,8 @@ class Solution {
 
 //Optimal implementation 
 
+//Forward recursive approach
+
 class Solution {
     private List<String> palindromePermutations;
 
