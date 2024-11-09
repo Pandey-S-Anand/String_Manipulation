@@ -1,40 +1,35 @@
-/*
- * For problems involving subsequences, it is generally more intuitive to use forward recursion (starting from the beginning of the sequence and moving to the end). 
- * This approach aligns naturally with the ordering constraint of subsequences, which must preserve the order of elements as they appear in the original array.
-*/
-
 //Bruteforce Approach
 
 class Solution {
     public String shortestCommonSupersequence(String str1, String str2) {
-        return computeScs(str1, str2, str1.length() - 1, str2.length() - 1);
+        return computeScs(str1, str2, 0, 0);
     }
 
     private String computeScs(String str1, String str2, int i, int j) {
-        if (i < 0 && j < 0) {
+        if (i == str1.length() && j == str2.length()) {
             return "";
         }
 
-        if (i < 0) {
-            return str2.substring(0, j + 1);
+        if (i == str1.length()) {
+            return str2.substring(j, str2.length());
         }
 
-        if (j < 0) {
-            return str1.substring(0, i + 1);
+        if (j == str2.length()) {
+            return str1.substring(i, str1.length());
         }
 
         if (str1.charAt(i) == str2.charAt(j)) {
-            return computeScs(str1, str2, i - 1, j - 1) + str1.charAt(i);
+            return str1.charAt(i) + computeScs(str1, str2, i + 1, j + 1);
         }
 
-        String option1 = computeScs(str1, str2, i - 1, j);
-        String option2 = computeScs(str1, str2, i, j - 1);
+        String option1 = computeScs(str1, str2, i + 1, j);
+        String option2 = computeScs(str1, str2, i, j + 1);
 
         if (option1.length() < option2.length()) {
-            return option1 + str1.charAt(i);
+            return str1.charAt(i) + option1;
         }
 
-        return option2 + str2.charAt(j);
+        return str2.charAt(j) + option2;
     }
 }
 
@@ -45,53 +40,53 @@ class Solution {
     public String shortestCommonSupersequence(String str1, String str2) {
         int[][] dp = new int[str1.length() + 1][str2.length() + 1];
 
-        dp[0][0] = 0;
+        dp[str1.length()][str2.length()] = 0;
 
-        for (int i = 1; i <= str2.length(); i++) {
-            dp[0][i] = i;
+        for (int i = 0; i < str2.length(); i++) {
+            dp[str1.length()][i] = str2.length() - i;
         }
 
-        for (int i = 1; i <= str1.length(); i++) {
-            dp[i][0] = i;
+        for (int i = 0; i < str1.length(); i++) {
+            dp[i][str2.length()] = str1.length() - i;
         }
 
-        for (int i = 1; i <= str1.length(); i++) {
-            for (int j = 1; j <= str2.length(); j++) {
-                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-                    dp[i][j] = 1 + dp[i - 1][j - 1];
+        for (int i = str1.length() - 1; i >= 0; i--) {
+            for (int j = str2.length() - 1; j >= 0; j--) {
+                if (str1.charAt(i) == str2.charAt(j)) {
+                    dp[i][j] = 1 + dp[i + 1][j + 1];
                 } else {
-                    dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1]);
+                    dp[i][j] = 1 + Math.min(dp[i + 1][j], dp[i][j + 1]);
                 }
             }
         }
 
-        int i = str1.length(), j = str2.length();
+        int i = 0, j = 0;
         StringBuilder shortestCommonSupersequence = new StringBuilder();
 
-        while (i > 0 && j > 0) {
-            if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-                shortestCommonSupersequence.append(str1.charAt(i - 1));
-                i--;
-                j--;
-            } else if (dp[i - 1][j] < dp[i][j - 1]) {
-                shortestCommonSupersequence.append(str1.charAt(i - 1));
-                i--;
+        while (i < str1.length() && j < str2.length()) {
+            if (str1.charAt(i) == str2.charAt(j)) {
+                shortestCommonSupersequence.append(str1.charAt(i));
+                i++;
+                j++;
+            } else if (dp[i + 1][j] < dp[i][j + 1]) {
+                shortestCommonSupersequence.append(str1.charAt(i));
+                i++;
             } else {
-                shortestCommonSupersequence.append(str2.charAt(j - 1));
-                j--;
+                shortestCommonSupersequence.append(str2.charAt(j));
+                j++;
             }
         }
 
-        while (i > 0) {
-            shortestCommonSupersequence.append(str1.charAt(i - 1));
-            i--;
+        while (i < str1.length()) {
+            shortestCommonSupersequence.append(str1.charAt(i));
+            i++;
         }
 
-        while (j > 0) {
-            shortestCommonSupersequence.append(str2.charAt(j - 1));
-            j--;
+        while (j < str2.length()) {
+            shortestCommonSupersequence.append(str2.charAt(j));
+            j++;
         }
 
-        return shortestCommonSupersequence.reverse().toString();
+        return shortestCommonSupersequence.toString();
     }
 }
