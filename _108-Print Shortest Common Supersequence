@@ -1,50 +1,40 @@
 /*
-Why does the backward recursive approach fail when printing the Shortest Common Supersequence (SCS) but work well for the Longest Common Subsequence (LCS)?
-
-In the case of LCS, we only print matching characters, so the backward recursion is effective as it preserves the order by definition. However, for SCS, 
-we must account for both matching and non-matching characters. Working backward can result in non-matching characters being inserted incorrectly relative to the original strings,
-which necessitates the use of a forward recursive approach.
-
-To ensure accuracy when printing results for problems that involve subsequences, it is generally safer to employ a forward recursive approach. 
-Conversely, if the objective is solely to determine the length of the result, a backward recursion can still be a viable option.
-
-The backward recursive approach for computing the length of a result (such as the length of the Shortest Common Supersequence), when converted to a tabulation method, 
-can also be applied in situations where printing the solution is necessary and involves subsequence concepts. After constructing the dynamic programming (DP) matrix, 
-we can traverse it from the bottom up to extract and print the solution, such as the Shortest Common Supersequence.
+ * For problems involving subsequences, it is generally more intuitive to use forward recursion (starting from the beginning of the sequence and moving to the end). 
+ * This approach aligns naturally with the ordering constraint of subsequences, which must preserve the order of elements as they appear in the original array.
 */
 
 //Bruteforce Approach
 
 class Solution {
     public String shortestCommonSupersequence(String str1, String str2) {
-        return computeScs(str1, str2, 0, 0);
+        return computeScs(str1, str2, str1.length() - 1, str2.length() - 1);
     }
 
     private String computeScs(String str1, String str2, int i, int j) {
-        if (i == str1.length() && j == str2.length()) {
+        if (i < 0 && j < 0) {
             return "";
         }
 
-        if (i == str1.length()) {
-            return str2.substring(j);
+        if (i < 0) {
+            return str2.substring(0, j + 1);
         }
 
-        if (j == str2.length()) {
-            return str1.substring(i);
+        if (j < 0) {
+            return str1.substring(0, i + 1);
         }
 
         if (str1.charAt(i) == str2.charAt(j)) {
-            return str1.charAt(i) + computeScs(str1, str2, i + 1, j + 1);
+            return computeScs(str1, str2, i - 1, j - 1) + str1.charAt(i);
         }
 
-        String option1 = computeScs(str1, str2, i + 1, j);
-        String option2 = computeScs(str1, str2, i, j + 1);
+        String option1 = computeScs(str1, str2, i - 1, j);
+        String option2 = computeScs(str1, str2, i, j - 1);
 
         if (option1.length() < option2.length()) {
-            return str1.charAt(i) + option1;
+            return option1 + str1.charAt(i);
         }
 
-        return str2.charAt(j) + option2;
+        return option2 + str2.charAt(j);
     }
 }
 
