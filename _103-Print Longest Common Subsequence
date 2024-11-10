@@ -39,20 +39,20 @@ public class Solution {
 
 public class Solution {
     public static String findLCS(int m, int n, String str1, String str2) {
-        return computeLcs(str1, str2, m - 1, n - 1);
+        return computeLcs(str1, str2, 0, 0, m, n);
     }
 
-    private static String computeLcs(String str1, String str2, int i, int j) {
-        if (i < 0 || j < 0) {
+    private static String computeLcs(String str1, String str2, int i, int j, int m, int n) {
+        if (i == m || j == n) {
             return "";
         }
 
         if (str1.charAt(i) == str2.charAt(j)) {
-            return computeLcs(str1, str2, i - 1, j - 1) + str1.charAt(i);
+            return str1.charAt(i) + computeLcs(str1, str2, i + 1, j + 1, m, n);
         }
 
-        String option1 = computeLcs(str1, str2, i - 1, j);
-        String option2 = computeLcs(str1, str2, i, j - 1);
+        String option1 = computeLcs(str1, str2, i + 1, j, m, n);
+        String option2 = computeLcs(str1, str2, i, j + 1, m, n);
 
         return option1.length() > option2.length() ? option1 : option2;
     }
@@ -65,31 +65,31 @@ public class Solution {
     public static String findLCS(int m, int n, String str1, String str2) {
         int[][] dp = new int[m + 1][n + 1];
 
-        for (int i = 1; i <= m; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-                    dp[i][j] = 1 + dp[i - 1][j - 1];
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                if (str1.charAt(i) == str2.charAt(j)) {
+                    dp[i][j] = 1 + dp[i + 1][j + 1];
                 } else {
-                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
                 }
             }
         }
 
-        int i = m, j = n;
+        int i = 0, j = 0;
         StringBuilder longestCommonSubsequence = new StringBuilder();
 
-        while (i > 0 && j > 0) {
-            if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+        while (i < m && j < n) {
+            if (str1.charAt(i) == str2.charAt(j)) {
                 longestCommonSubsequence.append(str1.charAt(i - 1));
-                i--;
-                j--;
-            } else if (dp[i - 1][j] > dp[i][j - 1]) {
-                i--;
+                i++;
+                j++;
+            } else if (dp[i + 1][j] > dp[i][j + 1]) {
+                i++;
             } else {
-                j--;
+                j++;
             }
         }
 
-        return longestCommonSubsequence.reverse().toString();
+        return longestCommonSubsequence.toString();
     }
 }
