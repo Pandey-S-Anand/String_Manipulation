@@ -40,7 +40,7 @@ class Solution {
         Arrays.fill(cache, -1);
         Arrays.fill(charLastIndexMap, -1); // Set initial value as -1 to indicate no occurrences
 
-        int result = distinctSubseq(str, str.length() - 1) - 1; // Subtract 1 to exclude the empty subsequence
+        int result = distinctSubseq(str, 0) - 1; // Subtract 1 to exclude the empty subsequence
         if (result < 0) {
             result = result + MOD;
         } else {
@@ -51,7 +51,7 @@ class Solution {
     }
 
     private int distinctSubseq(String str, int index) {
-        if (index < 0) {
+        if (index == str.length()) {
             return 1; // Base case: return 1 for the empty subsequence
         }
 
@@ -59,7 +59,7 @@ class Solution {
             return cache[index];
         }
 
-        int result = 2 * distinctSubseq(str, index - 1);
+        int result = 2 * distinctSubseq(str, index + 1);
         if (result < 0) {
             result = result + MOD;
         } else {
@@ -67,7 +67,7 @@ class Solution {
         }
 
         if (charLastIndexMap[str.charAt(index) - 'a'] != -1) {
-            result = result - distinctSubseq(str, charLastIndexMap[str.charAt(index) - 'a'] - 1);
+            result = result - distinctSubseq(str, charLastIndexMap[str.charAt(index) - 'a'] + 1);
             if (result < 0) {
                 result = result + MOD;
             } else {
@@ -95,11 +95,11 @@ class Solution {
         Arrays.fill(cache, -1);
         Arrays.fill(charLastIndexMap, -1);
 
-        return (distinctSubseq(str, str.length() - 1) - 1 + MOD) % MOD;
+        return (distinctSubseq(str, 0) - 1 + MOD) % MOD;
     }
 
     private int distinctSubseq(String str, int index) {
-        if (index < 0) {
+        if (index == str.length()) {
             return 1;
         }
 
@@ -107,10 +107,10 @@ class Solution {
             return cache[index];
         }
 
-        int result = (2 * (distinctSubseq(str, index - 1) % MOD)) % MOD;
+        int result = (2 * (distinctSubseq(str, index + 1) % MOD)) % MOD;
 
         if (charLastIndexMap[str.charAt(index) - 'a'] != -1) {
-            result = (result - (distinctSubseq(str, charLastIndexMap[str.charAt(index) - 'a'] - 1)) % MOD + MOD) % MOD;
+            result = (result - (distinctSubseq(str, charLastIndexMap[str.charAt(index) - 'a'] + 1)) % MOD + MOD) % MOD;
         }
 
         charLastIndexMap[str.charAt(index) - 'a'] = index;
@@ -126,17 +126,17 @@ class Solution {
     private final int MOD = 1000000007;
 
     public int distinctSubseqII(String str) {
-        int[] dp = new int[str.length() + 1]; // dp[i] represents the count of distinct subsequences of the substringstr[0...i-1]
+        int[] dp = new int[str.length() + 1]; // dp[i] represents the count of distinct subsequences of the substring str[i...str.length()-1]
         int[] charLastIndexMap = new int[26]; // Track last occurrence of each character
 
-        dp[0] = 1; // Base case: There's one subsequence (the empty subsequence)
+        dp[str.length()] = 1; // Base case: There's one subsequence (the empty subsequence)
 
-        for (int i = 1; i <= str.length(); i++) {
-            dp[i] = 2 * dp[i - 1];
+        for (int i = str.length() - 1; i >= 0; i--) {
+            dp[i] = 2 * dp[i + 1];
 
-            char ch = str.charAt(i - 1);
+            char ch = str.charAt(i);
             if (charLastIndexMap[ch - 'a'] != 0) {
-                dp[i] = (dp[i] - dp[charLastIndexMap[ch - 'a'] - 1]);
+                dp[i] = (dp[i] - dp[charLastIndexMap[ch - 'a'] + 1]);
             }
 
             charLastIndexMap[ch - 'a'] = i;
@@ -148,7 +148,7 @@ class Solution {
             }
         }
 
-        int result = dp[str.length()] - 1; // Subtract 1 to exclude the empty subsequence
+        int result = dp[0] - 1; // Subtract 1 to exclude the empty subsequence
 
         if (result < 0) {
             result += MOD; // Handle negative result after subtraction
