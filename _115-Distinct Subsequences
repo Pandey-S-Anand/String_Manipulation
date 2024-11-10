@@ -28,30 +28,28 @@ class Solution {
 
 class Solution {
     public int numDistinct(String text, String pattern) {
-        return countDistinct(text, pattern, text.length() - 1, pattern.length() - 1);
+        return countDistinct(text, pattern, 0, 0);
     }
 
     private int countDistinct(String text, String pattern, int i, int j) {
-        if (j < 0) {        
-            return 1;  // If we've matched all characters of the pattern, count this subsequence
+        if (j == pattern.length()) {
+            return 1; // If we've matched all characters of the pattern, count this subsequence
         }
 
-        if (i < 0) {
+        if (i == text.length()) {
             return 0; // If we've exhausted the main text without fully matching the pattern, return 0
         }
 
         if (pattern.charAt(j) == text.charAt(i)) {
-            return countDistinct(text, pattern, i - 1, j - 1) + countDistinct(text, pattern, i - 1, j);
+            return countDistinct(text, pattern, i + 1, j + 1) + countDistinct(text, pattern, i + 1, j);
         }
 
-        return countDistinct(text, pattern, i - 1, j);
+        return countDistinct(text, pattern, i + 1, j);
     }
 }
 
 
 //Better Approach
-
-//Naive implementation
 
 class Solution {
     private int[][] cache;
@@ -59,15 +57,20 @@ class Solution {
     public int numDistinct(String text, String pattern) {
         cache = new int[text.length()][pattern.length()];
         intializeCache();
-        return countDistinct(text, pattern, text.length() - 1, pattern.length() - 1);
+        return countDistinct(text, pattern, 0, 0);
     }
 
     private int countDistinct(String text, String pattern, int i, int j) {
-        if (j < 0) {
+        if (j == pattern.length()) {
             return 1;
         }
 
-        if (i < 0) {
+        if (i == text.length()) {
+            return 0; 
+        }
+
+        // Early exit condition: if remaining characters in text are fewer than in pattern
+        if (text.length() - i < pattern.length() - j) {
             return 0;
         }
 
@@ -76,49 +79,10 @@ class Solution {
         }
 
         if (pattern.charAt(j) == text.charAt(i)) {
-            return cache[i][j] = countDistinct(text, pattern, i - 1, j - 1) + countDistinct(text, pattern, i - 1, j);
+            return cache[i][j] = countDistinct(text, pattern, i + 1, j + 1) + countDistinct(text, pattern, i + 1, j);
         }
 
-        return cache[i][j] = countDistinct(text, pattern, i - 1, j);
-    }
-
-    private void intializeCache() {
-        for (int i = 0; i < cache.length; i++) {
-            Arrays.fill(cache[i], -1);
-        }
-    }
-}
-
-
-//Optimal implementation
-
-class Solution {
-    private int[][] cache;
-
-    public int numDistinct(String text, String pattern) {
-        cache = new int[text.length()][pattern.length()];
-        intializeCache();
-        return countDistinct(text, pattern, text.length() - 1, pattern.length() - 1);
-    }
-
-    private int countDistinct(String text, String pattern, int i, int j) {
-        if (j < 0) {
-            return 1;
-        }
-
-        if (i < j) {
-            return 0;  // If there are fewer characters left in the text than in the pattern, it's impossible to form the pattern
-        }
-
-        if (cache[i][j] != -1) {
-            return cache[i][j];
-        }
-
-        if (pattern.charAt(j) == text.charAt(i)) {
-            return cache[i][j] = countDistinct(text, pattern, i - 1, j - 1) + countDistinct(text, pattern, i - 1, j);
-        }
-
-        return cache[i][j] = countDistinct(text, pattern, i - 1, j);
+        return cache[i][j] = countDistinct(text, pattern, i + 1, j);
     }
 
     private void intializeCache() {
@@ -135,30 +99,30 @@ class Solution {
 
 class Solution {
     public int numDistinct(String text, String pattern) {
-        // dp[i][j]: This represents the number of distinct subsequences of the text[0...i-1] that match the pattern[0...j-1].
+        // dp[i][j]: The number of distinct subsequences in text[i...text.length()-1] that match pattern[j...pattern.length()-1]
         int[][] dp = new int[text.length() + 1][pattern.length() + 1];
 
-        dp[0][0] = 1;
+        dp[text.length()][pattern.length()] = 1;
 
-        for (int i = 1; i <= text.length(); i++) {
-            dp[i][0] = 1;
+        for (int i = 0; i < text.length(); i++) {
+            dp[i][pattern.length()] = 1;
         }
 
-        for (int i = 1; i <= pattern.length(); i++) {
-            dp[0][i] = 0;
+        for (int i = 0; i < pattern.length(); i++) {
+            dp[text.length()][i] = 0;
         }
 
-        for (int i = 1; i <= text.length(); i++) {
-            for (int j = 1; j <= pattern.length(); j++) {
-                if (text.charAt(i - 1) == pattern.charAt(j - 1)) {
-                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+        for (int i = text.length() - 1; i >= 0; i--) {
+            for (int j = pattern.length() - 1; j >= 0; j--) {
+                if (pattern.charAt(j) == text.charAt(i)) {
+                    dp[i][j] = dp[i + 1][j + 1] + dp[i + 1][j];
                 } else {
-                    dp[i][j] = dp[i - 1][j];
+                    dp[i][j] = dp[i + 1][j];
                 }
             }
         }
 
-        return dp[text.length()][pattern.length()];
+        return dp[0][0];
     }
 }
 
@@ -166,50 +130,49 @@ class Solution {
 
 class Solution {
     public int numDistinct(String text, String pattern) {
-        // dp[i][j]: This represents the number of distinct subsequences of the text[0...i-1] that match the pattern[0...j-1].
         int[][] dp = new int[text.length() + 1][pattern.length() + 1];
-        
+
         for (int i = 0; i <= text.length(); i++) {
-            dp[i][0] = 1;
+            dp[i][pattern.length()] = 1;
         }
 
-        for (int i = 1; i <= text.length(); i++) {
-            for (int j = 1; j <= pattern.length(); j++) {
-                if (text.charAt(i - 1) == pattern.charAt(j - 1)) {
-                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
-                } else {
-                    dp[i][j] = dp[i - 1][j];
+        for (int i = text.length() - 1; i >= 0; i--) {
+            for (int j = pattern.length() - 1; j >= 0; j--) {
+                if (pattern.charAt(j) == text.charAt(i)) {
+                    dp[i][j] = dp[i + 1][j + 1];
                 }
+                dp[i][j] += dp[i + 1][j];
             }
         }
 
-        return dp[text.length()][pattern.length()];
+        return dp[0][0];
     }
 }
+
 
 //Aliter
 
 class Solution {
     public int numDistinct(String text, String pattern) {
+        int[] nextRow = new int[pattern.length() + 1];
         int[] currentRow = new int[pattern.length() + 1];
-        int[] previousRow = new int[pattern.length() + 1];
 
-        previousRow[0] = 1;
+        nextRow[pattern.length()] = 1;
 
-        for (int i = 1; i <= text.length(); i++) {
-            currentRow[0] = 1;
-            for (int j = 1; j <= pattern.length(); j++) {
-                if (text.charAt(i - 1) == pattern.charAt(j - 1)) {
-                    currentRow[j] = previousRow[j - 1] + previousRow[j];
+        for (int i = text.length() - 1; i >= 0; i--) {
+            currentRow[pattern.length()] = 1;
+            for (int j = pattern.length() - 1; j >= 0; j--) {
+                if (pattern.charAt(j) == text.charAt(i)) {
+                    currentRow[j] = nextRow[j] + nextRow[j + 1];
                 } else {
-                    currentRow[j] = previousRow[j];
+                    currentRow[j] = nextRow[j];
                 }
             }
             int[] temp = currentRow;
-            currentRow = previousRow;
-            previousRow = temp;
+            currentRow = nextRow;
+            nextRow = temp;
         }
 
-        return previousRow[pattern.length()];
+        return nextRow[0];
     }
 }
