@@ -1,0 +1,88 @@
+//Bruteforce Approach
+
+class Solution {
+    static int countWays(int n, String s) {
+        /*
+         * Invoke the recursive function to evaluate the entire expression with the
+         * boolean flag set to true, indicating we're calculating for a "true" result.
+         */
+        return countWays(s, 0, n - 1, true);
+    }
+
+    private static int countWays(String expression, int start, int end, boolean isTrue) {
+        // Base case: When the subexpression consists of a single operand.
+        if (start == end) {
+            // If the desired result is true.
+            if (isTrue) {
+                return expression.charAt(start) == 'T' ? 1 : 0;
+            }
+            // If the desired result is false.
+            return expression.charAt(start) == 'F' ? 1 : 0;
+        }
+
+        int totalWays = 0;
+        /*
+         * Loop through each operator and partition the expression around it.
+         * Operators are located at odd indices, so we start the partition at start + 1 and increment by 2.
+         */
+        for (int partition = start + 1; partition < end; partition++) {
+            // Recursively calculate the number of ways for the left and right subexpressions.
+            int leftFalseCount = countWays(expression, start, partition - 1, false); // Left evaluates to false
+            int leftTrueCount = countWays(expression, start, partition - 1, true); // Left evaluates to true
+            int rightFalseCount = countWays(expression, partition + 1, end, false); // Right evaluates to False
+            int rightTrueCount = countWays(expression, partition + 1, end, true); // Right evaluates to true
+
+            char operator = expression.charAt(partition);
+
+            /*
+             * Truth Table for Boolean Operators:
+             * 
+             * 1. AND (`&`):
+             * - T & T = T
+             * - T & F = F
+             * - F & T = F
+             * - F & F = F
+             * 
+             * 2. OR (`|`):
+             * - T | T = T
+             * - T | F = T
+             * - F | T = T
+             * - F | F = F
+             * 
+             * 3. XOR (`^`):
+             * - T ^ T = F
+             * - T ^ F = T
+             * - F ^ T = T
+             * - F ^ F = F
+             */
+            // Calculate total ways based on the operator
+            if (operator == '&') {
+                if (isTrue) {
+                    totalWays += leftTrueCount * rightTrueCount;
+                } else {
+                    totalWays += (leftTrueCount * rightFalseCount)
+                            + (leftFalseCount * rightTrueCount)
+                            + (leftFalseCount * rightFalseCount);
+                }
+            } else if (operator == '|') {
+                if (isTrue) {
+                    totalWays += (leftTrueCount * rightTrueCount)
+                            + (leftTrueCount * rightFalseCount)
+                            + (leftFalseCount * rightTrueCount);
+                } else {
+                    totalWays += leftFalseCount * rightFalseCount;
+                }
+            } else if (operator == '^') {
+                if (isTrue) {
+                    totalWays += (leftTrueCount * rightFalseCount)
+                            + (leftFalseCount * rightTrueCount);
+                } else {
+                    totalWays += (leftTrueCount * rightTrueCount)
+                            + (leftFalseCount * rightFalseCount);
+                }
+            }
+        }
+        // Return the total number of ways for the current subproblem.
+        return totalWays;
+    }
+}
