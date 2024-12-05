@@ -80,8 +80,6 @@ class Solution {
 
 //Method 1
 
-//Forward recursive approach
-
 class Solution {
     private List<String> subsequences;
 
@@ -106,36 +104,8 @@ class Solution {
     }
 }
 
-//Backward recursive approach
-
-class Solution {
-    private List<String> subsequences;
-
-    public List<String> AllPossibleStrings(String str) {
-        subsequences = new ArrayList<>();
-        generateSubsequences(str, str.length() - 1, new StringBuilder());
-        Collections.sort(subsequences);
-        return subsequences;
-    }
-
-    private void generateSubsequences(String str, int index, StringBuilder currentSubsequence) {
-        if (index < 0) {
-            if (currentSubsequence.length() != 0) {
-                subsequences.add(currentSubsequence.toString());
-            }
-            return;
-        }
-        currentSubsequence.insert(0, str.charAt(index));
-        generateSubsequences(str, index - 1, currentSubsequence);
-        currentSubsequence.deleteCharAt(0);
-        generateSubsequences(str, index - 1, currentSubsequence);
-    }
-}
-
 
 //Method 2
-
-//Forward recursive approach
 
 class Solution {
     private List<String> subsequences;
@@ -156,31 +126,6 @@ class Solution {
             currentSubsequence.append(str.charAt(i));
             generateSubsequences(str, i + 1, currentSubsequence);
             currentSubsequence.setLength(currentSubsequence.length() - 1);
-        }
-    }
-}
-
-//Backward recursive approach
-
-class Solution {
-    private List<String> subsequences;
-
-    public List<String> AllPossibleStrings(String str) {
-        subsequences = new ArrayList<>();
-        generateSubsequences(str, str.length() - 1, new StringBuilder());
-        Collections.sort(subsequences);
-        return subsequences;
-    }
-
-    private void generateSubsequences(String str, int index, StringBuilder currentSubsequence) {
-        if (currentSubsequence.length() != 0) {
-            subsequences.add(currentSubsequence.toString());
-        }
-
-        for (int i = index; i >= 0; i--) {
-            currentSubsequence.insert(0, str.charAt(i));
-            generateSubsequences(str, i - 1, currentSubsequence);
-            currentSubsequence.deleteCharAt(0);
         }
     }
 }
