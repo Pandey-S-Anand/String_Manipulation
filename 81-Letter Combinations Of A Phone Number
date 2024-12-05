@@ -128,8 +128,6 @@ class Solution {
 
 //Method 1
 
-//Forward recursive approach
-
 class Solution {
     private static final Map<Character, String> KEYPAD_MAPPING = Map.of(
             '2', "abc",
@@ -169,51 +167,8 @@ class Solution {
     }
 }
 
-//Backward recursive approach
-
-class Solution {
-    private static final Map<Character, String> KEYPAD_MAPPING = Map.of(
-            '2', "abc",
-            '3', "def",
-            '4', "ghi",
-            '5', "jkl",
-            '6', "mno",
-            '7', "pqrs",
-            '8', "tuv",
-            '9', "wxyz");
-
-    public List<String> letterCombinations(String digits) {
-        if (digits.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return generateLetterCombinations(digits, digits.length() - 1);
-    }
-
-    private List<String> generateLetterCombinations(String digits, int index) {
-        if (index < 0) {
-            return Collections.singletonList("");
-        }
-
-        String letters = KEYPAD_MAPPING.get(digits.charAt(index));
-        StringBuilder combinationBuilder = new StringBuilder();
-        List<String> partialCombinations = generateLetterCombinations(digits, index - 1);
-        List<String> completeCombinations = new ArrayList<>();
-
-        for (int i = 0; i < letters.length(); i++) {
-            for (String combination : partialCombinations) {
-                completeCombinations.add(combinationBuilder.append(combination).append(letters.charAt(i)).toString());
-                combinationBuilder.setLength(0);
-            }
-        }
-
-        return completeCombinations;
-    }
-}
-
 
 //Method 2
-
-//Forward recursive approach
 
 public class Solution {
     private List<String> combinations;
@@ -247,44 +202,6 @@ public class Solution {
             currentCombination.append(letters.charAt(i));
             generateLetterCombinations(digits, index + 1, currentCombination);
             currentCombination.deleteCharAt(currentCombination.length() - 1);
-        }
-    }
-}
-
-//Backward recursive approach
-
-public class Solution {
-    private List<String> combinations;
-    private static final Map<Character, String> KEYPAD_MAPPING = Map.of(
-            '2', "abc",
-            '3', "def",
-            '4', "ghi",
-            '5', "jkl",
-            '6', "mno",
-            '7', "pqrs",
-            '8', "tuv",
-            '9', "wxyz");
-
-    public List<String> letterCombinations(String digits) {
-        if (digits.isEmpty()) {
-            return Collections.emptyList();
-        }
-        combinations = new ArrayList<>();
-        generateLetterCombinations(digits, digits.length() - 1, new StringBuilder());
-        return combinations;
-    }
-
-    private void generateLetterCombinations(String digits, int index, StringBuilder currentCombination) {
-        if (index < 0) {
-            combinations.add(currentCombination.toString());
-            return;
-        }
-
-        String letters = KEYPAD_MAPPING.get(digits.charAt(index));
-        for (int i = 0; i < letters.length(); i++) {
-            currentCombination.insert(0, letters.charAt(i));
-            generateLetterCombinations(digits, index - 1, currentCombination);
-            currentCombination.deleteCharAt(0);
         }
     }
 }
