@@ -203,8 +203,6 @@ class Solution {
 
 //Optimal Implementation
 
-//Forward recursive approach
-
 class Solution {
     private static final long MOD = 1000000007L;
     private static final int[] EVEN_DIGITS = { 0, 2, 4, 6, 8 };
@@ -225,34 +223,6 @@ class Solution {
 
         for (int digit : validDigits) {
             count = (count + countGoodDigitStrings(index + 1, n)) % MOD;
-        }
-
-        return count;
-    }
-}
-
-//Backward recursive approach
-
-class Solution {
-    private static final long MOD = 1000000007L;
-    private static final int[] EVEN_DIGITS = { 0, 2, 4, 6, 8 };
-    private static final int[] PRIME_DIGITS = { 2, 3, 5, 7 };
-
-    public int countGoodNumbers(long n) {
-        return (int) countGoodDigitStrings((int) n - 1);
-    }
-
-    private long countGoodDigitStrings(int index) {
-        if (index < 0) {
-            return 1L;
-        }
-
-        long count = 0;
-
-        int[] validDigits = (index % 2 == 0) ? EVEN_DIGITS : PRIME_DIGITS;
-
-        for (int digit : validDigits) {
-            count = (count + countGoodDigitStrings(index - 1)) % MOD;
         }
 
         return count;
