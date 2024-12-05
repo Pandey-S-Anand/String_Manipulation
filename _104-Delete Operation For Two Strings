@@ -1,29 +1,31 @@
 //Without LCS
 
+//Bruteforce Approach
+
 class Solution {
     public int minDistance(String word1, String word2) {
-        return findMinDeletions(word1, word2, word1.length() - 1, word2.length() - 1);
+        return findMinDeletions(word1, word2, 0, 0);
     }
 
     private int findMinDeletions(String word1, String word2, int i, int j) {
         // Base case: if we reach the end of both the strings word1 and word2
-        if (i < 0 && j < 0) {
+        if (i == word1.length() && j == word2.length()) {
             return 0;
         }
         // Base case: if we reach the end of word1
-        if (i < 0) {
-            return j + 1; // All remaining characters in word2 must be deleted
+        if (i == word1.length()) {
+            return word2.length() - j; // All remaining characters in word2 must be deleted
         }
         // Base case: if we reach the end of word2
-        if (j < 0) {
-            return i + 1; // All remaining characters in word1 must be deleted
+        if (j == word2.length()) {
+            return word1.length() - i; // All remaining characters in word1 must be deleted
         }
         // If the characters match, move to the next characters in both strings
         if (word1.charAt(i) == word2.charAt(j)) {
-            return findMinDeletions(word1, word2, i - 1, j - 1);
+            return findMinDeletions(word1, word2, i + 1, j + 1);
         }
         // If characters do not match, consider deleting from either string and take the minimum of both possibilities
-        return 1 + Math.min(findMinDeletions(word1, word2, i - 1, j), findMinDeletions(word1, word2, i, j - 1));
+        return 1 + Math.min(findMinDeletions(word1, word2, i + 1, j), findMinDeletions(word1, word2, i, j + 1));
     }
 }
 
@@ -36,20 +38,20 @@ class Solution {
     public int minDistance(String word1, String word2) {
         cache = new int[word1.length()][word2.length()];
         initializeCache();
-        return findMinDeletions(word1, word2, word1.length() - 1, word2.length() - 1);
+        return findMinDeletions(word1, word2, 0, 0);
     }
 
     private int findMinDeletions(String word1, String word2, int i, int j) {
-        if (i < 0 && j < 0) {
+        if (i == word1.length() && j == word2.length()) {
             return 0;
         }
 
-        if (i < 0) {
-            return j + 1;
+        if (i == word1.length()) {
+            return word2.length() - j;
         }
 
-        if (j < 0) {
-            return i + 1;
+        if (j == word2.length()) {
+            return word1.length() - i;
         }
 
         if (cache[i][j] != -1) {
@@ -57,10 +59,10 @@ class Solution {
         }
 
         if (word1.charAt(i) == word2.charAt(j)) {
-            return findMinDeletions(word1, word2, i - 1, j - 1);
+            return cache[i][j] = findMinDeletions(word1, word2, i + 1, j + 1);
         }
 
-        return cache[i][j] = 1 + Math.min(findMinDeletions(word1, word2, i - 1, j), findMinDeletions(word1, word2, i, j - 1));
+        return cache[i][j] = 1 + Math.min(findMinDeletions(word1, word2, i + 1, j), findMinDeletions(word1, word2, i, j + 1));
     }
 
     private void initializeCache() {
@@ -75,66 +77,65 @@ class Solution {
 
 class Solution {
     public int minDistance(String word1, String word2) {
-        // dp[i][j] will represent the minimum number of deletions required to make word1[0..i-1] equal to word2[0..j-1]
+        //dp[i][j] represents the minimum number of deletions required to make the substrings word1[i..word1.length()-1] and word2[j..word2.length()-1] identical
         int[][] dp = new int[word1.length() + 1][word2.length() + 1];
 
-        // dp[0][0] = 0 : Initialize dp[0][0] to 0, as no deletions are needed for two empty strings
-
+        dp[word1.length()][word2.length()] = 0;  // Initialize dp[0][0] to 0, as no deletions are needed for two empty strings
+        
         // If word2 is empty , we need to delete all characters of word1
-        for (int i = 1; i <= word1.length(); i++) {
-            dp[i][0] = i;
+        for (int i = word1.length(); i >= 0; i--) {
+            dp[i][word2.length()] = word1.length() - i; // Remaining characters in word1
         }
 
         // If word1 is empty , we need to delete all characters of word2
-        for (int i = 1; i <= word2.length(); i++) {
-            dp[0][i] = i;
+        for (int j = word2.length(); j >= 0; j--) {
+            dp[word1.length()][j] = word2.length() - j; // Remaining characters in word2
         }
 
-        for (int i = 1; i <= word1.length(); i++) {
-            for (int j = 1; j <= word2.length(); j++) {
-                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
-                    dp[i][j] = dp[i - 1][j - 1];
+        for (int i = word1.length()-1; i >= 0; i--) {
+            for (int j = word2.length()-1; j >= 0; j--) {
+                if (word1.charAt(i) == word2.charAt(j)) {
+                    dp[i][j] = dp[i + 1][j + 1];
                 } else {
-                    dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1]);
+                    dp[i][j] = 1 + Math.min(dp[i + 1][j], dp[i][j + 1]);
                 }
             }
         }
 
-        return dp[word1.length()][word2.length()];
+        return dp[0][0];
     }
 }
+
 
 //Aliter (Space optimized)
 
 class Solution {
     public int minDistance(String word1, String word2) {
         int[] currRow = new int[word2.length() + 1];
-        int[] prevRow = new int[word2.length() + 1];
+        int[] nextRow = new int[word2.length() + 1];
 
-        // If word1 is empty , we need to delete all characters of word2
-        for (int i = 1; i <= word2.length(); i++) {
-            prevRow[i] = i;
+        for (int j = word2.length(); j >= 0; j--) {
+            nextRow[j] = word2.length() - j; // If word1 is empty , we need to delete all characters of word2
         }
 
-        for (int i = 1; i <= word1.length(); i++) {
-            currRow[0] = i; // if word2 is empty , we need to delete all characters of word1
-            for (int j = 1; j <= word2.length(); j++) {
-                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
-                    currRow[j] = prevRow[j - 1];
+        for (int i = word1.length() - 1; i >= 0; i--) {
+            currRow[word2.length()] = word1.length() - i; // if word2 is empty , we need to delete all characters of word1
+            for (int j = word2.length() - 1; j >= 0; j--) {
+                if (word1.charAt(i) == word2.charAt(j)) {
+                    currRow[j] = nextRow[j + 1];
                 } else {
-                    currRow[j] = 1 + Math.min(prevRow[j], currRow[j - 1]);
+                    currRow[j] = 1 + Math.min(nextRow[j], currRow[j + 1]);
                 }
             }
 
             int[] temp = currRow;
-            currRow = prevRow;
-            prevRow = temp;
+            currRow = nextRow;
+            nextRow = temp;
         }
 
-        return prevRow[word2.length()];
+        return nextRow[0];
     }
 }
-
 
 
 //Using LCS
@@ -187,24 +188,25 @@ class Solution {
     }
 }
 
+
 //Improved Approach
 
 class Solution {
     public int minDistance(String word1, String word2) {
-        int lcs = longestCommonSubsequence(word1, word2, word1.length() - 1, word2.length() - 1);
+        int lcs = longestCommonSubsequence(word1, word2, 0, 0);
         return (word1.length() - lcs) + (word2.length() - lcs);
     }
 
     private int longestCommonSubsequence(String str1, String str2, int i, int j) {
-        if (i < 0 || j < 0) {
+        if (i == str1.length() || j == str2.length()) {
             return 0;
         }
 
         if (str1.charAt(i) == str2.charAt(j)) {
-            return 1 + longestCommonSubsequence(str1, str2, i - 1, j - 1);
+            return 1 + longestCommonSubsequence(str1, str2, i + 1, j + 1);
         }
 
-        return Math.max(longestCommonSubsequence(str1, str2, i - 1, j), longestCommonSubsequence(str1, str2, i, j - 1));
+        return Math.max(longestCommonSubsequence(str1, str2, i + 1, j), longestCommonSubsequence(str1, str2, i, j + 1));
     }
 }
 
@@ -217,12 +219,12 @@ class Solution {
     public int minDistance(String word1, String word2) {
         cache = new int[word1.length()][word2.length()];
         intializeCache();
-        int lcs = longestCommonSubsequence(word1, word2, word1.length() - 1, word2.length() - 1);
+        int lcs = longestCommonSubsequence(word1, word2, 0, 0);
         return (word1.length() - lcs) + (word2.length() - lcs);
     }
 
     private int longestCommonSubsequence(String str1, String str2, int i, int j) {
-        if (i < 0 || j < 0) {
+        if (i == str1.length() || j == str2.length()) {
             return 0;
         }
 
@@ -231,10 +233,10 @@ class Solution {
         }
 
         if (str1.charAt(i) == str2.charAt(j)) {
-            return 1 + longestCommonSubsequence(str1, str2, i - 1, j - 1);
+            return cache[i][j] = 1 + longestCommonSubsequence(str1, str2, i + 1, j + 1);
         }
 
-        return cache[i][j] = Math.max(longestCommonSubsequence(str1, str2, i - 1, j), longestCommonSubsequence(str1, str2, i, j - 1));
+        return cache[i][j] = Math.max(longestCommonSubsequence(str1, str2, i + 1, j), longestCommonSubsequence(str1, str2, i, j + 1));
     }
 
     private void intializeCache() {
@@ -243,6 +245,7 @@ class Solution {
         }
     }
 }
+
 
 //Optimal Approach
 
@@ -255,17 +258,17 @@ class Solution {
     private int longestCommonSubsequence(String str1, String str2) {
         int[][] dp = new int[str1.length() + 1][str2.length() + 1];
 
-        for (int i = 1; i <= str1.length(); i++) {
-            for (int j = 1; j <= str2.length(); j++) {
-                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-                    dp[i][j] = 1 + dp[i - 1][j - 1];
+        for (int i = str1.length() - 1; i >= 0; i--) {
+            for (int j = str2.length() - 1; j >= 0; j--) {
+                if (str1.charAt(i) == str2.charAt(j)) {
+                    dp[i][j] = 1 + dp[i + 1][j + 1];
                 } else {
-                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
                 }
             }
         }
 
-        return dp[str1.length()][str2.length()];
+        return dp[0][0];
     }
 }
 
@@ -279,22 +282,22 @@ class Solution {
     }
 
     private int longestCommonSubsequence(String str1, String str2) {
-        int[] previousRow = new int[str2.length() + 1];
+        int[] nextRow = new int[str2.length() + 1];
         int[] currentRow = new int[str2.length() + 1];
 
-        for (int i = 1; i <= str1.length(); i++) {
-            for (int j = 1; j <= str2.length(); j++) {
-                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-                    currentRow[j] = 1 + previousRow[j - 1];
+        for (int i = str1.length() - 1; i >= 0; i--) {
+            for (int j = str2.length() - 1; j >= 0; j--) {
+                if (str1.charAt(i) == str2.charAt(j)) {
+                    currentRow[j] = 1 + nextRow[j + 1];
                 } else {
-                    currentRow[j] = Math.max(previousRow[j], currentRow[j - 1]);
+                    currentRow[j] = Math.max(nextRow[j], currentRow[j + 1]);
                 }
             }
-            int[] temp = previousRow;
-            previousRow = currentRow;
-            currentRow = temp;
+            int[] temp = currentRow;
+            currentRow = nextRow;
+            nextRow = temp;
         }
 
-        return previousRow[str2.length()];
+        return nextRow[0];
     }
 }
