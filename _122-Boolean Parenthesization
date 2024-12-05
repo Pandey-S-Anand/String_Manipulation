@@ -1,6 +1,8 @@
 //Bruteforce Approach
 
 class Solution {
+    private static final int MOD = 1003;
+
     static int countWays(int n, String s) {
         /*
          * Invoke the recursive function to evaluate the entire expression with the
@@ -58,31 +60,109 @@ class Solution {
             // Calculate total ways based on the operator
             if (operator == '&') {
                 if (isTrue) {
-                    totalWays += leftTrueCount * rightTrueCount;
+                    totalWays += (leftTrueCount * rightTrueCount) % MOD;
                 } else {
-                    totalWays += (leftTrueCount * rightFalseCount)
-                            + (leftFalseCount * rightTrueCount)
-                            + (leftFalseCount * rightFalseCount);
+                    totalWays += (leftTrueCount * rightFalseCount) % MOD;
+                    totalWays += (leftFalseCount * rightTrueCount) % MOD;
+                    totalWays += (leftFalseCount * rightFalseCount) % MOD;
                 }
             } else if (operator == '|') {
                 if (isTrue) {
-                    totalWays += (leftTrueCount * rightTrueCount)
-                            + (leftTrueCount * rightFalseCount)
-                            + (leftFalseCount * rightTrueCount);
+                    totalWays += (leftTrueCount * rightTrueCount) % MOD;
+                    totalWays += (leftTrueCount * rightFalseCount) % MOD;
+                    totalWays += (leftFalseCount * rightTrueCount) % MOD;
                 } else {
-                    totalWays += leftFalseCount * rightFalseCount;
+                    totalWays += (leftFalseCount * rightFalseCount) % MOD;
                 }
             } else if (operator == '^') {
                 if (isTrue) {
-                    totalWays += (leftTrueCount * rightFalseCount)
-                            + (leftFalseCount * rightTrueCount);
+                    totalWays += (leftTrueCount * rightFalseCount) % MOD;
+                    totalWays += (leftFalseCount * rightTrueCount) % MOD;
                 } else {
-                    totalWays += (leftTrueCount * rightTrueCount)
-                            + (leftFalseCount * rightFalseCount);
+                    totalWays += (leftTrueCount * rightTrueCount) % MOD;
+                    totalWays += (leftFalseCount * rightFalseCount) % MOD;
                 }
             }
+
+            totalWays %= MOD;
         }
         // Return the total number of ways for the current subproblem.
         return totalWays;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private static final int MOD = 1003;
+    private static int[][][] cache;
+
+    static int countWays(int n, String expression) {
+        cache = new int[n][n][2];
+        initializeCache();
+        return countWays(expression, 0, n - 1, 1);
+    }
+
+    private static int countWays(String expression, int start, int end, int isTrue) {
+        if (start == end) {
+            if (isTrue == 1) {
+                return expression.charAt(start) == 'T' ? 1 : 0;
+            }
+            return expression.charAt(start) == 'F' ? 1 : 0;
+        }
+
+        if (cache[start][end][isTrue] != -1) {
+            return cache[start][end][isTrue];
+        }
+
+        int totalWays = 0;
+
+        for (int partition = start + 1; partition < end; partition++) {
+            int leftFalseCount = countWays(expression, start, partition - 1, 0);
+            int leftTrueCount = countWays(expression, start, partition - 1, 1);
+            int rightFalseCount = countWays(expression, partition + 1, end, 0);
+            int rightTrueCount = countWays(expression, partition + 1, end, 1);
+
+            char operator = expression.charAt(partition);
+
+            if (operator == '&') {
+                if (isTrue == 1) {
+                    totalWays += (leftTrueCount * rightTrueCount) % MOD;
+                } else {
+                    totalWays += (leftTrueCount * rightFalseCount) % MOD;
+                    totalWays += (leftFalseCount * rightTrueCount) % MOD;
+                    totalWays += (leftFalseCount * rightFalseCount) % MOD;
+                }
+            } else if (operator == '|') {
+                if (isTrue == 1) {
+                    totalWays += (leftTrueCount * rightTrueCount) % MOD;
+                    totalWays += (leftTrueCount * rightFalseCount) % MOD;
+                    totalWays += (leftFalseCount * rightTrueCount) % MOD;
+                } else {
+                    totalWays += (leftFalseCount * rightFalseCount) % MOD;
+                }
+            } else if (operator == '^') {
+                if (isTrue == 1) {
+                    totalWays += (leftTrueCount * rightFalseCount) % MOD;
+                    totalWays += (leftFalseCount * rightTrueCount) % MOD;
+                } else {
+                    totalWays += (leftTrueCount * rightTrueCount) % MOD;
+                    totalWays += (leftFalseCount * rightFalseCount) % MOD;
+                }
+            }
+
+            totalWays %= MOD;
+        }
+
+        return cache[start][end][isTrue] = totalWays;
+    }
+
+    private static void initializeCache() {
+        for (int i = 0; i < cache.length; i++) {
+            for (int j = 0; j < cache[0].length; j++) {
+                Arrays.fill(cache[i][j], -1);
+            }
+        }
     }
 }
