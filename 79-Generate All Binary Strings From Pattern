@@ -53,16 +53,6 @@ public class Solution {
     }
 }
 
-/*
-When generating binary strings with '?' replacements, backward recursion cannot be used because the order of replacements affects the lexicographical ordering of output strings.
-
-Example:
-Input: "1?"
-
-Forward recursion processes left-to-right, producing: "10" and "11" (correct lexicographical order)
-Backward recursion processes right-to-left, producing: "01" and "11" (incorrect lexicographical order)
-Therefore, forward recursion must be used to maintain the expected lexicographical ordering of the generated strings.
-*/
 
 //Recursive approach
 
