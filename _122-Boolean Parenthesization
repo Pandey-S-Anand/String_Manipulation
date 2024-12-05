@@ -166,3 +166,80 @@ class Solution {
         }
     }
 }
+
+
+//Optimal Approach
+
+class Solution {
+    private static final int MOD = 1003;
+
+    static int countWays(int n, String expression) {
+        /*
+         * dp[start][end][isTrue] stores the number of ways to parenthesize the
+         * substring of the boolean expression from index start to end such that the
+         * result evaluates to:
+         * 
+         * True if isTrue = 1.
+         * False if isTrue = 0.
+         */
+        int[][][] dp = new int[n][n][2];
+
+        for (int start = n - 1; start >= 0; start--) {
+            for (int end = start; end < n; end++) {
+                for (int isTrue = 0; isTrue <= 1; isTrue++) {
+                    if (start == end) {
+                        if (isTrue == 1) {
+                            dp[start][end][isTrue] = expression.charAt(start) == 'T' ? 1 : 0;
+                        } else {
+                            dp[start][end][isTrue] = expression.charAt(start) == 'F' ? 1 : 0;
+                        }
+
+                        continue;
+                    }
+
+                    int totalWays = 0;
+                    for (int partition = start + 1; partition < end; partition++) {
+                        int leftFalseCount = dp[start][partition - 1][0];
+                        int leftTrueCount = dp[start][partition - 1][1];
+                        int rightFalseCount = dp[partition + 1][end][0];
+                        int rightTrueCount = dp[partition + 1][end][1];
+
+                        char operator = expression.charAt(partition);
+
+                        if (operator == '&') {
+                            if (isTrue == 1) {
+                                totalWays += (leftTrueCount * rightTrueCount) % MOD;
+                            } else {
+                                totalWays += (leftTrueCount * rightFalseCount) % MOD;
+                                totalWays += (leftFalseCount * rightTrueCount) % MOD;
+                                totalWays += (leftFalseCount * rightFalseCount) % MOD;
+                            }
+                        } else if (operator == '|') {
+                            if (isTrue == 1) {
+                                totalWays += (leftTrueCount * rightTrueCount) % MOD;
+                                totalWays += (leftTrueCount * rightFalseCount) % MOD;
+                                totalWays += (leftFalseCount * rightTrueCount) % MOD;
+                            } else {
+                                totalWays += (leftFalseCount * rightFalseCount) % MOD;
+                            }
+                        } else if (operator == '^') {
+                            if (isTrue == 1) {
+                                totalWays += (leftTrueCount * rightFalseCount) % MOD;
+                                totalWays += (leftFalseCount * rightTrueCount) % MOD;
+                            } else {
+                                totalWays += (leftTrueCount * rightTrueCount) % MOD;
+                                totalWays += (leftFalseCount * rightFalseCount) % MOD;
+                            }
+                        }
+
+                        totalWays %= MOD;
+                    }
+
+                    dp[start][end][isTrue] = totalWays;
+                }
+            }
+        }
+
+        return dp[0][n - 1][1];
+    }
+}
