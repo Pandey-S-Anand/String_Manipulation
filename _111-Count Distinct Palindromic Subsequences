@@ -80,10 +80,12 @@ class Solution {
             return 0;
         }
 
+        // Base Case 1: A single character is always a palindrome of length 1.
         if (end == start) {
-            return 1; // A single character is a palindrome
+            return 1;
         }
 
+        // Base Case 2: Two characters.
         if (end - start == 1) {
             return 2; // If chars are different, count both individually. If same, count one character and the pair as palindrome.
         }
@@ -142,12 +144,8 @@ class Solution {
             return 0;
         }
 
-        if (end == start) {
-            return 1;
-        }
-
-        if (end - start == 1) {
-            return 2;
+        if (end - start <= 1) {
+            return start == end ? 1 : 2;
         }
 
         if (cache[start][end] != -1) {
@@ -207,17 +205,20 @@ class Solution {
 //Optimal Approach
 
 class Solution {
-    private int mod = 1000000007;
+    private int[] prevIndex;
+    private int[] nextIndex;
+    private final int mod = 1000000007;
 
     public int countPalindromicSubsequences(String str) {
+        // dp[i][j] = count of distinct palindromic subsequences in the substring str[i...j]
         int[][] dp = new int[str.length()][str.length()];
-        int[] nextOccurenceIndex = new int[str.length()];
-        int[] prevOccurenceIndex = new int[str.length()];
+        nextIndex = new int[str.length()];
+        prevIndex = new int[str.length()];
         Map<Character, Integer> map = new HashMap<>();
 
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
-            prevOccurenceIndex[i] = map.getOrDefault(ch, -1);
+            prevIndex[i] = map.getOrDefault(ch, -1);
             map.put(ch, i);
         }
 
@@ -225,39 +226,41 @@ class Solution {
 
         for (int i = str.length() - 1; i >= 0; i--) {
             char ch = str.charAt(i);
-            nextOccurenceIndex[i] = map.getOrDefault(ch, -1);
+            nextIndex[i] = map.getOrDefault(ch, -1);
             map.put(ch, i);
         }
-        
-        // dp[i][j] = count of distinct palindromic subsequences in the substring str[i...j]
-        for (int gap = 0; gap < str.length(); gap++) {
-            for (int i = 0, j = gap; j < str.length(); i++, j++) {
-                if (gap == 0) {
-                    dp[i][j] = 1;// A single character is a palindrome
-                } else if (gap == 1) {
-                    dp[i][j] = 2;// If chars are different, count both individually. If same, count one character and the pair as palindrome.
-                } else {
-                    if (str.charAt(i) != str.charAt(j)) {
-                        dp[i][j] = dp[i][j - 1] + dp[i + 1][j] - dp[i + 1][j - 1];
-                    } else { // str.charAt(i)==str.charAt(j) = ch (say)
-                        int nextIndex = nextOccurenceIndex[i]; // Next occurence of 'ch' after i
-                        int prevIndex = prevOccurenceIndex[j]; // Previous occurence of 'ch' before j
 
-                        if (nextIndex > prevIndex) { // Means no occurence of 'ch' in middle part
-                            dp[i][j] = 2 * dp[i + 1][j - 1] + 2;
-                        } else if (nextIndex == prevIndex) { // Means only one occurence of 'ch' in middle part
-                            dp[i][j] = 2 * dp[i + 1][j - 1] + 1;
-                        } else {// nextIndex < prevIndex => Means more than one occurences of 'ch' in middle part
-                            dp[i][j] = 2 * dp[i + 1][j - 1] - dp[nextIndex + 1][prevIndex - 1];
+        for (int start = str.length() - 1; start >= 0; start--) {
+            for (int end = start; end < str.length(); end++) {
+                if (end - start <= 1) {
+                    dp[start][end] = start == end ? 1 : 2;
+                } else {
+                    if (str.charAt(start) != str.charAt(end)) {
+                        /*
+                         * Base Case 1: A single character is always a palindrome of length 1.
+                         * Base Case 2: Two characters.
+                         * If chars are different, count both individually. If same, count one character and the pair as palindrome.
+                         */
+                        dp[start][end] = dp[start][end - 1] + dp[start + 1][end] - dp[start + 1][end - 1];
+                    } else { // str.charAt(i)==str.charAt(j) = ch (say)
+                        int nextIdx = nextIndex[start]; // Next occurence of 'ch' after 'start'
+                        int prevIdx = prevIndex[end]; // Previous occurence of 'ch' before 'end'
+
+                        if (nextIdx > prevIdx) { // Means no occurence of 'ch' in middle part
+                            dp[start][end] = (2 * dp[start + 1][end - 1] + 2);
+                        } else if (nextIdx == prevIdx) { // Means only one occurence of 'ch' in middle part
+                            dp[start][end] = 2 * dp[start + 1][end - 1] + 1;
+                        } else { // nextIdx < prevIdx => Means more than one occurences of 'ch' in middle part
+                            dp[start][end] = (2 * dp[start + 1][end - 1] - dp[nextIdx + 1][prevIdx - 1]);
+                        }
+
+                        // Handle modulo
+                        if (dp[start][end] < 0) {
+                            dp[start][end] += mod;
+                        } else {
+                            dp[start][end] %= mod;
                         }
                     }
-                }
-
-                // Handle modulo
-                if (dp[i][j] < 0) {
-                    dp[i][j] = dp[i][j] + mod;
-                } else {
-                    dp[i][j] = dp[i][j] % mod;
                 }
             }
         }
