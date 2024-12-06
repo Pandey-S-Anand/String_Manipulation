@@ -122,7 +122,6 @@ class Solution {
     }
 }
 
-
 //Aliter (Space optimised)
 
 class Solution {
@@ -151,6 +150,7 @@ class Solution {
         return nextRow[str.length() - 1];
     }
 }
+
 
 //Aliter (Using LCS)
 /*
