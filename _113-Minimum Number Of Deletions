@@ -65,50 +65,51 @@ class Solution {
 
 //Optimal Approach
 
-//Naive Implementation 
-
 class Solution {
     int minDeletions(String str, int n) {
-        int[][] dp = new int[n][n];
         // dp[i][j] represents the minimum number of deletions required to make the substring str[i..j] a palindrome.
+        int[][] dp = new int[str.length() + 1][str.length() + 1];
 
-        for (int gap = 0; gap < n; gap++) {
-            for (int i = 0, j = gap; j < n; i++, j++) {
-                if (gap == 0) {
-                    dp[i][j] = 0;
-                } else if (gap == 1) {
-                    dp[i][j] = str.charAt(i) == str.charAt(j) ? 0 : 1; // 1 deletion if two different characters else 0
+        for (int start = str.length() - 1; start >= 0; start--) {
+            for (int end = start; end < str.length(); end++) {
+                if (str.charAt(start) != str.charAt(end)) {
+                    dp[start][end] = 1 + Math.min(dp[start + 1][end], end - 1 < 0 ? 0 : dp[start][end - 1]);
                 } else {
-                    if (str.charAt(i) == str.charAt(j)) {
-                        dp[i][j] = dp[i + 1][j - 1];
-                    } else {
-                        dp[i][j] = 1 + Math.min(dp[i + 1][j], dp[i][j - 1]);
+                    if (end > 0) {
+                        dp[start][end] = dp[start + 1][end - 1];
                     }
                 }
             }
         }
 
-        return dp[0][n - 1];
+        return dp[0][str.length() - 1];
     }
 }
 
-//Optimal Implementation
+//Aliter (Space optimised)
 
 class Solution {
     int minDeletions(String str, int n) {
-        int[][] dp = new int[n][n];
+        int[] currentRow = new int[str.length() + 1];
+        int[] nextRow = new int[str.length() + 1];
 
-        for (int gap = 1; gap < n; gap++) {
-            for (int i = 0, j = gap; j < n; i++, j++) {
-                if (str.charAt(i) == str.charAt(j)) {
-                    dp[i][j] = dp[i + 1][j - 1];
+        for (int start = str.length() - 1; start >= 0; start--) {
+            for (int end = start; end < str.length(); end++) {
+                if (str.charAt(start) != str.charAt(end)) {
+                    currentRow[end] = 1 + Math.min(nextRow[end], end - 1 < 0 ? 0 : currentRow[end - 1]);
                 } else {
-                    dp[i][j] = 1 + Math.min(dp[i + 1][j], dp[i][j - 1]);
+                    if (end > 0) {
+                        currentRow[end] = nextRow[end - 1];
+                    }
                 }
             }
+
+            int[] temp = currentRow;
+            currentRow = nextRow;
+            nextRow = temp;
         }
 
-        return dp[0][n - 1];
+        return nextRow[str.length() - 1];
     }
 }
 
@@ -165,10 +166,6 @@ class Solution {
     }
 
     private int longestPalindromeSubsequence(String str, int start, int end) {
-        if (start > end) {
-            return 0;
-        }
-
         if (start == end) {
             return 1;
         }
@@ -229,26 +226,60 @@ class Solution {
 
 class Solution {
     int minDeletions(String str, int n) {
-        return n - longestPalindromeSubsequence(str, n);
+        return n - longestPalindromeSubsequence(str);
     }
 
-    private int longestPalindromeSubsequence(String str, int n) {
-        int[][] dp = new int[n][n];
+    private int longestPalindromeSubsequence(String str) {
+        int[][] dp = new int[str.length()][str.length()];
 
-        for (int gap = 0; gap < n; gap++) {
-            for (int i = 0, j = gap; j < n; i++, j++) {
-                if (gap == 0) {
-                    dp[i][j] = 1;
-                } else if (gap == 1) {
-                    dp[i][j] = str.charAt(i) == str.charAt(j) ? 2 : 1;
-                } else if (str.charAt(i) == str.charAt(j)) {
-                    dp[i][j] = 2 + dp[i + 1][j - 1];
+        for (int start = str.length() - 1; start >= 0; start--) {
+            for (int end = start; end < str.length(); end++) {
+                if (end - start <= 1) {
+                    dp[start][end] = (start == end) ? 1 : (str.charAt(start) == str.charAt(end) ? 2 : 1);
                 } else {
-                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);
+                    if (str.charAt(start) == str.charAt(end)) {
+                        dp[start][end] = 2 + dp[start + 1][end - 1];
+                    } else {
+                        dp[start][end] = Math.max(dp[start + 1][end], dp[start][end - 1]);
+                    }
                 }
             }
         }
 
-        return dp[0][n - 1];
+        return dp[0][str.length() - 1];
+    }
+}
+
+
+//Aliter (Space optimised)
+
+class Solution {
+    int minDeletions(String str, int n) {
+        return n - longestPalindromeSubsequence(str);
+    }
+
+    private int longestPalindromeSubsequence(String str) {
+        int[] nextRow = new int[str.length()];
+        int[] curentRow = new int[str.length()];
+
+        for (int start = str.length() - 1; start >= 0; start--) {
+            for (int end = start; end < str.length(); end++) {
+                if (end - start <= 1) {
+                    curentRow[end] = (start == end) ? 1 : (str.charAt(start) == str.charAt(end) ? 2 : 1);
+                } else {
+                    if (str.charAt(start) == str.charAt(end)) {
+                        curentRow[end] = 2 + nextRow[end - 1];
+                    } else {
+                        curentRow[end] = Math.max(nextRow[end], curentRow[end - 1]);
+                    }
+                }
+            }
+
+            int[] temp = curentRow;
+            curentRow = nextRow;
+            nextRow = temp;
+        }
+
+        return nextRow[str.length() - 1];
     }
 }
