@@ -75,10 +75,6 @@ class Solution {
     }
 
     private int computeLps(String str, int start, int end) {
-        if (start > end) {
-            return 0;
-        }
-
         if (end - start <= 1) {
             return (start == end) ? 1 : (str.charAt(start) == str.charAt(end) ? 2 : 1);
         }
@@ -107,22 +103,52 @@ class Solution {
 class Solution {
     public int longestPalindromeSubseq(String str) {
         int[][] dp = new int[str.length()][str.length()];
-        // dp[i][j] represents the length of the longest palindromic subsequence in the substring str[i...j].
-        for (int gap = 0; gap < str.length(); gap++) {
-            for (int i = 0, j = gap; j < str.length(); i++, j++) {
-                if (gap == 0) {
-                    dp[i][j] = 1;
-                } else if (gap == 1) {
-                    dp[i][j] = str.charAt(i) == str.charAt(j) ? 2 : 1;
-                } else if (str.charAt(i) == str.charAt(j)) {
-                    dp[i][j] = 2 + dp[i + 1][j - 1];
+
+        for (int start = str.length() - 1; start >= 0; start--) {
+            for (int end = start; end < str.length(); end++) {
+                if (end - start <= 1) {
+                    dp[start][end] = (start == end) ? 1 : (str.charAt(start) == str.charAt(end) ? 2 : 1);
                 } else {
-                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);
+                    if (str.charAt(start) == str.charAt(end)) {
+                        dp[start][end] = 2 + dp[start + 1][end - 1];
+                    } else {
+                        dp[start][end] = Math.max(dp[start + 1][end], dp[start][end - 1]);
+                    }
                 }
             }
         }
 
         return dp[0][str.length() - 1];
+    }
+}
+
+
+//Aliter (Space optimised)
+
+class Solution {
+    public int longestPalindromeSubseq(String str) {
+        int[] nextRow = new int[str.length()];
+        int[] curentRow = new int[str.length()];
+
+        for (int start = str.length() - 1; start >= 0; start--) {
+            for (int end = start; end < str.length(); end++) {
+                if (end - start <= 1) {
+                    curentRow[end] = (start == end) ? 1 : (str.charAt(start) == str.charAt(end) ? 2 : 1);
+                } else {
+                    if (str.charAt(start) == str.charAt(end)) {
+                        curentRow[end] = 2 + nextRow[end - 1];
+                    } else {
+                        curentRow[end] = Math.max(nextRow[end], curentRow[end - 1]);
+                    }
+                }
+            }
+
+            int[] temp = curentRow;
+            curentRow = nextRow;
+            nextRow = temp;
+        }
+
+        return nextRow[str.length() - 1];
     }
 }
 
@@ -181,19 +207,19 @@ class Solution {
     }
 
     private int longestCommonSubsequence(String str1, String str2) {
-        return computeLcs(str1, str2, str1.length() - 1, str2.length() - 1);
+        return computeLcs(str1, str2, 0, 0);
     }
 
     private int computeLcs(String str1, String str2, int i, int j) {
-        if (i < 0 || j < 0) {
+        if (i == str1.length() || j == str2.length()) {
             return 0;
         }
 
         if (str1.charAt(i) == str2.charAt(j)) {
-            return 1 + computeLcs(str1, str2, i - 1, j - 1);
+            return 1 + computeLcs(str1, str2, i + 1, j + 1);
         }
 
-        return Math.max(computeLcs(str1, str2, i - 1, j), computeLcs(str1, str2, i, j - 1));
+        return Math.max(computeLcs(str1, str2, i + 1, j), computeLcs(str1, str2, i, j + 1));
     }
 }
 
@@ -210,11 +236,11 @@ class Solution {
     private int longestCommonSubsequence(String str1, String str2) {
         cache = new int[str1.length()][str2.length()];
         intializeCache();
-        return computeLcs(str1, str2, str1.length() - 1, str2.length() - 1);
+        return computeLcs(str1, str2, 0, 0);
     }
 
     private int computeLcs(String str1, String str2, int i, int j) {
-        if (i < 0 || j < 0) {
+        if (i == str1.length() || j == str2.length()) {
             return 0;
         }
 
@@ -223,10 +249,10 @@ class Solution {
         }
 
         if (str1.charAt(i) == str2.charAt(j)) {
-            return 1 + computeLcs(str1, str2, i - 1, j - 1);
+            return cache[i][j] = 1 + computeLcs(str1, str2, i + 1, j + 1);
         }
 
-        return cache[i][j] = Math.max(computeLcs(str1, str2, i - 1, j), computeLcs(str1, str2, i, j - 1));
+        return cache[i][j] = Math.max(computeLcs(str1, str2, i + 1, j), computeLcs(str1, str2, i, j + 1));
     }
 
     private void intializeCache() {
@@ -247,17 +273,17 @@ class Solution {
     private int longestCommonSubsequence(String str1, String str2) {
         int[][] dp = new int[str1.length() + 1][str2.length() + 1];
 
-        for (int i = 1; i <= str1.length(); i++) {
-            for (int j = 1; j <= str2.length(); j++) {
-                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-                    dp[i][j] = 1 + dp[i - 1][j - 1];
+        for (int i = str1.length() - 1; i >= 0; i--) {
+            for (int j = str2.length() - 1; j >= 0; j--) {
+                if (str1.charAt(i) == str2.charAt(j)) {
+                    dp[i][j] = 1 + dp[i + 1][j + 1];
                 } else {
-                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
                 }
             }
         }
 
-        return dp[str1.length()][str2.length()];
+        return dp[0][0];
     }
 }
 
@@ -270,22 +296,22 @@ class Solution {
     }
 
     private int longestCommonSubsequence(String str1, String str2) {
-        int[] previousRow = new int[str2.length() + 1];
+        int[] nextRow = new int[str2.length() + 1];
         int[] currentRow = new int[str2.length() + 1];
 
-        for (int i = 1; i <= str1.length(); i++) {
-            for (int j = 1; j <= str2.length(); j++) {
-                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-                    currentRow[j] = 1 + previousRow[j - 1];
+        for (int i = str1.length() - 1; i >= 0; i--) {
+            for (int j = str2.length() - 1; j >= 0; j--) {
+                if (str1.charAt(i) == str2.charAt(j)) {
+                    currentRow[j] = 1 + nextRow[j + 1];
                 } else {
-                    currentRow[j] = Math.max(previousRow[j], currentRow[j - 1]);
+                    currentRow[j] = Math.max(nextRow[j], currentRow[j + 1]);
                 }
             }
             int[] temp = currentRow;
-            currentRow = previousRow;
-            previousRow = temp;
+            currentRow = nextRow;
+            nextRow = temp;
         }
 
-        return previousRow[str2.length()];
+        return nextRow[0];
     }
 }
