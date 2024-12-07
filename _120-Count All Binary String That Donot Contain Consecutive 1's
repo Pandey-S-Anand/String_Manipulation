@@ -51,25 +51,25 @@ class Solution {
 //Improved Approach
 
 class Solution {
-    private static final long MOD = 1000000007L;
+    private static final int MOD = 1000000007;
 
-    long countStrings(int n) {
-        return countValidNLengthBinaryStrings(new char[n], n - 1, false);
+    int countStrings(int n) {
+        return countValidNLengthBinaryStrings(new char[n], 0, false);
     }
 
-    private long countValidNLengthBinaryStrings(char[] currentNLengthBinaryString, int index, boolean wasLastBitOne) {
-        if (index < 0) {
-            return 1L;
+    private int countValidNLengthBinaryStrings(char[] currentNLengthBinaryString, int index, boolean wasLastBitOne) {
+        if (index == currentNLengthBinaryString.length) {
+            return 1;
         }
 
         // Place '0' at the current index
         currentNLengthBinaryString[index] = '0';
-        long count = countValidNLengthBinaryStrings(currentNLengthBinaryString, index - 1, false);
+        int count = countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1, false);
 
         // Place '1' at the current index only if the previous bit is not '1'
         if (!wasLastBitOne) {
             currentNLengthBinaryString[index] = '1';
-            count = (count + countValidNLengthBinaryStrings(currentNLengthBinaryString, index - 1, true)) % MOD;
+            count = (count + countValidNLengthBinaryStrings(currentNLengthBinaryString, index + 1, true)) % MOD;
         }
 
         return count;
@@ -80,23 +80,23 @@ class Solution {
 //Good Approach
 
 class Solution {
-    private static final long MOD = 1000000007L;
+    private static final int MOD = 1000000007;
 
-    long countStrings(int n) {
-        return countValidNLengthBinaryStrings(n-1, false);
+    int countStrings(int n) {
+        return countValidNLengthBinaryStrings(0, n, false);
     }
 
-    private long countValidNLengthBinaryStrings(int index, boolean wasLastBitOne) {
-        if (index < 0) {
-            return 1L;
+    private int countValidNLengthBinaryStrings(int index, int n, boolean wasLastBitOne) {
+        if (index == n) {
+            return 1;
         }
 
         // Place '0' at the current index
-        long count = countValidNLengthBinaryStrings(index - 1, false);
+        int count = countValidNLengthBinaryStrings(index + 1, n, false);
 
         // Place '1' at the current index only if the previous bit is not '1'
         if (!wasLastBitOne) {
-            count = (count + countValidNLengthBinaryStrings(index - 1, true)) % MOD;
+            count = (count + countValidNLengthBinaryStrings(index + 1, n, true)) % MOD;
         }
 
         return count;
@@ -107,28 +107,28 @@ class Solution {
 //Better Approach
 
 class Solution {
-    private static final long MOD = 1000000007L;
-    private long[][] cache;
+    private static final int MOD = 1000000007;
+    private int[][] cache;
 
-    long countStrings(int n) {
-        cache = new long[n][2];
+    int countStrings(int n) {
+        cache = new int[n][2];
         intializeCache();
-        return countValidNLengthBinaryStrings(n - 1, 0);
+        return countValidNLengthBinaryStrings(0, n, 0);
     }
 
-    private long countValidNLengthBinaryStrings(int index, int wasLastBitOne) {
-        if (index < 0) {
-            return 1L;
+    private int countValidNLengthBinaryStrings(int index, int n, int wasLastBitOne) {
+        if (index == n) {
+            return 1;
         }
 
         if (cache[index][wasLastBitOne] != -1) {
             return cache[index][wasLastBitOne];
         }
 
-        long count = countValidNLengthBinaryStrings(index - 1, 0);
+        int count = countValidNLengthBinaryStrings(index + 1, n, 0);
 
         if (wasLastBitOne == 0) {
-            count = (count + countValidNLengthBinaryStrings(index - 1, 1)) % MOD;
+            count = (count + countValidNLengthBinaryStrings(index + 1, n, 1)) % MOD;
         }
 
         return cache[index][wasLastBitOne] = count;
@@ -145,31 +145,31 @@ class Solution {
 //Optimal Approach
 
 class Solution {
-    private static final long MOD = 1000000007L;
+    private static final int MOD = 1000000007;
 
-    long countStrings(int n) {
+    int countStrings(int n) {
         /*
          * dp[i][0] -> Count of valid strings of length i ending with '0'
          * dp[i][1] -> Count of valid strings of length i ending with '1'
          */
-        long[][] dp = new long[n + 1][2];
+        int[][] dp = new int[n + 1][2];
 
         // Base case: An empty string can be considered as both ending with '0' and '1'
-        dp[0][0] = 1L;
-        dp[0][1] = 1L;
+        dp[n][0] = 1;
+        dp[n][1] = 1;
 
-        for (int index = 1; index <= n; index++) {
+        for (int index = n - 1; index >= 0; index--) {
             for (int wasLastBitOne = 0; wasLastBitOne <= 1; wasLastBitOne++) {
-                long count = dp[index - 1][0];
+                int count = dp[index + 1][0];
                 if (wasLastBitOne == 0) {
-                    count = (count + dp[index - 1][1]) % MOD;
+                    count = (count + dp[index + 1][1]) % MOD;
                 }
 
                 dp[index][wasLastBitOne] = count;
             }
         }
 
-        return dp[n][0];
+        return dp[0][0];
     }
 }
 
@@ -177,29 +177,30 @@ class Solution {
 //Aliter (Space optimised)
 
 class Solution {
-    private static final long MOD = 1000000007L;
+    private static final int MOD = 1000000007;
 
-    long countStrings(int n) {
-        long[] previousRow=new long[2];
-        long[] currentRow=new long[2];
+    int countStrings(int n) {
+        int[] currentRow = new int[2];
+        int[] nextRow = new int[2];
 
-        previousRow[0]=1L;
-        previousRow[1]=1L;
-        
-        for(int index=1;index<=n;index++){
-            for(int wasLastBitOne=0;wasLastBitOne<=1;wasLastBitOne++){
-              long count=previousRow[0];
-              if(wasLastBitOne==0){
-                  count=(count+previousRow[1])%MOD;
-              }
-               
-              currentRow[wasLastBitOne]=count;
+        nextRow[0] = 1;
+        nextRow[1] = 1;
+
+        for (int index = n - 1; index >= 0; index--) {
+            for (int wasLastBitOne = 0; wasLastBitOne <= 1; wasLastBitOne++) {
+                int count = nextRow[0];
+                if (wasLastBitOne == 0) {
+                    count = (count + nextRow[1]) % MOD;
+                }
+
+                currentRow[wasLastBitOne] = count;
             }
-            long[] temp=currentRow;
-            currentRow=previousRow;
-            previousRow=temp;
+
+            int[] temp = currentRow;
+            currentRow = nextRow;
+            nextRow = temp;
         }
-        
-        return previousRow[0];
+
+        return nextRow[0];
     }
 }
