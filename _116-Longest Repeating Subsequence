@@ -74,19 +74,19 @@ public class Solution {
 
 public class Solution {
     public static int longestRepeatingSubsequence(String str, int n) {
-        return computeLrs(str, str, str.length() - 1, str.length() - 1);
+        return computeLrs(str, str, 0, 0, n);
     }
 
-    private static int computeLrs(String str1, String str2, int i, int j) {
-        if (i < 0 || j < 0) {
+    private static int computeLrs(String str1, String str2, int i, int j, int n) {
+        if (i == n || j == n) {
             return 0;
         }
 
         if (i != j && str1.charAt(i) == str2.charAt(j)) {
-            return 1 + computeLrs(str1, str2, i - 1, j - 1);
+            return 1 + computeLrs(str1, str2, i + 1, j + 1, n);
         }
 
-        return Math.max(computeLrs(str1, str2, i - 1, j), computeLrs(str1, str2, i, j - 1));
+        return Math.max(computeLrs(str1, str2, i + 1, j, n), computeLrs(str1, str2, i, j + 1, n));
     }
 }
 
@@ -99,11 +99,11 @@ public class Solution {
     public static int longestRepeatingSubsequence(String str, int n) {
         cache = new int[str.length()][str.length()];
         initializeCache();
-        return computeLrs(str, str, str.length() - 1, str.length() - 1);
+        return computeLrs(str, str, 0, 0, n);
     }
 
-    private static int computeLrs(String str1, String str2, int i, int j) {
-        if (i < 0 || j < 0) {
+    private static int computeLrs(String str1, String str2, int i, int j, int n) {
+        if (i == n || j == n) {
             return 0;
         }
 
@@ -112,10 +112,10 @@ public class Solution {
         }
 
         if (i != j && str1.charAt(i) == str2.charAt(j)) {
-            return cache[i][j] = 1 + computeLrs(str1, str2, i - 1, j - 1);
+            return cache[i][j] = 1 + computeLrs(str1, str2, i + 1, j + 1, n);
         }
 
-        return cache[i][j] = Math.max(computeLrs(str1, str2, i - 1, j), computeLrs(str1, str2, i, j - 1));
+        return cache[i][j] = Math.max(computeLrs(str1, str2, i + 1, j, n), computeLrs(str1, str2, i, j + 1, n));
     }
 
     private static void initializeCache() {
@@ -135,24 +135,25 @@ public class Solution {
         int[][] dp = new int[n + 1][n + 1];
 
         for (int i = 0; i <= n; i++) {
-            dp[0][i] = dp[i][0] = 0;
+            dp[n][i] = dp[n][0] = 0;
         }
 
-        // dp[i][j]=length of longest repeating subsequence between str[0...i-1] and str[0..j-1]
-        for (int i = 1; i <= n; i++) {
+        // dp[i][j]=length of longest repeating subsequence between str[i...n-1] and str[i..n-1]
+        for (int i = n-1; i >= 0; i--) {
             // Check if characters are the same but at different positions
-            for (int j = 1; j <= n; j++) {
-                if (i != j && str.charAt(i - 1) == str.charAt(j - 1)) {
-                    dp[i][j] = 1 + dp[i - 1][j - 1];
+            for (int j = n-1; j >= 0; j--) {
+                if (i != j && str.charAt(i) == str.charAt(j)) {
+                    dp[i][j] = 1 + dp[i + 1][j + 1];
                 } else {
-                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
+                    dp[i][j] = Math.max(dp[i][j + 1], dp[i + 1][j]);
                 }
             }
         }
 
-        return dp[n][n];
+        return dp[0][0];
     }
 }
+
 
 //Optimal Implementation 
 
@@ -160,17 +161,17 @@ public class Solution {
     public static int longestRepeatingSubsequence(String str, int n) {
         int[][] dp = new int[n + 1][n + 1];
 
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (i != j && str.charAt(i - 1) == str.charAt(j - 1)) {
-                    dp[i][j] = 1 + dp[i - 1][j - 1];
+        for (int i = n-1; i >= 0; i--) {
+            for (int j = n-1; j >= 0; j--) {
+                if (i != j && str.charAt(i) == str.charAt(j)) {
+                    dp[i][j] = 1 + dp[i + 1][j + 1];
                 } else {
-                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
+                    dp[i][j] = Math.max(dp[i][j + 1], dp[i + 1][j]);
                 }
             }
         }
 
-        return dp[n][n];
+        return dp[0][0];
     }
 }
 
@@ -179,23 +180,22 @@ public class Solution {
 
 public class Solution {
     public static int longestRepeatingSubsequence(String str, int n) {
-        int[] curRow = new int[n + 1];
-        int[] prevRow = new int[n + 1];
+        int[] currentRow = new int[n + 1];
+        int[] nextRow = new int[n + 1];
 
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (i != j && str.charAt(i - 1) == str.charAt(j - 1)) {
-                    curRow[j] = 1 + prevRow[j - 1];
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                if (i != j && str.charAt(i) == str.charAt(j)) {
+                    currentRow[j] = 1 + nextRow[j + 1];
                 } else {
-                    curRow[j] = Math.max(curRow[j - 1], prevRow[j]);
+                    currentRow[j] = Math.max(currentRow[j + 1], nextRow[j]);
                 }
             }
-
-            int[] temp = curRow;
-            curRow = prevRow;
-            prevRow = temp;
+            int[] temp = currentRow;
+            currentRow = nextRow;
+            nextRow = temp;
         }
 
-        return prevRow[n];
+        return nextRow[0];
     }
 }
