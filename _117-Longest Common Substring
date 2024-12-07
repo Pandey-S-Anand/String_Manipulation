@@ -30,6 +30,7 @@ class Solution {
     }
 }
 
+//Logic : The longest common substring between str1 and str2 is the longest common suffix of any two prefixes of these strings.
 
 //Improved Approach
 
