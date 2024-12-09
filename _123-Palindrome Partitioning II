@@ -1,11 +1,7 @@
 //Bruteforce Approach
 
 class Solution {
-    private int[][] cache;
-
     public int minCut(String str) {
-        cache = new int[str.length()][str.length()];
-        initializeCache();
         return minCut(str, 0);
     }
 
@@ -30,52 +26,102 @@ class Solution {
             return true;
         }
 
-        if (cache[start][end] != -1) {
-            return cache[start][end] == 1;
-        }
-
         if (str.charAt(start) != str.charAt(end)) {
-            cache[start][end] = 0;
             return false;
         }
 
-        cache[start][end] = isPalindrome(str, start + 1, end - 1) ? 1 : 0;
-
-        return cache[start][end] == 1;
-    }
-
-    private void initializeCache() {
-        for (int i = 0; i < cache.length; i++) {
-            Arrays.fill(cache[i], -1);
-        }
+        return isPalindrome(str, start + 1, end - 1);
     }
 }
 
 
-//Improved Approach
+//Better Approach
 
 class Solution {
-    private boolean[][] dp;
+    private int[][] cache1;
+    private int[] cache2;
 
     public int minCut(String str) {
-        dp = precomputePalindromeSubstrings(str);
+        cache1 = new int[str.length()][str.length()];
+        cache2 = new int[str.length()];
+        initializeCache();
         return minCut(str, 0);
     }
 
     private int minCut(String str, int start) {
-        if (dp[start][str.length() - 1]) {
+        if (isPalindrome(str, start, str.length() - 1)) {
             return 0;
+        }
+
+        if (cache2[start] != -1) {
+            return cache2[start];
         }
 
         int minCuts = Integer.MAX_VALUE;
 
         for (int partition = start; partition < str.length() - 1; partition++) {
-            if (dp[start][partition]) {
+            if (isPalindrome(str, start, partition)) {
                 minCuts = Math.min(minCuts, 1 + minCut(str, partition + 1));
             }
         }
 
-        return minCuts;
+        return cache2[start] = minCuts;
+    }
+
+    private boolean isPalindrome(String str, int start, int end) {
+        if (start >= end) {
+            return true;
+        }
+
+        if (cache1[start][end] != -1) {
+            return cache1[start][end] == 1;
+        }
+
+        if (str.charAt(start) != str.charAt(end)) {
+            cache1[start][end] = 0;
+            return false;
+        }
+
+        cache1[start][end] = isPalindrome(str, start + 1, end - 1) ? 1 : 0;
+
+        return cache1[start][end] == 1;
+    }
+
+    private void initializeCache() {
+        for (int i = 0; i < cache1.length; i++) {
+            Arrays.fill(cache1[i], -1);
+        }
+
+        Arrays.fill(cache2, -1);
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int minCut(String str) {
+        boolean[][] isPalindrome = precomputePalindromeSubstrings(str);
+        int[] dp = new int[str.length()];
+
+        for (int start = str.length() - 1; start >= 0; start--) {
+            if (isPalindrome[start][str.length() - 1]) {
+                dp[start] = 0;
+                continue;
+            }
+
+            int minCuts = Integer.MAX_VALUE;
+
+            for (int partition = start; partition < str.length() - 1; partition++) {
+                if (isPalindrome[start][partition]) {
+                    minCuts = Math.min(minCuts, 1 + dp[partition + 1]);
+                }
+            }
+
+            dp[start] = minCuts;
+        }
+
+        return dp[0];
     }
 
     private boolean[][] precomputePalindromeSubstrings(String str) {
@@ -96,8 +142,3 @@ class Solution {
         return dp;
     }
 }
-
-
-//Good Approach
-
-
