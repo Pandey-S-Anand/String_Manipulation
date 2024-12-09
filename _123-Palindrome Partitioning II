@@ -6,13 +6,16 @@ class Solution {
     }
 
     private int minCut(String str, int start) {
+        // Base case: If the substring from 'start' to the end is a palindrome, no cuts are needed.
         if (isPalindrome(str, start, str.length() - 1)) {
             return 0;
         }
 
         int minCuts = Integer.MAX_VALUE;
 
+        // For a string of length 'N', the maximum number of cuts possible is 'N-1'. Therefore, the loop runs from index 0 to 'str.length() - 2' to consider all potential cuts.
         for (int partition = start; partition < str.length() - 1; partition++) {
+            // If the substring from 'start' to 'partition' is a palindrome, make a cut and find the minimum cuts for the remaining part.
             if (isPalindrome(str, start, partition)) {
                 minCuts = Math.min(minCuts, 1 + minCut(str, partition + 1));
             }
@@ -101,7 +104,10 @@ class Solution {
 
 class Solution {
     public int minCut(String str) {
+        // isPalindrome[i][j] is true if the substring str[i...j] (from index i to j) is a palindrome; otherwise, it is false.
         boolean[][] isPalindrome = precomputePalindromeSubstrings(str);
+
+        // dp[start] represents the minimum number of cuts needed to partition the substring str[start...str.length()-1] into palindromic substrings.
         int[] dp = new int[str.length()];
 
         for (int start = str.length() - 1; start >= 0; start--) {
