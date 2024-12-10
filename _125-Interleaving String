@@ -199,11 +199,11 @@ class Solution {
             for (int j = str2.length() - 1; j >= 0; j--) {
                 boolean result = false;
 
-                if (i < str1.length() && (str1.charAt(i) == str3.charAt(i + j))) {
+                if (str1.charAt(i) == str3.charAt(i + j)) {
                     result = dp[i + 1][j];
                 }
 
-                if (j < str2.length() && (str2.charAt(j) == str3.charAt(i + j))) {
+                if (str2.charAt(j) == str3.charAt(i + j)) {
                     result = result || dp[i][j + 1];
                 }
 
@@ -238,11 +238,11 @@ class Solution {
             for (int j = str2.length() - 1; j >= 0; j--) {
                 boolean result = false;
 
-                if (i < str1.length() && (str1.charAt(i) == str3.charAt(i + j))) {
+                if (str1.charAt(i) == str3.charAt(i + j)) {
                     result = nextRow[j];
                 }
 
-                if (j < str2.length() && (str2.charAt(j) == str3.charAt(i + j))) {
+                if (str2.charAt(j) == str3.charAt(i + j)) {
                     result = result || currentRow[j + 1];
                 }
 
