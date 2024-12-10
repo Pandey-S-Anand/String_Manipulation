@@ -126,7 +126,7 @@ class Solution {
     }
 
     private boolean isInterleave(String str1, String str2, String str3, int i, int j) {
-        if (i == str1.length() && j == str2.length() && (i + j) == str3.length()) {
+        if (i == str1.length() && j == str2.length()) {
             return true;
         }
 
@@ -154,5 +154,101 @@ class Solution {
     }
 }
 
+
 //Optimal Approach
 
+class Solution {
+    public boolean isInterleave(String str1, String str2, String str3) {
+        if (str1.length() + str2.length() != str3.length()) {
+            return false;
+        }
+        /*
+         * dp[i][j] is a boolean value that represents whether the substring str1[i...] (from index i to the end of str1)
+         * and the substring str2[j...] (from index j to the end of str2)
+         * can interleave to form the substring str3[i + j...] (from index i + j to the end of str3).
+         */
+        boolean[][] dp = new boolean[str1.length() + 1][str2.length() + 1];
+
+        // Base case: If both str1 and str2 are empty, they can form an empty str3.
+        dp[str1.length()][str2.length()] = true;
+
+        /*
+         * Initialize the last row of the dp table.
+         * This represents the scenario where str1 is empty, and we need to check
+         * if the remaining characters of str2 can match the remaining portion of str3.
+         */
+        for (int j = str2.length() - 1; j >= 0; j--) {
+            dp[str1.length()][j] = dp[str1.length()][j + 1] && str2.charAt(j) == str3.charAt(str1.length() + j);
+        }
+
+        /*
+         * Initialize the last coloumn of the dp table.
+         * This represents the scenario where str2 is empty, and we need to check
+         * if the remaining characters of str1 can match the remaining portion of str3.
+         */
+        for (int i = str1.length() - 1; i >= 0; i--) {
+            dp[i][str2.length()] = dp[i + 1][str2.length()] && str1.charAt(i) == str3.charAt(i + str2.length());
+        }
+
+        for (int i = str1.length() - 1; i >= 0; i--) {
+            for (int j = str2.length() - 1; j >= 0; j--) {
+                boolean result = false;
+
+                if (i < str1.length() && (str1.charAt(i) == str3.charAt(i + j))) {
+                    result = dp[i + 1][j];
+                }
+
+                if (j < str2.length() && (str2.charAt(j) == str3.charAt(i + j))) {
+                    result = result || dp[i][j + 1];
+                }
+
+                dp[i][j] = result;
+            }
+        }
+
+        return dp[0][0];
+    }
+}
+
+
+//Aliter (Space optimised)
+
+class Solution {
+    public boolean isInterleave(String str1, String str2, String str3) {
+        if (str1.length() + str2.length() != str3.length()) {
+            return false;
+        }
+
+        boolean[] currentRow = new boolean[str2.length() + 1];
+        boolean[] nextRow = new boolean[str2.length() + 1];
+
+        nextRow[str2.length()] = true;
+
+        for (int j = str2.length() - 1; j >= 0; j--) {
+            nextRow[j] = nextRow[j + 1] && str2.charAt(j) == str3.charAt(str1.length() + j);
+        }
+
+        for (int i = str1.length() - 1; i >= 0; i--) {
+            currentRow[str2.length()] = nextRow[str2.length()] && str1.charAt(i) == str3.charAt(i + str2.length());
+            for (int j = str2.length() - 1; j >= 0; j--) {
+                boolean result = false;
+
+                if (i < str1.length() && (str1.charAt(i) == str3.charAt(i + j))) {
+                    result = nextRow[j];
+                }
+
+                if (j < str2.length() && (str2.charAt(j) == str3.charAt(i + j))) {
+                    result = result || currentRow[j + 1];
+                }
+
+                currentRow[j] = result;
+            }
+
+            boolean[] temp = currentRow;
+            currentRow = nextRow;
+            nextRow = temp;
+        }
+
+        return nextRow[0];
+    }
+}
