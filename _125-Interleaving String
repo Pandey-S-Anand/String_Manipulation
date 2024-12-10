@@ -30,17 +30,6 @@ class Solution {
             return true;
         }
 
-        /*
-         * If the index for str3 reaches the end, but there are still characters left in str1 or str2,
-         * return false because the strings haven't been fully interleaved.
-         *
-         * Example : str1 = "a", str2 = "b", str3 = "a"
-         * - str3 is exhausted, but str2 still has characters left ("b").
-         */
-        if (k == str3.length()) {
-            return false;
-        }
-
         boolean result = false;
 
         /*
@@ -86,10 +75,6 @@ class Solution {
             return true;
         }
 
-        if (k == str3.length()) {
-            return false;
-        }
-
         if (cache[i][j][k] != 0) {
             return cache[i][j][k] == 1;
         }
@@ -113,6 +98,7 @@ class Solution {
         return result;
     }
 }
+
 
 //Better Approach
 /*
@@ -142,10 +128,6 @@ class Solution {
     private boolean isInterleave(String str1, String str2, String str3, int i, int j) {
         if (i == str1.length() && j == str2.length() && (i + j) == str3.length()) {
             return true;
-        }
-
-        if ((i + j) == str3.length()) {
-            return false;
         }
 
         if (cache[i][j] != 0) {
