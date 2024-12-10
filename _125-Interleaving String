@@ -1,0 +1,176 @@
+//Bruteforce Approach
+
+class Solution {
+    public boolean isInterleave(String str1, String str2, String str3) {
+        // If the lengths of str1 and str2 combined do not match the length of str3,it is impossible for str3 to be an interleaving of str1 and str2.
+        if (str1.length() + str2.length() != str3.length()) {
+            return false;
+        }
+        /*
+         * Even if the combined length of str1 and str2 matches str3, interleaving might
+         * still not be possible if the characters cannot be interleaved in the right order to form str3.
+         *
+         * Examples:
+         *
+         * 1. str1 = "aab", str2 = "abc", str3 = "acaabb"
+         * - Despite the combined length being 6, no valid interleaving of "aab" and
+         *   "abc" can produce "acaabb".
+         *
+         * 2. str1 = "abcw", str2 = "acbd", str3 = "abckacbd"
+         * - The combined length is 8, but the sequence "abckacbd" cannot be formed by
+         *   interleaving "abcw" and "acbd".
+         */
+
+        return isInterleave(str1, str2, str3, 0, 0, 0);
+    }
+
+    private boolean isInterleave(String str1, String str2, String str3, int i, int j, int k) {
+        // Base case: If all indices have reached the end of their respective strings, the strings have been successfully interleaved.
+        if (i == str1.length() && j == str2.length() && k == str3.length()) {
+            return true;
+        }
+
+        /*
+         * If the index for str3 reaches the end, but there are still characters left in str1 or str2,
+         * return false because the strings haven't been fully interleaved.
+         *
+         * Example : str1 = "a", str2 = "b", str3 = "a"
+         * - str3 is exhausted, but str2 still has characters left ("b").
+         */
+        if (k == str3.length()) {
+            return false;
+        }
+
+        boolean result = false;
+
+        /*
+         * Case 1: Check if the current character of str1 matches the current character of str3.
+         * If they match, move to the next character in both str1 and str3.
+         */
+        if (i < str1.length() && (str1.charAt(i) == str3.charAt(k))) {
+            result = isInterleave(str1, str2, str3, i + 1, j, k + 1);
+        }
+
+        if (result) {
+            return true;
+        }
+
+        /*
+         * Case 1: Check if the current character of str2 matches the current character of str3.
+         * If they match, move to the next character in both str2 and str3.
+         */
+        if (j < str2.length() && (str2.charAt(j) == str3.charAt(k))) {
+            result = isInterleave(str1, str2, str3, i, j + 1, k + 1);
+        }
+
+        return result;
+    }
+}
+
+
+//Improved Approach
+
+class Solution {
+    private int[][][] cache;
+
+    public boolean isInterleave(String str1, String str2, String str3) {
+        if (str1.length() + str2.length() != str3.length()) {
+            return false;
+        }
+        cache = new int[str1.length() + 1][str2.length() + 1][str3.length()];
+        return isInterleave(str1, str2, str3, 0, 0, 0);
+    }
+
+    private boolean isInterleave(String str1, String str2, String str3, int i, int j, int k) {
+        if (i == str1.length() && j == str2.length() && k == str3.length()) {
+            return true;
+        }
+
+        if (k == str3.length()) {
+            return false;
+        }
+
+        if (cache[i][j][k] != 0) {
+            return cache[i][j][k] == 1;
+        }
+
+        boolean result = false;
+
+        if (i < str1.length() && (str1.charAt(i) == str3.charAt(k))) {
+            result = isInterleave(str1, str2, str3, i + 1, j, k + 1);
+        }
+
+        if (result) {
+            cache[i][j][k] = 1;
+            return true;
+        }
+
+        if (j < str2.length() && (str2.charAt(j) == str3.charAt(k))) {
+            result = isInterleave(str1, str2, str3, i, j + 1, k + 1);
+        }
+
+        cache[i][j][k] = result ? 1 : -1;
+        return result;
+    }
+}
+
+//Better Approach
+/*
+ * The key insight in this approach is that at any point in time, 
+ * the position in str3 we are trying to match (denoted by 'k') is the 
+ * total number of characters that have already been processed from both 
+ * str1 and str2. 
+ *
+ * Specifically, 'i' represents the number of characters we've processed 
+ * from str1, and 'j' represents the number of characters we've processed 
+ * from str2. Therefore, the current position in str3 ('k') is simply 
+ * the sum of these two, i.e., k = i + j.
+ */
+
+
+class Solution {
+    private int[][] cache;
+
+    public boolean isInterleave(String str1, String str2, String str3) {
+        if (str1.length() + str2.length() != str3.length()) {
+            return false;
+        }
+        cache = new int[str1.length() + 1][str2.length() + 1];
+        return isInterleave(str1, str2, str3, 0, 0);
+    }
+
+    private boolean isInterleave(String str1, String str2, String str3, int i, int j) {
+        if (i == str1.length() && j == str2.length() && (i + j) == str3.length()) {
+            return true;
+        }
+
+        if ((i + j) == str3.length()) {
+            return false;
+        }
+
+        if (cache[i][j] != 0) {
+            return cache[i][j] == 1;
+        }
+
+        boolean result = false;
+
+        if (i < str1.length() && (str1.charAt(i) == str3.charAt(i + j))) {
+            result = isInterleave(str1, str2, str3, i + 1, j);
+        }
+
+        if (result) {
+            cache[i][j] = 1;
+            return true;
+        }
+
+        if (j < str2.length() && (str2.charAt(j) == str3.charAt(i + j))) {
+            result = isInterleave(str1, str2, str3, i, j + 1);
+        }
+
+        cache[i][j] = result ? 1 : -1;
+        return result;
+    }
+}
+
+//Optimal Approach
+
