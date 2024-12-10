@@ -1,0 +1,98 @@
+//Bruteforce Approach
+
+class Solution {
+    public boolean isScramble(String str1, String str2) {
+        return isScrambleHelper(str1, str2);
+    }
+
+    private boolean isScrambleHelper(String str1, String str2) {
+        // Base case: If the two strings are equal, they are scramble strings
+        if (str1.equals(str2)) {
+            return true;
+        }
+
+        int n = str1.length();
+
+        // Iterate over all possible partitions of the strings
+        for (int partition = 1; partition < n; partition++) {
+            /*
+             * Case 1: No swap case
+             * Check if the left part of str1 matches the left part of str2
+             * AND the right part of str1 matches the right part of str2
+             */
+            boolean notSwap = isScramble(str1.substring(0, partition), str2.substring(0, partition))
+                    && isScramble(str1.substring(partition), str2.substring(partition));
+            
+            // If a valid partition is found without a swap, return true
+            if (notSwap) {
+                return true;
+            }
+
+            /*
+             * Case 2: Swap case
+             * Check if the left part of str1 matches the right part of str2
+             * AND the right part of str1 matches the left part of str2
+             */
+            boolean swap = isScramble(str1.substring(0, partition), str2.substring(n - partition))
+                    && isScramble(str1.substring(partition), str2.substring(0, n - partition));
+           
+            // If a valid partition is found with a swap, return true
+            if (swap) {
+                return true;
+            }
+        }
+        
+        // If no valid scramble is found, return false
+        return false;
+    }
+}
+
+
+//Improved Approach
+
+class Solution {
+    private Map<String, Boolean> cache;
+
+    public boolean isScramble(String str1, String str2) {
+        cache = new HashMap<>();
+        return isScrambleHelper(str1, str2);
+    }
+
+    private boolean isScrambleHelper(String str1, String str2) {
+        if (str1.equals(str2)) {
+            return true;
+        }
+
+        String key = str1 + "_" + str2;
+
+        if (cache.containsKey(key)) {
+            return cache.get(key);
+        }
+
+        int n = str1.length();
+
+        for (int partition = 1; partition < n; partition++) {
+            boolean notSwap = isScramble(str1.substring(0, partition), str2.substring(0, partition))
+                    && isScramble(str1.substring(partition), str2.substring(partition));
+
+            if (notSwap) {
+                cache.put(key, true);
+                return true;
+            }
+
+            boolean swap = isScramble(str1.substring(0, partition), str2.substring(n - partition))
+                    && isScramble(str1.substring(partition), str2.substring(0, n - partition));
+
+            if (swap) {
+                cache.put(key, true);
+                return true;
+            }
+        }
+
+        cache.put(key, false);
+        return false;
+    }
+}
+
+//Good Approach
+
