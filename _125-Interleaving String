@@ -162,10 +162,15 @@ class Solution {
         if (str1.length() + str2.length() != str3.length()) {
             return false;
         }
+
         /*
-         * dp[i][j] is a boolean value that represents whether the substring str1[i...] (from index i to the end of str1)
-         * and the substring str2[j...] (from index j to the end of str2)
-         * can interleave to form the substring str3[i + j...] (from index i + j to the end of str3).
+         * dp[i][j] is a boolean value that represents whether the substring str1[i...str1.length()-1] (from index i to the end of str1)
+         * and the substring str2[j...str2.length()-1] (from index j to the end of str2)
+         * can interleave to form the substring str3[i + j...str3.length()-1] (from index i + j to the end of str3).
+         * 
+         * In other words, dp[i][j] tells us whether the remaining characters of str1 starting at index i,
+         * and the remaining characters of str2 starting at index j, can be combined (by interleaving) 
+         * to match the remaining characters of str3 starting from index i + j.
          */
         boolean[][] dp = new boolean[str1.length() + 1][str2.length() + 1];
 
