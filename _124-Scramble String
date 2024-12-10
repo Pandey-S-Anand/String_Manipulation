@@ -89,7 +89,6 @@ class Solution {
 
     public boolean isScramble(String str1, String str2) {
         cache = new int[str1.length()][str1.length()][str1.length()][str1.length()];
-        intializeCache(str1.length());
         return isScrambleHelper(str1, str2, 0, str1.length() - 1, 0, str2.length() - 1);
     }
 
@@ -98,14 +97,14 @@ class Solution {
             return true;
         }
 
-        if (cache[start1][end1][start2][end2] != -1) {
+        if (cache[start1][end1][start2][end2] != 0) {
             return cache[start1][end1][start2][end2] == 1;
         }
 
         int n = end1 - start1 + 1;
 
         for (int partition = 1; partition < n; partition++) {
-            boolean notSwap = isScrambleHelper(str1, str2, start1, start1 + partition - 1, start2, start2 + partition - 1)
+            boolean notSwap = isScrambleHelper(str1, str2, start1, start1 + partition - 1, start2,start2 + partition - 1)
                     && isScrambleHelper(str1, str2, start1 + partition, end1, start2 + partition, end2);
 
             if (notSwap) {
@@ -122,18 +121,8 @@ class Solution {
             }
         }
 
-        cache[start1][end1][start2][end2] = 0;
+        cache[start1][end1][start2][end2] = -1;
         return false;
-    }
-
-    private void intializeCache(int n) {
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                for (int k = 0; k < n; k++) {
-                    Arrays.fill(cache[i][j][k], -1);
-                }
-            }
-        }
     }
 
     private boolean areEqual(String str1, String str2, int start1, int end1, int start2, int end2) {
