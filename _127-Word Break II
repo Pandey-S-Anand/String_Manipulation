@@ -1,0 +1,143 @@
+//Method 1
+
+//Bruteforce Approach
+
+class Solution {
+    private Set<String> dictionary;
+    private List<String> sentences;
+
+    public List<String> wordBreak(String str, List<String> wordDict) {
+        dictionary = new HashSet<>(wordDict);
+        sentences = new ArrayList<>();
+        wordBreak(str, "");
+        return sentences;
+    }
+
+    private void wordBreak(String str, String currentSentence) {
+        if (str.isEmpty()) {
+            sentences.add(currentSentence.trim());
+            return;
+        }
+
+        StringBuilder prefix = new StringBuilder();
+        for (int partition = 0; partition < str.length(); partition++) {
+            prefix.append(str.charAt(partition));
+            String currentPrefix = prefix.toString();
+            if (dictionary.contains(currentPrefix)) {
+                wordBreak(str.substring(partition + 1), currentSentence + " " + currentPrefix);
+            }
+        }
+    }
+}
+
+
+//Improved Approach
+
+class Solution {
+    private Set<String> dictionary;
+    private List<String> sentences;
+    private int maxWordLength;
+    private int minWordLength;
+
+    public List<String> wordBreak(String str, List<String> wordDict) {
+        dictionary = new HashSet<>(wordDict);
+        sentences = new ArrayList<>();
+        maxWordLength = Integer.MIN_VALUE;
+        minWordLength = Integer.MAX_VALUE;
+
+        for (String word : wordDict) {
+            maxWordLength = Math.max(maxWordLength, word.length());
+            minWordLength = Math.min(minWordLength, word.length());
+        }
+
+        wordBreak(str, 0, "");
+        return sentences;
+    }
+
+    private void wordBreak(String str, int start, String currentSentence) {
+        if (start == str.length()) {
+            sentences.add(currentSentence.trim());
+            return;
+        }
+
+        StringBuilder prefix = new StringBuilder();
+
+        for (int partition = start; partition < str.length(); partition++) {
+            prefix.append(str.charAt(partition));
+            
+            if (prefix.length() < minWordLength) {
+                continue;
+            }
+
+            if (prefix.length() > maxWordLength) {
+                break;
+            }
+
+            String currentPrefix = prefix.toString();
+            if (dictionary.contains(currentPrefix)) {
+                wordBreak(str, partition + 1, currentSentence + " " + currentPrefix);
+            }
+        }
+    }
+}
+
+
+// Better Approach
+
+class Solution {
+    private Set<String> dictionary;
+    private List<String> sentences;
+    private int maxWordLength;
+    private int minWordLength;
+
+    public List<String> wordBreak(String str, List<String> wordDict) {
+        dictionary = new HashSet<>(wordDict);
+        sentences = new ArrayList<>();
+        maxWordLength = Integer.MIN_VALUE;
+        minWordLength = Integer.MAX_VALUE;
+
+        for (String word : wordDict) {
+            maxWordLength = Math.max(maxWordLength, word.length());
+            minWordLength = Math.min(minWordLength, word.length());
+        }
+
+        wordBreak(str, 0, new StringBuilder());
+        return sentences;
+    }
+
+    private void wordBreak(String str, int start, StringBuilder currentSentence) {
+        if (start == str.length()) {
+            sentences.add(currentSentence.toString());
+            return;
+        }
+
+        StringBuilder prefix = new StringBuilder();
+
+        for (int partition = start; partition < str.length(); partition++) {
+            prefix.append(str.charAt(partition));
+
+            if (prefix.length() < minWordLength) {
+                continue;
+            }
+
+            if (prefix.length() > maxWordLength) {
+                break;
+            }
+
+            String currentPrefix = prefix.toString();
+            if (dictionary.contains(currentPrefix)) {
+                int currentLength = currentSentence.length();
+
+                if (currentLength != 0) {
+                    currentSentence.append(" ");
+                }
+
+                currentSentence.append(currentPrefix);
+
+                wordBreak(str, partition + 1, currentSentence);
+
+                currentSentence.setLength(currentLength);
+            }
+        }
+    }
+}
