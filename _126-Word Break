@@ -1,0 +1,178 @@
+//Bruteforce Approach
+
+class Solution {
+    // Convert the word list to a HashSet for quick lookups.
+    private Set<String> dictionary;
+
+    public boolean wordBreak(String str, List<String> wordDict) {
+        dictionary = new HashSet<>(wordDict);
+        return wordBreak(str);
+    }
+
+    private boolean wordBreak(String str) {
+        // Base case: if the string is empty, it means we've successfully segmented the entire string.
+        if (str.isEmpty()) {
+            return true;
+        }
+        
+        // Try to partition the string by checking all possible prefixes.
+        for (int i = 0; i < str.length(); i++) {
+            // Check if the prefix from index 0 to i (inclusive) exists in the dictionary.
+            if (dictionary.contains(str.substring(0, i + 1))) {
+                // If the prefix is valid, recursively check the remaining substring.
+                if (wordBreak(str.substring(i + 1))) {
+                    return true; // If the remaining substring can be segmented, return true.
+                }
+            }
+        }
+        
+        // If no valid segmentation is found, return false.
+        return false;
+    }
+}
+
+
+//Improved Approach
+
+class Solution {
+    private Set<String> dictionary;
+    private int maxWordLength;
+    private int minWordLength;
+
+    public boolean wordBreak(String str, List<String> wordDict) {
+        dictionary = new HashSet<>(wordDict);
+        maxWordLength = Integer.MIN_VALUE;
+        minWordLength = Integer.MAX_VALUE;
+        // Determine the maximum and minimum word lengths in the dictionary.
+        for (String word : wordDict) {
+            maxWordLength = Math.max(maxWordLength, word.length());
+            minWordLength = Math.min(minWordLength, word.length());
+        }
+
+        return wordBreak(str, 0);
+    }
+
+    private boolean wordBreak(String str, int start) {
+        if (start == str.length()) {
+            return true;
+        }
+
+        StringBuilder prefix = new StringBuilder();
+
+        for (int partition = start; partition < str.length(); partition++) {
+            prefix.append(str.charAt(partition));
+            // Skip if the prefix length is less than the smallest word length in the dictionary.
+            if (prefix.length() < minWordLength) {
+                continue;
+            }
+            // Stop if the prefix length exceeds the largest word length in the dictionary.
+            if (prefix.length() > maxWordLength) {
+                break;
+            }
+            
+            if (dictionary.contains(prefix.toString())) {
+                if (wordBreak(str, partition + 1)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    private Set<String> dictionary;
+    private int maxWordLength;
+    private int minWordLength;
+    private int[] cache;
+
+    public boolean wordBreak(String str, List<String> wordDict) {
+        dictionary = new HashSet<>(wordDict);
+        maxWordLength = Integer.MIN_VALUE;
+        minWordLength = Integer.MAX_VALUE;
+        cache = new int[str.length()];
+
+        for (String word : wordDict) {
+            maxWordLength = Math.max(maxWordLength, word.length());
+            minWordLength = Math.min(minWordLength, word.length());
+        }
+
+        return wordBreak(str, 0);
+    }
+
+    private boolean wordBreak(String str, int start) {
+        if (start == str.length()) {
+            return true;
+        }
+
+        if (cache[start] != 0) {
+            return cache[start] == 1;
+        }
+
+        StringBuilder prefix = new StringBuilder();
+
+        for (int partition = start; partition < str.length(); partition++) {
+            prefix.append(str.charAt(partition));
+            if (prefix.length() < minWordLength) {
+                continue;
+            }
+            if (prefix.length() > maxWordLength) {
+                break;
+            }
+            if (dictionary.contains(prefix.toString())) {
+                if (wordBreak(str, partition + 1)) {
+                    cache[start] = 1;
+                    return true;
+                }
+            }
+        }
+
+        cache[start] = -1;
+        return false;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public boolean wordBreak(String str, List<String> wordDict) {
+        Set<String> dictionary = new HashSet<>(wordDict);
+        StringBuilder prefix = new StringBuilder();
+        int maxWordLength = Integer.MIN_VALUE;
+        int minWordLength = Integer.MAX_VALUE;
+
+        for (String word : wordDict) {
+            maxWordLength = Math.max(maxWordLength, word.length());
+            minWordLength = Math.min(minWordLength, word.length());
+        }
+        /*
+         * dp[i] is a boolean value that indicates whether the substring str[i...str.length() - 1] (from index i to the end of the string)
+         * can be segmented into valid words found in the dictionary
+         */
+        boolean[] dp = new boolean[str.length() + 1];
+        dp[str.length()] = true;
+
+        for (int start = str.length() - 1; start >= 0; start--) {
+            prefix.setLength(0);
+            for (int partition = start; partition < str.length(); partition++) {
+                prefix.append(str.charAt(partition));
+                if (prefix.length() < minWordLength) {
+                    continue;
+                }
+                if (prefix.length() > maxWordLength) {
+                    break;
+                }
+                if (dictionary.contains(prefix.toString()) && dp[partition + 1]) {
+                    dp[start] = true;
+                    break;
+                }
+            }
+        }
+
+        return dp[0];
+    }
+}
