@@ -193,6 +193,7 @@ class Solution {
         // Iterate through the string to form different partitions
         for (int partition = 0; partition < str.length(); partition++) {
             prefix.append(str.charAt(partition));
+            
             String currentPrefix = prefix.toString();
 
             if (dictionary.contains(currentPrefix)) {
@@ -313,6 +314,10 @@ class Solution {
         for (int partition = start; partition < str.length(); partition++) {
             prefix.append(str.charAt(partition));
 
+            if (prefix.length() < minWordLength) {
+                continue;
+            }
+
             if (prefix.length() > maxWordLength) {
                 break;
             }
@@ -380,6 +385,10 @@ class Solution {
 
         for (int partition = start; partition < str.length(); partition++) {
             prefix.append(str.charAt(partition));
+
+            if (prefix.length() < minWordLength) {
+                continue;
+            }
 
             if (prefix.length() > maxWordLength) {
                 break;
