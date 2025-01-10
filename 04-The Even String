@@ -1,26 +1,4 @@
-//Methd 1
-
-class Solution {
-    public int convertToEven(String str) {
-        int additions = 0, i = 0;
-
-        while (i < str.length()) {
-            if (str.charAt(i) == 'O') {
-                additions++;
-                while (i < str.length() && str.charAt(i) == 'O') {
-                    i++;
-                }
-            } else {
-                i++;
-            }
-        }
-
-        return additions;
-    }
-}
-
-
-//Method 2
+//Naive Approach
 
 class Solution {
     public int convertToEven(String str) {
@@ -43,6 +21,28 @@ class Solution {
 
         if (!stack.isEmpty()) {
             additions++;
+        }
+
+        return additions;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int convertToEven(String str) {
+        int additions = 0, i = 0;
+
+        while (i < str.length()) {
+            if (str.charAt(i) == 'O') {
+                additions++;
+                while (i < str.length() && str.charAt(i) == 'O') {
+                    i++;
+                }
+            } else {
+                i++;
+            }
         }
 
         return additions;
