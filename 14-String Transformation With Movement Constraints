@@ -1,0 +1,94 @@
+/*
+In the problem, A can only move left by swapping with #, and B can only move right by swapping with #. 
+Neither A nor B can be swapped with each other. 
+*/
+class Solution {
+    int isItPossible(String str1, String str2, int m, int n) {
+        /* If lengths are different, transformation is impossible
+            Ex:
+            Input:
+            str1=#A#B#B#   
+            str2=A###B#BBA
+        */
+        if (m != n) { 
+            return 0;
+        }
+
+        int i = 0, j = 0;
+
+        while (i < m && j < n) {
+            // Skip '#' characters in str1
+            while (i < m && str1.charAt(i) == '#') {
+                i++; 
+            }
+            // Skip '#' characters in str2
+            while (j < n && str2.charAt(j) == '#') { 
+                j++;
+            }
+
+            /* If both pointers reach the end, str1 can be transformed into str2
+            Ex :
+            Input:
+            str1= #######  
+            str2= ####### 
+            */
+            if (i == m && j == n) {
+                return 1; 
+            } 
+
+            /* 
+            If one pointer reaches the end and the other does not, transformation is impossible
+            Ex 1:
+            Input:
+            str1=#######   
+            str2=A###B#B
+            
+            Ex 2:
+            Input:
+            str1= A###B#B 
+            str2= ####### 
+            */
+            if (i == m || j == n) {
+                return 0;
+            }
+ 
+            /* 
+              If characters at i and j don't match, return 0
+              Ex:
+              Input:
+              str1=#A#B#B#   
+              str2=A###B#B
+            */
+            if (str1.charAt(i) != str2.charAt(j)) { 
+                return 0;
+            }
+
+            /*
+            Check for invalid move: A can't move right
+            Ex:
+            Input:
+            str1=A#B#B#   
+            str2=#A#B#B
+            */
+            if (str1.charAt(i) == 'A' && i < j) { 
+                return 0;
+            }
+            
+            /*
+            Check for invalid move: B can't move left
+            Ex:
+            Input:
+            str1=#B#B#   
+            str2=B##B
+            */
+            if (str1.charAt(i) == 'B' && i > j) { 
+                return 0;
+            }
+
+            i++;
+            j++;
+        }
+
+        return 1;
+    }
+}
